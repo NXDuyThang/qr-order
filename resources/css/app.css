@@ -2,4 +2,22 @@
 
 @theme {
   --color-primary: #0077bb;
+  --color-dark: #111518;
+  --color-darker: #0d1114;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Jost", "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-dark);
+    color: #d1d5db;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    color: #ffffff;
+  }
 }

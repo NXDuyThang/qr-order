@@ -117,11 +117,11 @@
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center gap-[45px] font-light">
-                <a href="#" class="text-[11px] uppercase tracking-[0.45em] text-primary border-b border-primary/60 pb-1 pointer-events-auto transition-colors duration-300">Home</a>
-                <a href="#" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Pages</a>
-                <a href="#" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Portfolio</a>
-                <a href="#" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Blog</a>
-                <a href="#" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Shop</a>
+                <a href="{{ url('/') }}" class="text-[11px] uppercase tracking-[0.45em] text-primary border-b border-primary/60 pb-1 pointer-events-auto transition-colors duration-300">Trang Chủ</a>
+                <a href="{{ url('/restaurant') }}" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Nhà Hàng</a>
+                <a href="{{ url('/vietnamese-cuisine') }}" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Ẩm Thực Việt</a>
+                <a href="{{ url('/booking') }}" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Đặt Bàn</a>
+                <a href="{{ url('/contact') }}" class="text-[11px] uppercase tracking-[0.45em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300">Liên Hệ</a>
             </nav>
 
             <!-- Hamburger menu icon -->
@@ -142,22 +142,22 @@
         <section class="relative w-full h-screen overflow-hidden">
             <!-- Slide 1 -->
             <div id="slide-0" class="slide-content absolute inset-0 slide-active">
-                <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1920&q=80');"></div>
+                <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1568644396922-5c3bfae12521?auto=format&fit=crop&w=1920&q=80');"></div>
                 <div class="absolute inset-0 bg-black/60"></div>
                 <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 z-20">
-                    <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">take a sip of our innovative drinks</span>
+                    <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức những thức uống tuyệt hảo</span>
                     <h1 class="font-light text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-4">
                         <span class="text-white/20 font-extralight select-none">-</span>
-                        <span class="text-outline-luxury">The Finest</span>
-                        <span class="text-outline-primary">Drinks</span>
+                        <span class="text-outline-luxury">Đồ Uống</span>
+                        <span class="text-outline-primary">Thượng Hạng</span>
                         <span class="text-white/20 font-extralight select-none">-</span>
                     </h1>
                     <p class="mt-6 text-sm md:text-base text-gray-300 font-light leading-relaxed max-w-2xl text-center px-4 tracking-wide">
-                        From the delicious food to wonderful cocktails, Laurent's offer is guaranteed to satisfy all of your taste buds.
+                        Từ những món ăn tinh tế đến những ly cocktail tuyệt vời, nhà hàng chúng tôi đảm bảo sẽ làm hài lòng vị giác của bạn.
                     </p>
                     <div class="mt-10">
-                        <a href="#" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary transition-all duration-500 pointer-events-auto">
-                            View More
+                        <a href="{{ url('/menu') }}" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary transition-all duration-500 pointer-events-auto">
+                            XEM THÊM
                         </a>
                     </div>
                 </div>
@@ -165,22 +165,22 @@
 
             <!-- Slide 2 -->
             <div id="slide-1" class="slide-content absolute inset-0 slide-inactive">
-                <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1920&q=80');"></div>
+                <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=1920&q=80');"></div>
                 <div class="absolute inset-0 bg-black/60"></div>
                 <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 z-20">
-                    <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">savor our chef's signature creations</span>
+                    <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức tinh hoa ẩm thực</span>
                     <h1 class="font-light text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-4">
                         <span class="text-white/20 font-extralight select-none">-</span>
-                        <span class="text-outline-luxury">Gourmet</span>
-                        <span class="text-outline-primary">Culinary</span>
+                        <span class="text-outline-luxury">Tinh Hoa</span>
+                        <span class="text-outline-primary">Ẩm Thực</span>
                         <span class="text-white/20 font-extralight select-none">-</span>
                     </h1>
                     <p class="mt-6 text-sm md:text-base text-gray-300 font-light leading-relaxed max-w-2xl text-center px-4 tracking-wide">
-                        Handcrafted masterworks made from fresh organic ingredients, prepared by award-winning chefs.
+                        Những tuyệt tác ẩm thực được chế biến từ nguyên liệu tươi ngon nhất, bởi các đầu bếp chuyên nghiệp.
                     </p>
                     <div class="mt-10">
-                        <a href="#" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary transition-all duration-500 pointer-events-auto">
-                            Explore Menu
+                        <a href="{{ url('/menu') }}" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary transition-all duration-500 pointer-events-auto">
+                            KHÁM PHÁ THỰC ĐƠN
                         </a>
                     </div>
                 </div>
@@ -212,18 +212,18 @@
             <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
                 <!-- Images Left -->
                 <div class="w-full lg:w-1/2 flex gap-6 justify-center relative">
-                    <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=400&q=80" alt="Chef with wine" class="w-[45%] object-cover object-center aspect-[2/3] filter brightness-75 hover:brightness-100 transition-all duration-500">
-                    <img src="https://images.unsplash.com/photo-1606850780554-b55ea4dd0b70?auto=format&fit=crop&w=400&q=80" alt="Chef tossing shrimp" class="w-[45%] object-cover object-center aspect-[2/3] filter brightness-75 hover:brightness-100 transition-all duration-500 mt-12">
+                    <img src="/images/banh-mi.png" alt="Bánh Mì" class="w-[45%] object-cover object-center aspect-[2/3] filter brightness-75 hover:brightness-100 transition-all duration-500 rounded-sm">
+                    <img src="/images/bun-rieu.jpg" alt="Bún Riêu" class="w-[45%] object-cover object-center aspect-[2/3] filter brightness-75 hover:brightness-100 transition-all duration-500 mt-12 rounded-sm">
                 </div>
                 <!-- Text Right -->
                 <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left">
-                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Our food philosophy</h3>
-                    <h2 class="section-title-deco mb-8">OUR TIPS</h2>
+                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Triết lý ẩm thực</h3>
+                    <h2 class="section-title-deco mb-8">BÍ QUYẾT</h2>
                     <p class="text-gray-300 font-light leading-relaxed mb-10 max-w-md text-[15px]">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
+                        Ẩm thực không chỉ là việc chế biến các món ăn, mà còn là một nghệ thuật mang lại những trải nghiệm khó quên cho thực khách. Mỗi món ăn là một câu chuyện độc đáo.
                     </p>
                     <a href="#" class="read-more-btn text-[11px] uppercase tracking-[0.3em] font-medium text-white hover:text-primary pointer-events-auto">
-                        READ MORE
+                        XEM THÊM
                     </a>
                 </div>
             </div>
@@ -233,8 +233,8 @@
         <section class="relative w-full py-24 md:py-32 px-12 md:px-[120px] bg-transparent z-20">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16 md:mb-20">
-                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Special selection</h3>
-                    <h2 class="section-title-deco">FROM OUR MENU</h2>
+                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Lựa chọn tuyệt hảo</h3>
+                    <h2 class="section-title-deco">TỪ THỰC ĐƠN</h2>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-0 md:gap-y-12">
@@ -242,27 +242,27 @@
                     <div>
                         <div class="mb-12 md:mb-8 text-left">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
-                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BEEF BURGER MEAL</h4>
+                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">PHỞ BÒ ĐẶC BIỆT</h4>
                                 <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$32</span>
+                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$65</span>
                             </div>
-                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Classic greek salad, barrel aged feta cheese, bread</p>
+                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bánh phở mềm, nước dùng thanh ngọt, thịt bò tươi</p>
                         </div>
                         <div class="mb-12 md:mb-8 text-left">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
-                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">ROASTED LAMB RUMP</h4>
+                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BÚN RIÊU CUA</h4>
                                 <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$25</span>
+                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$55</span>
                             </div>
-                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Grilled lamb cutlets, pomegranate glaze, butternut squash</p>
+                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bún riêu cua đồng, chả lụa, đậu hũ chiên, huyết, ốc</p>
                         </div>
                         <div class="mb-12 md:mb-8 text-left">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
-                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">PAN SEARED SEA BASS</h4>
+                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">CƠM TẤM SƯỜN BÌ</h4>
                                 <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$38</span>
+                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$70</span>
                             </div>
-                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Saffron and mussel's broth, new potatoes, edamame beans</p>
+                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Sườn nướng mật ong, bì lợn dai, chả trứng, nước mắm</p>
                         </div>
                     </div>
                     
@@ -270,34 +270,34 @@
                     <div>
                         <div class="mb-12 md:mb-8 text-left">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
-                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">PAN SEARED SCALLOPS</h4>
-                                <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$29</span>
-                            </div>
-                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Saffron, celeriac puree, black pudding, olive oil</p>
-                        </div>
-                        <div class="mb-12 md:mb-8 text-left">
-                            <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
-                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BAKED CAMEMBERT</h4>
+                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BÁNH MÌ THỊT NƯỚNG</h4>
                                 <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
                                 <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$25</span>
                             </div>
-                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Red onion marmalade, garlic Foccacia bread, grilled figs</p>
+                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bánh mì giòn, thịt nướng, patê, chả lụa, rau thơm</p>
                         </div>
                         <div class="mb-12 md:mb-8 text-left">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
-                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BRAISED OX CHEEK RAVIOLI</h4>
+                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BÚN ĐẬU MẮM TÔM</h4>
                                 <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$23</span>
+                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$60</span>
                             </div>
-                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Mediterranean olives casserole, celeriac puree, mushrooms</p>
+                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bún lá, đậu hũ chiên, thịt luộc, chả cốm, mắm tôm</p>
+                        </div>
+                        <div class="mb-12 md:mb-8 text-left">
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
+                                <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">TRÀ TẮC</h4>
+                                <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
+                                <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$15</span>
+                            </div>
+                            <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Trà tắc chua ngọt mát lạnh, giải nhiệt ngày hè</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mt-12">
-                    <a href="#" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-500 pointer-events-auto">
-                        VIEW ALL
+                    <a href="{{ route('menu') }}" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-500 pointer-events-auto">
+                        XEM TẤT CẢ
                     </a>
                 </div>
             </div>
@@ -308,17 +308,17 @@
             <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16">
                 <!-- Image Left -->
                 <div class="w-full lg:w-1/2 flex justify-center">
-                    <img src="https://images.unsplash.com/photo-1612874742237-6526221588e3?auto=format&fit=crop&w=600&q=80" alt="Spaghetti" class="w-full max-w-md object-cover object-center aspect-square filter brightness-90 hover:brightness-100 transition-all duration-500">
+                    <img src="/images/pho-bo.png" alt="Phở Bò" class="w-full max-w-md object-cover object-center aspect-square filter brightness-90 hover:brightness-100 transition-all duration-500 rounded-full border-8 border-primary/20">
                 </div>
                 <!-- Text Right -->
                 <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-center text-center">
-                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Recommendations</h3>
-                    <h2 class="section-title-deco mb-8">OUR BEST<br>SPECIALTIES</h2>
+                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Gợi ý của bếp trưởng</h3>
+                    <h2 class="section-title-deco mb-8">MÓN NGON<br>ĐẶC SẢN</h2>
                     <p class="text-gray-300 font-light leading-relaxed mb-10 max-w-md text-[15px]">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+                        Hãy nếm thử những món ăn làm nên tên tuổi của nhà hàng, sự kết hợp hoàn hảo giữa kỹ thuật nấu ăn hiện đại và nguyên liệu truyền thống.
                     </p>
-                    <a href="#" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary transition-all duration-500 pointer-events-auto">
-                        VIEW ALL
+                    <a href="{{ route('menu') }}" class="inline-block px-10 py-4 border border-primary/40 text-[10px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary hover:border-primary transition-all duration-500 pointer-events-auto">
+                        XEM TẤT CẢ
                     </a>
                 </div>
             </div>
@@ -332,14 +332,16 @@
                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
                 </svg>
                 <p class="font-script-tagline text-[28px] md:text-[34px] leading-relaxed text-gray-200 mb-8 max-w-lg">
-                    Lorem ipsum dolor sit amet, consectetur adipisic sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad.
+                    Hương vị tuyệt hảo, không gian sang trọng và phục vụ chu đáo. Trải nghiệm ẩm thực tại đây luôn khiến tôi ấn tượng và muốn quay lại.
                 </p>
-                <h4 class="text-[13px] tracking-[0.2em] uppercase text-primary mb-1">ROBERT CHANG</h4>
-                <span class="text-[13px] text-gray-400 font-light tracking-widest">Sommelier</span>
+                <h4 class="text-[13px] tracking-[0.2em] uppercase text-primary mb-1">NGUYỄN MINH KHANG</h4>
+                <span class="text-[13px] text-gray-400 font-light tracking-widest">Chuyên Gia Ẩm Thực</span>
             </div>
             <!-- Right Side Image -->
-            <div class="w-full md:w-1/2 h-[400px] md:h-full">
-                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80" alt="Fine Dining Dish" class="w-full h-full object-cover">
+            <div class="w-full md:w-1/2 h-[400px] md:h-full flex items-center justify-center bg-[#040810] py-8">
+                <div class="relative w-full h-[80%] max-w-[400px] aspect-square rounded-2xl shadow-2xl overflow-hidden p-2 bg-[#111518] mx-auto">
+                    <img src="/images/bun-dau-mam-tom.jpg" class="w-full h-full object-contain rounded-xl" alt="Bún Đậu Mắm Tôm">
+                </div>
             </div>
         </section>
 
@@ -347,55 +349,60 @@
         <section class="relative w-full py-32 px-6 md:px-[60px] lg:px-[120px] bg-transparent z-20">
             <div class="max-w-7xl mx-auto">
                 <div class="text-center mb-20">
-                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Our Story</h3>
-                    <h2 class="section-title-deco mb-8">ABOUT US</h2>
+                    <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Câu chuyện của chúng tôi</h3>
+                    <h2 class="section-title-deco mb-8">VỀ CHÚNG TÔI</h2>
                     <p class="text-gray-300 font-light leading-relaxed max-w-xl mx-auto text-[15px]">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusm od tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud.
+                        Khởi nguồn từ tình yêu với ẩm thực truyền thống, chúng tôi xây dựng một không gian nơi mỗi bữa ăn đều là một hành trình kết nối văn hóa và cảm xúc.
                     </p>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <!-- Image 1 -->
                     <div class="aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=400&q=80" alt="Restaurant Interior" class="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500">
+                        <img src="/images/story-1.jpg" alt="Không gian nhà hàng 1" class="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500 rounded-sm">
                     </div>
                     <!-- Image 2 (Center) -->
                     <div class="aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80" alt="Dining Experience" class="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500">
+                        <img src="/images/story-2.jpg" alt="Không gian nhà hàng 2" class="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500 rounded-sm">
                     </div>
                     <!-- Image 3 -->
                     <div class="aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=400&q=80" alt="Chocolate Dessert" class="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500">
+                        <img src="/images/story-3.jpg" alt="Không gian nhà hàng 3" class="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-500 rounded-sm">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Book Table Section -->
         <section class="relative w-full py-24 px-6 md:px-[120px] bg-transparent z-20 border-t border-primary/20">
-            <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 justify-center items-center">
-                <!-- 1 Person dropdown -->
-                <div class="relative w-full md:w-64 border border-primary/30 py-3 px-4 flex justify-between items-center group hover:border-primary transition-colors cursor-pointer bg-[#040810]/80 backdrop-blur-sm">
-                    <span class="text-[13px] tracking-[0.1em] text-white">1 Person</span>
-                    <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <form action="{{ route('booking') }}" method="GET" class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 justify-center items-center">
+                <!-- Guests -->
+                <div class="relative w-full md:w-64">
+                    <select name="guests" class="w-full border border-primary/30 py-3 px-4 appearance-none bg-[#040810]/80 backdrop-blur-sm text-[13px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary">
+                        <option value="1">1 Người</option>
+                        <option value="2" selected>2 Người</option>
+                        <option value="3">3 Người</option>
+                        <option value="4">4 Người</option>
+                        <option value="5">5+ Người</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                        <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
                 </div>
                 <!-- Date -->
-                <div class="relative w-full md:w-64 border border-primary/30 py-3 px-4 flex justify-between items-center group hover:border-primary transition-colors cursor-pointer bg-[#040810]/80 backdrop-blur-sm">
-                    <span class="text-[13px] tracking-[0.1em] text-gray-300">06/04/2026</span>
-                    <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="relative w-full md:w-64">
+                    <input type="date" name="date" required value="{{ date('Y-m-d') }}" class="w-full border border-primary/30 py-3 px-4 bg-[#040810]/80 backdrop-blur-sm text-[13px] tracking-[0.1em] text-gray-300 hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert">
                 </div>
                 <!-- Time -->
-                <div class="relative w-full md:w-64 border border-primary/30 py-3 px-4 flex justify-between items-center group hover:border-primary transition-colors cursor-pointer bg-[#040810]/80 backdrop-blur-sm">
-                    <span class="text-[13px] tracking-[0.1em] text-gray-300">11:00 am</span>
-                    <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="relative w-full md:w-64">
+                    <input type="time" name="time" required value="19:00" class="w-full border border-primary/30 py-3 px-4 bg-[#040810]/80 backdrop-blur-sm text-[13px] tracking-[0.1em] text-gray-300 hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert">
                 </div>
                 <!-- Button -->
-                <button class="w-full md:w-auto px-10 py-3.5 border border-primary text-[11px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary transition-all duration-300 bg-transparent">
-                    BOOK NOW
+                <button type="submit" class="w-full md:w-auto px-10 py-3.5 border border-primary text-[11px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary transition-all duration-300 bg-transparent cursor-pointer">
+                    ĐẶT BÀN NGAY
                 </button>
-            </div>
+            </form>
             <div class="max-w-5xl mx-auto mt-4 flex justify-start pl-0 md:pl-2">
-                <span class="text-gray-500 text-[11px] font-light tracking-wide">*Powered by OpenTable</span>
+                <span class="text-gray-500 text-[11px] font-light tracking-wide">*Cung cấp bởi QR Order</span>
             </div>
         </section>
 
@@ -410,13 +417,13 @@
                 </svg>
             </div>
             <p class="text-[14px] text-gray-300 font-light mb-2 tracking-wider">
-                Laurent Restaurant & Fine dining, 71 Madison Ave
+                Nhà Hàng Ẩm Thực Việt, 71 Lê Lợi, Quận 1
             </p>
             <p class="text-[14px] text-gray-300 font-light mb-2 tracking-wider">
-                10013 New York, 914-309-7030, reservations@laurent.com
+                Thành phố Hồ Chí Minh, 0909-123-456, contact@laurent.com
             </p>
             <p class="text-[14px] text-gray-300 font-light mb-12 tracking-wider">
-                Open: 09:00 am - 01:00 pm
+                Mở cửa: 09:00 sáng - 10:00 tối
             </p>
             
             <div class="flex flex-col gap-4 items-center">
@@ -435,7 +442,7 @@
             <svg class="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path>
             </svg>
-            <span class="text-[9px] tracking-widest font-bold uppercase mt-1">Related</span>
+            <span class="text-[9px] tracking-widest font-bold uppercase mt-1">Liên quan</span>
         </button>
         
         <!-- Widget 2: BUY NOW -->
@@ -443,7 +450,7 @@
             <svg class="w-6 h-6 mb-1 text-[#0077bb]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
             </svg>
-            <span class="text-[9px] tracking-widest font-bold uppercase mt-1">Buy Now</span>
+            <span class="text-[9px] tracking-widest font-bold uppercase mt-1">Mua ngay</span>
         </a>
     </div>
 
@@ -456,36 +463,35 @@
 
         <!-- Header -->
         <div class="p-8 pb-4 border-b border-primary/20 mt-4">
-            <h3 class="font-script-tagline text-[40px] text-primary mb-1 leading-none">Discover</h3>
-            <h4 class="text-[11px] font-semibold tracking-[0.3em] text-white uppercase mt-2">POPULAR ITEMS</h4>
+            <h3 class="font-script-tagline text-[40px] text-primary mb-1 leading-none">Khám phá</h3>
+            <h4 class="text-[11px] font-semibold tracking-[0.3em] text-white uppercase mt-2">MÓN PHỔ BIẾN</h4>
         </div>
         
         <!-- List -->
         <div class="flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-8 pb-20 custom-scrollbar">
             <!-- Item 1 -->
             <div class="group cursor-pointer flex gap-4 items-center">
-                <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=150&q=80" alt="Item" class="w-[70px] h-[70px] object-cover filter brightness-75 group-hover:brightness-100 transition-all border border-primary/20">
-                <div class="flex flex-col flex-1">
-                    <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Chocolate Lava</h5>
-                    <span class="text-gray-400 text-[10px] uppercase tracking-[0.1em] mb-1">Dessert</span>
-                    <span class="text-primary font-semibold text-[13px]">$12.00</span>
+                <img src="/images/pho-bo.png" alt="Phở Bò" class="w-16 h-16 object-cover bg-gray-800">
+                <div class="flex-grow">
+                    <h5 class="text-[12px] font-semibold text-white tracking-[0.1em] uppercase group-hover:text-primary transition-colors">Phở Bò Đặc Biệt</h5>
+                    <span class="text-primary text-[12px] mt-1 block font-medium">$65</span>
                 </div>
             </div>
             <!-- Item 2 -->
             <div class="group cursor-pointer flex gap-4 items-center">
-                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=150&q=80" alt="Item" class="w-[70px] h-[70px] object-cover filter brightness-75 group-hover:brightness-100 transition-all border border-primary/20">
+                <img src="/images/banh-mi.png" alt="Bánh Mì" class="w-16 h-16 object-cover bg-gray-800 border border-primary/20 filter brightness-75 group-hover:brightness-100 transition-all">
                 <div class="flex flex-col flex-1">
-                    <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Wagyu Beef Steak</h5>
-                    <span class="text-gray-400 text-[10px] uppercase tracking-[0.1em] mb-1">Main Course</span>
-                    <span class="text-primary font-semibold text-[13px]">$45.00</span>
+                    <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Bánh Mì Thịt Nướng</h5>
+                    <span class="text-gray-400 text-[10px] uppercase tracking-[0.1em] mb-1">Món Ăn Nhanh</span>
+                    <span class="text-primary font-semibold text-[13px]">$25.00</span>
                 </div>
             </div>
             <!-- Item 3 -->
             <div class="group cursor-pointer flex gap-4 items-center">
-                <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=150&q=80" alt="Item" class="w-[70px] h-[70px] object-cover filter brightness-75 group-hover:brightness-100 transition-all border border-primary/20">
+                <img src="/images/tra-tac.jpg" alt="Trà Tắc" class="w-16 h-16 object-cover bg-gray-800 border border-primary/20 filter brightness-75 group-hover:brightness-100 transition-all">
                 <div class="flex flex-col flex-1">
-                    <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Signature Cocktail</h5>
-                    <span class="text-gray-400 text-[10px] uppercase tracking-[0.1em] mb-1">Beverage</span>
+                    <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Trà Tắc</h5>
+                    <span class="text-gray-400 text-[10px] uppercase tracking-[0.1em] mb-1">Đồ Uống</span>
                     <span class="text-primary font-semibold text-[13px]">$15.00</span>
                 </div>
             </div>
@@ -493,7 +499,7 @@
         
         <!-- Footer -->
         <a href="#" class="absolute bottom-0 left-0 right-0 bg-[#040810] border-t border-primary/20 text-white py-5 text-center text-[11px] font-medium tracking-[0.3em] uppercase hover:bg-primary transition-colors backdrop-blur-md">
-            VIEW FULL MENU <span class="ml-1">↗</span>
+            XEM TOÀN BỘ THỰC ĐƠN <span class="ml-1">↗</span>
         </a>
     </div>
 
