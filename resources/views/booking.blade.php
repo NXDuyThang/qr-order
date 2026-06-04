@@ -1,6 +1,6 @@
 <x-layouts.app>
-    <div class="min-h-screen bg-[#040810] py-24 px-6">
-        <div class="max-w-4xl mx-auto mt-20">
+    <div class="min-h-screen bg-[#040810] pb-24 px-6">
+        <div class="max-w-4xl mx-auto pt-8">
             <div class="text-center mb-16">
                 <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Đặt bàn</h3>
                 <h2 class="section-title-deco mb-6">GIỮ CHỖ NGAY</h2>
