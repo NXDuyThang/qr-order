@@ -8,6 +8,11 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="Trải nghiệm gọi món nhanh chóng và tiện lợi tại bàn với Order-QR. Khám phá thực đơn đa dạng và tận hưởng không gian ẩm thực tuyệt vời.">
     
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Order-QR - Hệ thống gọi món thông minh">
+    <meta property="og:description" content="Trải nghiệm gọi món nhanh chóng và tiện lợi tại bàn với Order-QR. Khám phá thực đơn đa dạng và tận hưởng không gian ẩm thực tuyệt vời.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
