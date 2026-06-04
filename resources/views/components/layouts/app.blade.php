@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Laurent – Elegant Restaurant Theme') }}</title>
+    <title>Order-QR - Hệ thống gọi món thông minh</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Welcome to Laurent - Elegant Restaurant Theme. Discover our innovative drinks, gourmet culinary arts, and experience an unforgettable fine dining atmosphere.">
+    <meta name="description" content="Trải nghiệm gọi món nhanh chóng và tiện lợi tại bàn với Order-QR. Khám phá thực đơn đa dạng và tận hưởng không gian ẩm thực tuyệt vời.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
