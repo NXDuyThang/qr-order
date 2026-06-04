@@ -1,6 +1,5 @@
 {
     "version": 2,
-    "framework": "laravel",
     "buildCommand": "npm install && npm run build",
     "outputDirectory": "public",
     "functions": {
