@@ -265,27 +265,27 @@
         <form action="{{ route('booking') }}" method="GET" class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 justify-center items-center">
             <!-- Guests -->
             <div class="relative w-full md:w-64">
-                <select name="guests" class="w-full border border-primary/30 py-3 px-4 appearance-none bg-[#040810]/80 backdrop-blur-sm text-[13px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary">
+                <select name="guests" class="w-full h-[60px] border border-primary/30 px-6 appearance-none bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary cursor-pointer">
                     <option value="1">1 Người</option>
                     <option value="2" selected>2 Người</option>
                     <option value="3">3 Người</option>
                     <option value="4">4 Người</option>
                     <option value="5">5+ Người</option>
                 </select>
-                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                    <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="absolute inset-y-0 right-0 flex items-center px-6 pointer-events-none">
+                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
             </div>
             <!-- Date -->
             <div class="relative w-full md:w-64">
-                <input type="date" name="date" required value="{{ date('Y-m-d') }}" class="w-full border border-primary/30 py-3 px-4 bg-[#040810]/80 backdrop-blur-sm text-[13px] tracking-[0.1em] text-gray-300 hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert">
+                <input type="date" name="date" required value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
             </div>
             <!-- Time -->
             <div class="relative w-full md:w-64">
-                <input type="time" name="time" required value="19:00" class="w-full border border-primary/30 py-3 px-4 bg-[#040810]/80 backdrop-blur-sm text-[13px] tracking-[0.1em] text-gray-300 hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert">
+                <input type="time" name="time" required value="19:00" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
             </div>
             <!-- Button -->
-            <button type="submit" class="w-full md:w-auto px-10 py-3.5 border border-primary text-[11px] uppercase tracking-[0.45em] font-medium text-white hover:bg-primary transition-all duration-300 bg-transparent cursor-pointer">
+            <button type="submit" class="w-full md:w-auto h-[60px] px-12 border border-primary text-[13px] uppercase tracking-[0.3em] font-medium text-white hover:bg-primary transition-all duration-300 bg-transparent cursor-pointer flex items-center justify-center whitespace-nowrap">
                 ĐẶT BÀN NGAY
             </button>
         </form>
