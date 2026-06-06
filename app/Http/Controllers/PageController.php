@@ -25,7 +25,15 @@ class PageController extends Controller
 
     public function menu() { return view('menu'); }
     public function booking() { return view('booking'); }
-    public function orderAtTable() { return view('order_at_table'); }
+    public function orderAtTable(Request $request) 
+    { 
+        $tableId = $request->query('table_id');
+        $categories = Category::with(['food' => function($query) {
+            $query->where('is_available', true);
+        }])->where('is_active', true)->get();
+        
+        return view('order_at_table', compact('categories', 'tableId')); 
+    }
     public function vietnameseCuisine() { return view('portfolio'); }
     public function vietnameseCuisineDetail($slug) { return view('portfolio_detail', compact('slug')); }
     public function contact() { return view('contact'); }

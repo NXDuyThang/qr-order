@@ -7,11 +7,21 @@ use Illuminate\Database\Seeder;
 
 use App\Models\Category;
 use App\Models\Food;
+use App\Models\Table;
 
 class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
+        // Seed Tables
+        $tables = [
+            ['name' => 'Bàn 1', 'qr_code' => 'QR001', 'status' => 'available'],
+            ['name' => 'Bàn 2', 'qr_code' => 'QR002', 'status' => 'available'],
+            ['name' => 'Bàn 3', 'qr_code' => 'QR003', 'status' => 'available'],
+        ];
+        foreach ($tables as $t) {
+            Table::create($t);
+        }
         $categories = [
             ['name' => 'Phở & Bún', 'slug' => 'pho-bun', 'image' => '/images/pho-bo.png'],
             ['name' => 'Bánh Mì', 'slug' => 'banh-mi', 'image' => '/images/banh-mi.png'],

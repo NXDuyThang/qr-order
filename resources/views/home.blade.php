@@ -100,7 +100,7 @@
                     <div class="flex-grow">
                         <div class="flex justify-between items-baseline mb-1">
                             <h4 class="font-serif tracking-widest text-lg text-white group-hover:text-primary transition-colors uppercase">{{ $food->name }}</h4>
-                            <span class="text-primary font-serif text-lg">${{ number_format($food->price, 0) }}</span>
+                            <span class="text-primary font-serif text-lg">{{ number_format($food->price * 1000, 0, ',', '.') }} VNĐ</span>
                         </div>
                         <div class="w-full border-b border-gray-800 mb-2"></div>
                         <p class="text-sm text-gray-500">{{ $food->description }}</p>

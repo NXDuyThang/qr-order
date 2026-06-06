@@ -101,12 +101,18 @@
             </a>
 
             <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-[45px] font-light">
-                <a href="{{ url('/') }}" class="text-[11px] uppercase tracking-[0.45em] {{ request()->is('/') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300">Trang Chủ</a>
-                <a href="{{ url('/restaurant') }}" class="text-[11px] uppercase tracking-[0.45em] {{ request()->is('restaurant') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300">Nhà Hàng</a>
-                <a href="{{ url('/menu') }}" class="text-[11px] uppercase tracking-[0.45em] {{ request()->is('menu') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300">Thực Đơn</a>
-                <a href="{{ url('/booking') }}" class="text-[11px] uppercase tracking-[0.45em] {{ request()->is('booking') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300">Đặt Bàn</a>
+            <nav class="hidden md:flex items-center gap-5 lg:gap-8 xl:gap-10 font-light">
+                <a href="{{ url('/') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('/') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Trang Chủ</a>
+                <a href="{{ url('/restaurant') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('restaurant') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Nhà Hàng</a>
+                <a href="{{ url('/booking') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('booking') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Đặt Bàn</a>
+                <a href="{{ url('/order') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('order') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Order Tại Bàn</a>
+                <a href="{{ url('/menu') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('menu') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Menu</a>
+                <a href="{{ url('/vietnamese-cuisine') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('vietnamese-cuisine') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Ẩm Thực Việt</a>
+                <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
             </nav>
+
+            <!-- Cart Icon Container (Teleported from order page) -->
+            <div id="cart-icon-container" class="pointer-events-auto flex items-center pr-2"></div>
 
             <!-- Hamburger menu icon -->
             <button id="menu-btn" class="flex items-center justify-center group pointer-events-auto w-[45px] h-[110px] pr-4 focus:outline-none" aria-label="Open Menu">
@@ -120,7 +126,7 @@
         </div>
     </header>
 
-    <main class="relative w-full z-10 flex flex-col">
+    <main class="relative w-full flex flex-col">
         {{ $slot }}
     </main>
 
@@ -151,21 +157,7 @@
         </div>
     </footer>
 
-    <!-- Floating Widgets (Right Side) -->
-    <div class="fixed right-0 top-[40%] transform -translate-y-1/2 z-[60] hidden md:flex flex-col gap-3 pointer-events-auto shadow-2xl">
-        <button id="related-btn" class="flex flex-col items-center justify-center bg-[#ef2853] hover:bg-[#d11a43] text-white w-[60px] h-[60px] md:w-[75px] md:h-[75px] transition-all duration-300 focus:outline-none">
-            <svg class="w-6 h-6 mb-1 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path>
-            </svg>
-            <span class="text-[9px] tracking-widest font-bold uppercase mt-1">Liên quan</span>
-        </button>
-        <a href="{{ route('menu') }}" class="flex flex-col items-center justify-center bg-white hover:bg-gray-100 text-gray-800 w-[60px] h-[60px] md:w-[75px] md:h-[75px] transition-all duration-300">
-            <svg class="w-6 h-6 mb-1 text-[#0077bb]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"></path>
-            </svg>
-            <span class="text-[9px] tracking-widest font-bold uppercase mt-1">Thực Đơn</span>
-        </a>
-    </div>
+    <!-- Floating Widgets Removed -->
 
     <!-- Right Info Sidebar (Hamburger Menu) -->
     <div id="side-menu" class="fixed top-0 right-0 h-full w-[85vw] sm:w-[350px] bg-[#040810]/95 backdrop-blur-md z-[100] transform translate-x-full transition-transform duration-500 px-10 py-16 flex flex-col pointer-events-auto border-l border-primary/20">
@@ -211,21 +203,21 @@
                 <img src="/images/pho-bo.png" alt="Phở Bò" class="w-16 h-16 object-cover bg-gray-800 border border-primary/20 filter brightness-75 group-hover:brightness-100 transition-all">
                 <div class="flex-grow">
                     <h5 class="text-[12px] font-semibold text-white tracking-[0.1em] uppercase group-hover:text-primary transition-colors">Phở Bò Đặc Biệt</h5>
-                    <span class="text-primary text-[12px] mt-1 block font-medium">$65</span>
+                    <span class="text-primary text-[12px] mt-1 block font-medium">65.000 VNĐ</span>
                 </div>
             </div>
             <div class="group cursor-pointer flex gap-4 items-center">
                 <img src="/images/banh-mi.png" alt="Bánh Mì" class="w-16 h-16 object-cover bg-gray-800 border border-primary/20 filter brightness-75 group-hover:brightness-100 transition-all">
                 <div class="flex flex-col flex-1">
                     <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Bánh Mì Thịt Nướng</h5>
-                    <span class="text-primary font-semibold text-[13px] mt-1">$25</span>
+                    <span class="text-primary font-semibold text-[13px] mt-1">25.000 VNĐ</span>
                 </div>
             </div>
             <div class="group cursor-pointer flex gap-4 items-center">
                 <img src="/images/tra-tac.jpg" alt="Trà Tắc" class="w-16 h-16 object-cover bg-gray-800 border border-primary/20 filter brightness-75 group-hover:brightness-100 transition-all">
                 <div class="flex flex-col flex-1">
                     <h5 class="text-gray-200 font-medium text-[14px] group-hover:text-primary transition-colors tracking-wide">Trà Tắc</h5>
-                    <span class="text-primary font-semibold text-[13px] mt-1">$15</span>
+                    <span class="text-primary font-semibold text-[13px] mt-1">15.000 VNĐ</span>
                 </div>
             </div>
         </div>
