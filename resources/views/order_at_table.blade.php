@@ -35,8 +35,8 @@
             opacity: 1;
         }
         .add-to-cart-btn {
-            border: 1px solid #c5a880; /* Goldish border */
-            color: #c5a880;
+            border: 1px solid #0077bb; /* Primary border */
+            color: #0077bb;
             background: transparent;
             padding: 10px 20px;
             font-size: 11px;
@@ -46,12 +46,12 @@
             transition: all 0.3s ease;
         }
         .add-to-cart-btn:hover {
-            background: #c5a880;
-            color: #040810;
+            background: #0077bb;
+            color: #ffffff;
         }
         .product-title {
             font-family: var(--font-serif, 'Playfair Display', serif);
-            color: #c5a880;
+            color: #ffffff; /* White title */
             font-size: 14px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -66,7 +66,7 @@
             letter-spacing: 2px;
         }
         .product-price {
-            color: #c5a880;
+            color: #0077bb; /* Primary price */
             font-size: 13px;
             text-align: center;
             margin-top: 5px;
@@ -81,10 +81,10 @@
 
     <div class="pt-[110px] pb-24 min-h-screen bg-[#0d1114]" x-data="orderCart()">
         <!-- Header -->
-        <div class="px-6 md:px-[60px] py-8 border-b border-white/5 flex justify-between items-center">
-            <h1 class="text-[#c5a880] text-[13px] tracking-[0.2em] uppercase font-sans font-semibold">Order At Table {{ $tableId ? '#'.$tableId : '' }}</h1>
+        <div class="px-6 md:px-[60px] py-8 border-b border-white/5 flex justify-center items-center">
+            <h1 class="text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center">ORDER AT TABLE {{ $tableId ? '#'.$tableId : '' }}</h1>
             <template x-teleport="#cart-icon-container">
-                <button @click="cartOpen = true" class="relative text-white hover:text-[#c5a880] transition-colors focus:outline-none">
+                <button @click="cartOpen = true" class="relative text-white hover:text-primary transition-colors focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
@@ -148,7 +148,7 @@
         <div x-show="cartOpen" id="cart-sidebar" class="fixed top-0 right-0 h-full w-[90vw] sm:w-[400px] bg-[#040810] border-l border-white/10 z-[130] flex flex-col shadow-2xl transform transition-transform duration-300" x-transition:enter="translate-x-full" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="translate-x-full" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" style="display: none;">
             
             <div class="p-6 border-b border-white/10 flex justify-between items-center">
-                <h3 class="text-[#c5a880] text-[13px] tracking-[0.2em] uppercase font-semibold">Giỏ hàng của bạn</h3>
+                <h3 class="text-primary text-[13px] tracking-[0.2em] uppercase font-semibold">Giỏ hàng của bạn</h3>
                 <button @click="cartOpen = false" class="text-gray-400 hover:text-white focus:outline-none">
                     <svg class="w-6 h-6 font-thin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -165,18 +165,18 @@
                     <template x-for="(item, index) in items" :key="item.id">
                         <div class="flex gap-4 items-center">
                             <div class="w-16 h-16 bg-[#0d1114] border border-white/5 flex-shrink-0 relative overflow-hidden">
-                                <img :src="item.image || 'https://via.placeholder.com/100x100/1a202c/c5a880?text=Food'" 
-                                     onerror="this.onerror=null; this.src='https://via.placeholder.com/100x100/1a202c/c5a880?text=Food';" 
+                                <img :src="item.image || 'https://via.placeholder.com/100x100/1a202c/0077bb?text=Food'" 
+                                     onerror="this.onerror=null; this.src='https://via.placeholder.com/100x100/1a202c/0077bb?text=Food';" 
                                      class="w-full h-full object-cover">
                             </div>
                             <div class="flex-1">
                                 <h4 class="text-white text-[13px] font-serif tracking-wider" x-text="item.name"></h4>
-                                <div class="text-[#c5a880] text-[12px] mt-1" x-text="formatPrice(item.price)"></div>
+                                <div class="text-primary text-[12px] mt-1" x-text="formatPrice(item.price)"></div>
                                 
                                 <div class="flex items-center gap-3 mt-2">
-                                    <button @click="updateQuantity(index, -1)" class="w-6 h-6 border border-white/20 text-white flex items-center justify-center hover:border-[#c5a880] hover:text-[#c5a880] transition-colors">-</button>
+                                    <button @click="updateQuantity(index, -1)" class="w-6 h-6 border border-white/20 text-white flex items-center justify-center hover:border-primary hover:text-primary transition-colors">-</button>
                                     <span class="text-white text-[12px]" x-text="item.quantity"></span>
-                                    <button @click="updateQuantity(index, 1)" class="w-6 h-6 border border-white/20 text-white flex items-center justify-center hover:border-[#c5a880] hover:text-[#c5a880] transition-colors">+</button>
+                                    <button @click="updateQuantity(index, 1)" class="w-6 h-6 border border-white/20 text-white flex items-center justify-center hover:border-primary hover:text-primary transition-colors">+</button>
                                 </div>
                             </div>
                             <button @click="removeItem(index)" class="text-gray-500 hover:text-red-500 p-2">
@@ -190,14 +190,14 @@
             <div class="p-6 border-t border-white/10 bg-[#040810]">
                 <div class="flex justify-between items-center mb-6">
                     <span class="text-white text-[12px] tracking-[0.1em] uppercase">Tổng cộng:</span>
-                    <span class="text-[#c5a880] font-serif text-lg" x-text="formatPrice(cartTotal())"></span>
+                    <span class="text-primary font-serif text-lg" x-text="formatPrice(cartTotal())"></span>
                 </div>
                 
                 <form action="{{ route('order.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="table_id" value="{{ $tableId }}">
                     <input type="hidden" name="items" :value="JSON.stringify(items)">
-                    <button type="submit" :disabled="items.length === 0" class="w-full bg-[#c5a880] text-[#040810] py-3 text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button type="submit" :disabled="items.length === 0" class="w-full bg-primary text-white py-3 text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         Gửi Yêu Cầu Đặt Món
                     </button>
                 </form>

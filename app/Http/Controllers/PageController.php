@@ -23,7 +23,13 @@ class PageController extends Controller
         return view('home', compact('categories', 'specialFoods'));
     }
 
-    public function menu() { return view('menu'); }
+    public function menu() { 
+        $categories = Category::with(['food' => function($query) {
+            $query->where('is_available', true);
+        }])->where('is_active', true)->get();
+        
+        return view('menu', compact('categories')); 
+    }
     public function booking() { return view('booking'); }
     public function orderAtTable(Request $request) 
     { 
@@ -32,9 +38,13 @@ class PageController extends Controller
             $query->where('is_available', true);
         }])->where('is_active', true)->get();
         
-        return view('order_at_table', compact('categories', 'tableId')); 
+        return view('order_at_table', compact('categories', 'tableId'));
     }
-    public function vietnameseCuisine() { return view('portfolio'); }
+    public function vietnameseCuisine() { 
+        $categories = Category::where('is_active', true)->get();
+        $foods = Food::with('category')->where('is_available', true)->get();
+        return view('portfolio', compact('categories', 'foods')); 
+    }
     public function vietnameseCuisineDetail($slug) { return view('portfolio_detail', compact('slug')); }
     public function contact() { return view('contact'); }
 }

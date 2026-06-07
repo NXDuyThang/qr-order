@@ -32,7 +32,7 @@
         <div id="slide-0" class="slide-content absolute inset-0 slide-active">
             <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1568644396922-5c3bfae12521?auto=format&fit=crop&w=1920&q=80');"></div>
             <div class="absolute inset-0 bg-black/60"></div>
-            <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 z-20">
+            <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 pt-[110px] z-20">
                 <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức những thức uống tuyệt hảo</span>
                 <h1 class="font-light text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-4">
                     <span class="text-white/20 font-extralight select-none">-</span>
@@ -55,7 +55,7 @@
         <div id="slide-1" class="slide-content absolute inset-0 slide-inactive">
             <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=1920&q=80');"></div>
             <div class="absolute inset-0 bg-black/60"></div>
-            <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 z-20">
+            <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 pt-[110px] z-20">
                 <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức tinh hoa ẩm thực</span>
                 <h1 class="font-light text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-4">
                     <span class="text-white/20 font-extralight select-none">-</span>
