@@ -30,7 +30,7 @@
                 </div>
                 <!-- Date -->
                 <div>
-                    <input type="date" name="date" required value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] bg-[#040810] border border-primary/30 px-6 text-white text-[16px] tracking-[0.1em] focus:outline-none focus:border-primary transition-colors [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
+                    <input type="date" name="date" required min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] bg-[#040810] border border-primary/30 px-6 text-white text-[16px] tracking-[0.1em] focus:outline-none focus:border-primary transition-colors [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
                 </div>
                 <!-- Time -->
                 <div>
@@ -39,7 +39,6 @@
                 <button type="submit" class="w-full h-[60px] inline-flex items-center justify-center px-12 border border-primary text-white text-[13px] tracking-[0.3em] uppercase hover:bg-primary transition-colors duration-300 mt-4 cursor-pointer whitespace-nowrap">
                     ĐẶT BÀN NGAY
                 </button>
-                <p class="text-[11px] text-gray-500 text-center mt-6 font-light tracking-wide">*Cung cấp bởi Hệ thống QR Order</p>
             </form>
         </div>
     </section>
@@ -77,7 +76,6 @@
             <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition-colors duration-500"></div>
             <div class="absolute inset-0 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-dark/80 m-4">
                 <h3 class="text-primary font-serif tracking-[0.2em] uppercase text-xl mb-2">{{ $category->name }}</h3>
-                <span class="text-gray-300 text-sm">Danh Mục</span>
             </div>
         </div>
         @endforeach

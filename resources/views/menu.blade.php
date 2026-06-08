@@ -55,7 +55,7 @@
                                     <div class="flex items-baseline justify-between mb-3 gap-4">
                                         <h4 class="text-[14px] md:text-[15px] tracking-[0.15em] uppercase font-medium text-white">{{ $food->name }}</h4>
                                         <div class="flex-grow border-b border-primary/30 relative top-[-6px]"></div>
-                                        <span class="text-[15px] tracking-[0.1em] text-primary font-medium whitespace-nowrap">{{ number_format($food->price, 0, ',', '.') }} đ</span>
+                                        <span class="text-[15px] tracking-[0.1em] text-primary font-medium whitespace-nowrap">{{ number_format($food->price * 1000, 0, ',', '.') }} VNĐ</span>
                                     </div>
                                     @if($food->description)
                                         <p class="text-[13px] text-gray-400 font-light leading-relaxed {{ $isEven ? 'text-left' : 'text-left lg:text-right' }} pr-4 {{ $isEven ? '' : 'lg:pr-0 lg:pl-4' }}">
@@ -102,7 +102,7 @@
             </div>
             <!-- Date -->
             <div class="relative w-full md:w-64">
-                <input type="date" name="date" required value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
+                <input type="date" name="date" required min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
             </div>
             <!-- Time -->
             <div class="relative w-full md:w-64">

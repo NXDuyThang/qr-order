@@ -132,7 +132,7 @@
                         <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
                             <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">PHỞ BÒ ĐẶC BIỆT</h4>
                             <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$65</span>
+                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">65.000 VNĐ</span>
                         </div>
                         <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bánh phở mềm, nước dùng thanh ngọt, thịt bò tươi</p>
                     </div>
@@ -140,7 +140,7 @@
                         <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
                             <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BÚN RIÊU CUA</h4>
                             <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$55</span>
+                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">55.000 VNĐ</span>
                         </div>
                         <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bún riêu cua đồng, chả lụa, đậu hũ chiên, huyết, ốc</p>
                     </div>
@@ -148,7 +148,7 @@
                         <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
                             <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">CƠM TẤM SƯỜN BÌ</h4>
                             <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$70</span>
+                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">70.000 VNĐ</span>
                         </div>
                         <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Sườn nướng mật ong, bì lợn dai, chả trứng, nước mắm</p>
                     </div>
@@ -160,7 +160,7 @@
                         <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
                             <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BÁNH MÌ THỊT NƯỚNG</h4>
                             <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$25</span>
+                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">25.000 VNĐ</span>
                         </div>
                         <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bánh mì giòn, thịt nướng, patê, chả lụa, rau thơm</p>
                     </div>
@@ -168,7 +168,7 @@
                         <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
                             <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">BÚN ĐẬU MẮM TÔM</h4>
                             <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$60</span>
+                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">60.000 VNĐ</span>
                         </div>
                         <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Bún lá, đậu hũ chiên, thịt luộc, chả cốm, mắm tôm</p>
                     </div>
@@ -176,7 +176,7 @@
                         <div class="flex flex-col md:flex-row md:justify-between md:items-baseline mb-3 md:mb-2">
                             <h4 class="text-[15px] tracking-[0.2em] uppercase font-medium text-primary mb-2 md:mb-0">TRÀ TẮC</h4>
                             <div class="hidden md:block flex-grow border-b border-primary/40 mx-4 relative top-[-4px]"></div>
-                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">$15</span>
+                            <span class="text-[15px] tracking-[0.1em] text-primary font-medium">15.000 VNĐ</span>
                         </div>
                         <p class="text-[14px] text-gray-300 font-light leading-relaxed md:pr-0">Trà tắc chua ngọt mát lạnh, giải nhiệt ngày hè</p>
                     </div>
@@ -228,7 +228,7 @@
         <!-- Right Side Image -->
         <div class="w-full md:w-1/2 h-[400px] md:h-full flex items-center justify-center bg-[#040810] py-8">
             <div class="relative w-full h-[80%] max-w-[400px] aspect-square rounded-2xl shadow-2xl overflow-hidden p-2 bg-[#111518] mx-auto">
-                <img src="/images/bun-dau-mam-tom.jpg" class="w-full h-full object-contain rounded-xl" alt="Bún Đậu Mắm Tôm">
+                <img src="/images/com-tam.jpg" class="w-full h-full object-contain rounded-xl" alt="Cơm Tấm">
             </div>
         </div>
     </section>
@@ -278,7 +278,7 @@
             </div>
             <!-- Date -->
             <div class="relative w-full md:w-64">
-                <input type="date" name="date" required value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
+                <input type="date" name="date" required min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
             </div>
             <!-- Time -->
             <div class="relative w-full md:w-64">

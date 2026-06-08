@@ -23,7 +23,10 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('table_id')
+                Forms\Components\Section::make('Thông tin Đơn hàng')
+                    ->description('Quản lý thông tin đơn gọi món tại bàn.')
+                    ->schema([
+                        Forms\Components\Select::make('table_id')
                     ->relationship('table', 'name')
                     ->label('Bàn')
                     ->required(),
@@ -53,6 +56,7 @@ class OrderResource extends Resource
                 Forms\Components\Textarea::make('notes')
                     ->label('Ghi chú')
                     ->columnSpanFull(),
+                    ])->columns(2),
             ]);
     }
 
@@ -65,10 +69,18 @@ class OrderResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->label('Tổng tiền')
-                    ->numeric()
+                    ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái món')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'new' => 'primary',
+                        'preparing' => 'warning',
+                        'served' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'new' => 'Mới đặt',
                         'preparing' => 'Đang chuẩn bị',
@@ -79,6 +91,12 @@ class OrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Thanh toán')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'paid' => 'success',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'pending' => 'Chưa thanh toán',
                         'paid' => 'Đã thanh toán',

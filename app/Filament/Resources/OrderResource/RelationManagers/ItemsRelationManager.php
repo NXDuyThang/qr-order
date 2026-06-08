@@ -30,6 +30,7 @@ class ItemsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('unit_price')
                     ->label('Đơn giá')
                     ->numeric()
+                    ->suffix('VNĐ')
                     ->required(),
             ]);
     }
@@ -45,11 +46,11 @@ class ItemsRelationManager extends RelationManager
                     ->label('Số lượng'),
                 Tables\Columns\TextColumn::make('unit_price')
                     ->label('Đơn giá')
-                    ->numeric(),
+                    ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ'),
                 Tables\Columns\TextColumn::make('total')
                     ->label('Thành tiền')
                     ->state(function ($record) {
-                        return number_format($record->quantity * $record->unit_price) . ' VNĐ';
+                        return number_format($record->quantity * $record->unit_price * 1000, 0, ',', '.') . ' VNĐ';
                     }),
             ])
             ->filters([

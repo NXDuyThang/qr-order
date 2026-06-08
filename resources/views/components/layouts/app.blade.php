@@ -109,20 +109,24 @@
                 <a href="{{ url('/menu') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('menu') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Menu</a>
                 <a href="{{ url('/vietnamese-cuisine') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('vietnamese-cuisine') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Ẩm Thực Việt</a>
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
+                <a href="{{ url('/admin') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] text-gray-400 hover:text-white pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đăng Nhập</a>
             </nav>
 
-            <!-- Cart Icon Container (Teleported from order page) -->
-            <div id="cart-icon-container" class="pointer-events-auto flex items-center pr-2"></div>
+            <!-- Right Side Controls -->
+            <div class="flex items-center gap-4 pointer-events-auto">
+                <!-- Cart Icon Container (Teleported from order page) -->
+                <div id="cart-icon-container" class="flex items-center"></div>
 
-            <!-- Hamburger menu icon -->
-            <button id="menu-btn" class="flex items-center justify-center group pointer-events-auto w-[45px] h-[110px] pr-4 focus:outline-none" aria-label="Open Menu">
-                <svg class="w-[32px] h-[32px] text-white group-hover:text-primary transition-colors duration-300" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 14 L24 14" />
-                    <path d="M8 19 L24 19" />
-                    <path d="M16 24 L32 24" />
-                    <path d="M16 29 L32 29" />
-                </svg>
-            </button>
+                <!-- Hamburger menu icon -->
+                <button id="menu-btn" class="flex items-center justify-center group w-[45px] h-[110px] focus:outline-none" aria-label="Open Menu">
+                    <svg class="w-[32px] h-[32px] text-white group-hover:text-primary transition-colors duration-300" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="square" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 14 L24 14" />
+                        <path d="M8 19 L24 19" />
+                        <path d="M16 24 L32 24" />
+                        <path d="M16 29 L32 29" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
 

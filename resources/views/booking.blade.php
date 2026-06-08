@@ -26,10 +26,17 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Tên -->
-                        <div class="md:col-span-2">
+                        <div>
                             <label class="block text-gray-400 text-sm tracking-widest uppercase mb-3">Tên của bạn *</label>
                             <input type="text" name="name" required class="w-full bg-transparent border border-primary/30 py-3 px-4 text-white focus:outline-none focus:border-primary transition-colors">
                             @error('name') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-gray-400 text-sm tracking-widest uppercase mb-3">Email *</label>
+                            <input type="email" name="email" required class="w-full bg-transparent border border-primary/30 py-3 px-4 text-white focus:outline-none focus:border-primary transition-colors">
+                            @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- SĐT -->
@@ -59,14 +66,14 @@
                         <!-- Ngày -->
                         <div>
                             <label class="block text-gray-400 text-sm tracking-widest uppercase mb-3">Ngày *</label>
-                            <input type="date" name="date" required value="{{ request('date', date('Y-m-d')) }}" class="w-full bg-transparent border border-primary/30 py-3 px-4 text-gray-300 focus:outline-none focus:border-primary transition-colors [&::-webkit-calendar-picker-indicator]:invert">
+                            <input type="date" name="date" required min="{{ date('Y-m-d') }}" value="{{ request('date', date('Y-m-d')) }}" onclick="this.showPicker()" class="w-full bg-transparent border border-primary/30 py-3 px-4 text-gray-300 focus:outline-none focus:border-primary transition-colors [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
                             @error('date') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Giờ -->
                         <div>
                             <label class="block text-gray-400 text-sm tracking-widest uppercase mb-3">Giờ *</label>
-                            <input type="time" name="time" required value="{{ request('time', '19:00') }}" class="w-full bg-transparent border border-primary/30 py-3 px-4 text-gray-300 focus:outline-none focus:border-primary transition-colors [&::-webkit-calendar-picker-indicator]:invert">
+                            <input type="time" name="time" required value="{{ request('time', '19:00') }}" onclick="this.showPicker()" class="w-full bg-transparent border border-primary/30 py-3 px-4 text-gray-300 focus:outline-none focus:border-primary transition-colors [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
                             @error('time') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>

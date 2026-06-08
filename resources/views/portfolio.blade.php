@@ -90,7 +90,7 @@
             </div>
             <!-- Date -->
             <div class="relative w-full md:w-64">
-                <input type="date" name="date" required value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
+                <input type="date" name="date" required min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" onclick="this.showPicker()" class="w-full h-[60px] border border-primary/30 px-6 bg-[#040810]/80 backdrop-blur-sm text-[16px] tracking-[0.1em] text-white hover:border-primary transition-colors focus:outline-none focus:border-primary [&::-webkit-calendar-picker-indicator]:invert cursor-pointer">
             </div>
             <!-- Time -->
             <div class="relative w-full md:w-64">

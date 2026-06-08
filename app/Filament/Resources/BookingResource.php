@@ -23,31 +23,41 @@ class BookingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('date')
-                    ->required(),
-                Forms\Components\TextInput::make('time')
-                    ->required(),
-                Forms\Components\TextInput::make('guests')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('table_id')
-                    ->numeric(),
-                Forms\Components\Textarea::make('notes')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('pending'),
+                Forms\Components\Section::make('Thông tin Đặt bàn')
+                    ->description('Quản lý thông tin đặt bàn của khách.')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('phone')
+                            ->tel()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->maxLength(255),
+                        Forms\Components\DatePicker::make('date')
+                            ->required(),
+                        Forms\Components\TextInput::make('time')
+                            ->required(),
+                        Forms\Components\TextInput::make('guests')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\TextInput::make('table_id')
+                            ->numeric(),
+                        Forms\Components\Textarea::make('notes')
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('status')
+                            ->label('Trạng thái')
+                            ->options([
+                                'pending' => 'Chờ xác nhận',
+                                'confirmed' => 'Đã xác nhận',
+                                'completed' => 'Đã hoàn thành',
+                                'cancelled' => 'Đã hủy',
+                            ])
+                            ->required()
+                            ->default('pending'),
+                    ])->columns(2),
             ]);
     }
 
@@ -72,6 +82,22 @@ class BookingResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Trạng thái')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'confirmed' => 'primary',
+                        'completed' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Chờ xác nhận',
+                        'confirmed' => 'Đã xác nhận',
+                        'completed' => 'Đã hoàn thành',
+                        'cancelled' => 'Đã hủy',
+                        default => $state,
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

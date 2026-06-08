@@ -37,7 +37,7 @@ class FoodResource extends Resource
                 Forms\Components\TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->suffix('VNĐ'),
                 Forms\Components\FileUpload::make('image')
                     ->image(),
                 Forms\Components\Toggle::make('is_available')
@@ -57,7 +57,7 @@ class FoodResource extends Resource
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\IconColumn::make('is_available')

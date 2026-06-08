@@ -23,6 +23,9 @@ class TableResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Thông tin Bàn')
+                    ->description('Quản lý thông tin và mã QR của bàn.')
+                    ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Tên bàn')
                     ->required()
@@ -46,6 +49,7 @@ class TableResource extends Resource
                         $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
                         return new \Illuminate\Support\HtmlString('<img src="' . $qrUrl . '" alt="QR Code" style="margin-top: 10px;" /> <br><a href="'.$qrUrl.'" download="table_'.$record->id.'_qr.png" target="_blank" class="text-primary-600 underline mt-2 inline-block" style="color: #0077bb;">Tải xuống (In)</a>');
                     }),
+                    ])->columns(2),
             ]);
     }
 
@@ -64,6 +68,13 @@ class TableResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'available' => 'success',
+                        'occupied' => 'danger',
+                        'reserved' => 'warning',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'available' => 'Trống',
                         'occupied' => 'Đang phục vụ',
