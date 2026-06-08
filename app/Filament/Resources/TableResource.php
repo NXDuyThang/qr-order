@@ -24,14 +24,28 @@ class TableResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Tên bàn')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('qr_code')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->label('Trạng thái')
+                    ->options([
+                        'available' => 'Trống',
+                        'occupied' => 'Đang phục vụ',
+                        'reserved' => 'Đã đặt',
+                    ])
                     ->required()
-                    ->maxLength(255)
                     ->default('available'),
+                Forms\Components\Placeholder::make('qr_code_image')
+                    ->label('Mã QR Đặt Món')
+                    ->content(function ($record) {
+                        if (! $record) {
+                            return 'Vui lòng lưu bàn trước để xem mã QR.';
+                        }
+                        $url = url('/order?table_id=' . $record->id);
+                        $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($url);
+                        return new \Illuminate\Support\HtmlString('<img src="' . $qrUrl . '" alt="QR Code" style="margin-top: 10px;" /> <br><a href="'.$qrUrl.'" download="table_'.$record->id.'_qr.png" target="_blank" class="text-primary-600 underline mt-2 inline-block" style="color: #0077bb;">Tải xuống (In)</a>');
+                    }),
             ]);
     }
 
@@ -40,10 +54,22 @@ class TableResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Tên bàn')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('qr_code')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('qr_code_image')
+                    ->label('Mã QR')
+                    ->state(function ($record) {
+                        $url = url('/order?table_id=' . $record->id);
+                        return 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode($url);
+                    }),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Trạng thái')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'available' => 'Trống',
+                        'occupied' => 'Đang phục vụ',
+                        'reserved' => 'Đã đặt',
+                        default => $state,
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

@@ -23,21 +23,35 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('table_id')
-                    ->numeric(),
+                Forms\Components\Select::make('table_id')
+                    ->relationship('table', 'name')
+                    ->label('Bàn')
+                    ->required(),
                 Forms\Components\TextInput::make('total_price')
+                    ->label('Tổng tiền')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\TextInput::make('status')
+                Forms\Components\Select::make('status')
+                    ->label('Trạng thái món')
+                    ->options([
+                        'new' => 'Mới đặt',
+                        'preparing' => 'Đang chuẩn bị',
+                        'served' => 'Đã phục vụ',
+                        'cancelled' => 'Đã hủy',
+                    ])
                     ->required()
-                    ->maxLength(255)
                     ->default('new'),
-                Forms\Components\TextInput::make('payment_status')
+                Forms\Components\Select::make('payment_status')
+                    ->label('Trạng thái thanh toán')
+                    ->options([
+                        'pending' => 'Chưa thanh toán',
+                        'paid' => 'Đã thanh toán',
+                    ])
                     ->required()
-                    ->maxLength(255)
                     ->default('pending'),
                 Forms\Components\Textarea::make('notes')
+                    ->label('Ghi chú')
                     ->columnSpanFull(),
             ]);
     }
@@ -46,17 +60,33 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('table_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('table.name')
+                    ->label('Bàn')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_price')
+                    ->label('Tổng tiền')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Trạng thái món')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'new' => 'Mới đặt',
+                        'preparing' => 'Đang chuẩn bị',
+                        'served' => 'Đã phục vụ',
+                        'cancelled' => 'Đã hủy',
+                        default => $state,
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('payment_status')
+                    ->label('Thanh toán')
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Chưa thanh toán',
+                        'paid' => 'Đã thanh toán',
+                        default => $state,
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày đặt')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -81,7 +111,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ItemsRelationManager::class,
         ];
     }
 
