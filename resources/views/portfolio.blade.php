@@ -36,7 +36,17 @@
                 @foreach($foods as $food)
                     <div class="portfolio-item relative aspect-[3/4] overflow-hidden group cursor-pointer" data-category="{{ $food->category->slug ?? '' }}">
                         <!-- Image -->
-                        <img src="{{ $food->image ?? '/images/default-food.jpg' }}" alt="{{ $food->name }}" 
+                        @php
+                            $imageUrl = '/images/default-food.jpg';
+                            if (!empty($food->image)) {
+                                if (str_starts_with($food->image, '/') || str_starts_with($food->image, 'http')) {
+                                    $imageUrl = $food->image;
+                                } else {
+                                    $imageUrl = Storage::url($food->image);
+                                }
+                            }
+                        @endphp
+                        <img src="{{ $imageUrl }}" alt="{{ $food->name }}" 
                              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         
                         <!-- Hover Overlay -->

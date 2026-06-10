@@ -21,7 +21,17 @@
             <!-- Left Column: Images -->
             <div class="w-full lg:w-[60%] xl:w-[65%] border-r border-primary/20 flex flex-col relative group">
                 <!-- Main Image -->
-                <img src="{{ $food->image ?? '/images/default-food.jpg' }}" alt="{{ $food->name }}" class="w-full h-auto min-h-[500px] object-cover border-b border-primary/20">
+                @php
+                    $imageUrl = '/images/default-food.jpg';
+                    if (!empty($food->image)) {
+                        if (str_starts_with($food->image, '/') || str_starts_with($food->image, 'http')) {
+                            $imageUrl = $food->image;
+                        } else {
+                            $imageUrl = Storage::url($food->image);
+                        }
+                    }
+                @endphp
+                <img src="{{ $imageUrl }}" alt="{{ $food->name }}" class="w-full h-auto min-h-[500px] object-cover border-b border-primary/20">
             </div>
 
             <!-- Right Column: Details -->
