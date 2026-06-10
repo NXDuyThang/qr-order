@@ -16,22 +16,22 @@ class StatsOverview extends BaseWidget
     {
         return [
             Stat::make('Tổng doanh thu', number_format(Order::where('payment_status', 'paid')->sum('total_price') * 1000, 0, ',', '.') . ' VNĐ')
-                ->description('Tổng số tiền đã thanh toán')
+                ->description(new \Illuminate\Support\HtmlString('<span class="whitespace-nowrap">Tổng số tiền đã thanh toán</span>'))
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
             
             Stat::make('Đơn gọi món mới', Order::where('status', 'new')->count())
-                ->description('Đơn gọi món chưa được xử lý')
+                ->description(new \Illuminate\Support\HtmlString('<span class="whitespace-nowrap">Đơn gọi món chưa được xử lý</span>'))
                 ->descriptionIcon('heroicon-m-bell-alert')
                 ->color('danger'),
             
             Stat::make('Lịch đặt bàn chờ duyệt', Booking::where('status', 'pending')->count())
-                ->description('Khách vừa đặt bàn mới')
+                ->description(new \Illuminate\Support\HtmlString('<span class="whitespace-nowrap">Khách vừa đặt bàn mới</span>'))
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('warning'),
 
             Stat::make('Bàn đang phục vụ', Table::where('status', 'occupied')->count())
-                ->description('Số bàn hiện đang có khách')
+                ->description(new \Illuminate\Support\HtmlString('<span class="whitespace-nowrap">Số bàn hiện đang có khách</span>'))
                 ->descriptionIcon('heroicon-m-users')
                 ->color('primary'),
         ];
