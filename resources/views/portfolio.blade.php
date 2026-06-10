@@ -19,15 +19,15 @@
             
             <!-- Filters -->
             <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12 mb-16">
-                <button class="filter-btn text-[14px] font-medium tracking-[0.15em] text-primary transition-colors hover:text-primary relative group active" data-filter="all">
+                <a href="{{ route('vietnamese_cuisine', ['category' => 'all']) }}" class="filter-btn text-[14px] font-medium tracking-[0.15em] {{ (!request('category') || request('category') == 'all') ? 'text-primary' : 'text-gray-400' }} transition-colors hover:text-primary relative group">
                     Tất cả
-                    <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full transition-opacity duration-300 opacity-100 group-[.active]:opacity-100"></span>
-                </button>
+                    <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full transition-opacity duration-300 {{ (!request('category') || request('category') == 'all') ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }}"></span>
+                </a>
                 @foreach($categories as $category)
-                    <button class="filter-btn text-[14px] font-medium tracking-[0.15em] text-gray-400 transition-colors hover:text-primary relative group" data-filter="{{ $category->slug }}">
+                    <a href="{{ route('vietnamese_cuisine', ['category' => $category->slug]) }}" class="filter-btn text-[14px] font-medium tracking-[0.15em] {{ request('category') == $category->slug ? 'text-primary' : 'text-gray-400' }} transition-colors hover:text-primary relative group">
                         {{ $category->name }}
-                        <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full transition-opacity duration-300 opacity-0 group-[.active]:opacity-100"></span>
-                    </button>
+                        <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full transition-opacity duration-300 {{ request('category') == $category->slug ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }}"></span>
+                    </a>
                 @endforeach
             </div>
 
@@ -68,17 +68,36 @@
             </div>
 
             <!-- Pagination -->
+            @if ($foods->hasPages())
             <div class="mt-20 flex justify-center items-center gap-6">
-                <button class="w-10 h-10 rounded-full border border-primary text-primary flex justify-center items-center text-[12px] hover:bg-primary hover:text-white transition-colors pointer-events-auto">
-                    1
-                </button>
-                <button class="w-10 h-10 rounded-full border border-transparent text-gray-400 flex justify-center items-center text-[12px] hover:border-primary/50 hover:text-white transition-colors pointer-events-auto">
-                    2
-                </button>
-                <button class="w-10 h-10 rounded-full border border-transparent text-gray-400 flex justify-center items-center text-[16px] hover:text-primary transition-colors pointer-events-auto">
-                    »
-                </button>
+                {{-- Previous Page Link --}}
+                @if (!$foods->onFirstPage())
+                    <a href="{{ $foods->previousPageUrl() }}" class="w-10 h-10 rounded-full border border-transparent text-gray-400 flex justify-center items-center text-[16px] hover:text-primary transition-colors pointer-events-auto">
+                        «
+                    </a>
+                @endif
+
+                {{-- Pagination Elements --}}
+                @foreach ($foods->getUrlRange(1, $foods->lastPage()) as $page => $url)
+                    @if ($page == $foods->currentPage())
+                        <button class="w-10 h-10 rounded-full border border-primary text-primary flex justify-center items-center text-[12px] hover:bg-primary hover:text-white transition-colors pointer-events-auto">
+                            {{ $page }}
+                        </button>
+                    @else
+                        <a href="{{ $url }}" class="w-10 h-10 rounded-full border border-transparent text-gray-400 flex justify-center items-center text-[12px] hover:border-primary/50 hover:text-white transition-colors pointer-events-auto">
+                            {{ $page }}
+                        </a>
+                    @endif
+                @endforeach
+
+                {{-- Next Page Link --}}
+                @if ($foods->hasMorePages())
+                    <a href="{{ $foods->nextPageUrl() }}" class="w-10 h-10 rounded-full border border-transparent text-gray-400 flex justify-center items-center text-[16px] hover:text-primary transition-colors pointer-events-auto">
+                        »
+                    </a>
+                @endif
             </div>
+            @endif
         </div>
     </section>
 
@@ -118,41 +137,7 @@
 
     @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const portfolioItems = document.querySelectorAll('.portfolio-item');
-
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active button classes
-                    filterBtns.forEach(b => {
-                        b.classList.remove('text-primary', 'active');
-                        b.classList.add('text-gray-400');
-                    });
-                    btn.classList.remove('text-gray-400');
-                    btn.classList.add('text-primary', 'active');
-
-                    const filterValue = btn.getAttribute('data-filter');
-
-                    // Show/hide items
-                    portfolioItems.forEach(item => {
-                        if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
-                            item.style.display = 'block';
-                            // Add a small fade-in animation
-                            item.animate([
-                                { opacity: 0, transform: 'scale(0.95)' },
-                                { opacity: 1, transform: 'scale(1)' }
-                            ], {
-                                duration: 400,
-                                easing: 'ease-out'
-                            });
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
-            });
-        });
+        // Document load event can go here if needed in future
     </script>
     @endpush
 </x-layouts.app>

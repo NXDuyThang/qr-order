@@ -40,9 +40,19 @@ class PageController extends Controller
         
         return view('order_at_table', compact('categories', 'tableId'));
     }
-    public function vietnameseCuisine() { 
+    public function vietnameseCuisine(Request $request) { 
         $categories = Category::where('is_active', true)->get();
-        $foods = Food::with('category')->where('is_available', true)->get();
+        $query = Food::with('category')->where('is_available', true);
+        
+        if ($request->has('category') && $request->category !== 'all') {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
+        }
+        
+        $foods = $query->paginate(6);
+        $foods->appends($request->query());
+        
         return view('portfolio', compact('categories', 'foods')); 
     }
     public function vietnameseCuisineDetail($slug) { 
