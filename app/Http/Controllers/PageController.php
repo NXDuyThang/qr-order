@@ -45,6 +45,13 @@ class PageController extends Controller
         $foods = Food::with('category')->where('is_available', true)->get();
         return view('portfolio', compact('categories', 'foods')); 
     }
-    public function vietnameseCuisineDetail($slug) { return view('portfolio_detail', compact('slug')); }
+    public function vietnameseCuisineDetail($slug) { 
+        $food = Food::with('category')->where('slug', $slug)->firstOrFail();
+        $relatedFoods = Food::where('category_id', $food->category_id)
+            ->where('id', '!=', $food->id)
+            ->where('is_available', true)
+            ->take(4)->get();
+        return view('portfolio_detail', compact('food', 'relatedFoods')); 
+    }
     public function contact() { return view('contact'); }
 }
