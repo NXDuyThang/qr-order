@@ -83,6 +83,41 @@
 </head>
 <body class="text-white antialiased selection:bg-primary selection:text-white overflow-x-hidden">
 
+    <!-- Notification Toast -->
+    @if(session('warning') || session('success') || session('error'))
+    <div id="toast-notification" class="fixed top-28 right-6 md:right-[60px] z-[9999] max-w-sm w-full bg-[#0d1114]/95 backdrop-blur-md border border-primary/30 p-5 shadow-2xl transition-all duration-500 transform translate-y-0" style="font-family: 'Montserrat', sans-serif;">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 mt-0.5">
+                @if(session('success'))
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                @elseif(session('warning'))
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                @else
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                @endif
+            </div>
+            <div class="flex-grow">
+                <p class="text-[13px] tracking-wider text-gray-200 font-light leading-relaxed">
+                    {{ session('success') ?? session('warning') ?? session('error') }}
+                </p>
+            </div>
+            <button onclick="const t = document.getElementById('toast-notification'); t.style.opacity = '0'; setTimeout(() => t.remove(), 300);" class="text-gray-500 hover:text-white transition-colors focus:outline-none">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+    <script>
+        setTimeout(() => {
+            const toast = document.getElementById('toast-notification');
+            if (toast) {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+                setTimeout(() => toast.remove(), 500);
+            }
+        }, 5000);
+    </script>
+    @endif
+
     <!-- 2 Vertical Background Grid Lines -->
     <div class="fixed inset-0 pointer-events-none z-[0] flex justify-center items-center w-full px-6 md:px-[60px]">
         <div class="w-full h-full border-x border-primary/30"></div>
@@ -105,7 +140,9 @@
                 <a href="{{ url('/') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('/') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Trang Chủ</a>
                 <a href="{{ url('/restaurant') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('restaurant') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Nhà Hàng</a>
                 <a href="{{ url('/booking') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('booking') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Đặt Bàn</a>
+                @if(session()->has('table_id'))
                 <a href="{{ url('/order') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('order') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Order Tại Bàn</a>
+                @endif
                 <a href="{{ url('/menu') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('menu') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Menu</a>
                 <a href="{{ url('/vietnamese-cuisine') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('vietnamese-cuisine') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Ẩm Thực Việt</a>
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>

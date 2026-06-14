@@ -34,6 +34,23 @@ class PageController extends Controller
     public function orderAtTable(Request $request) 
     { 
         $tableId = $request->query('table_id');
+        
+        if ($tableId) {
+            $tableExists = \App\Models\Table::where('id', $tableId)->exists();
+            if ($tableExists) {
+                session(['table_id' => $tableId]);
+            } else {
+                $tableId = session('table_id');
+            }
+        } else {
+            $tableId = session('table_id');
+        }
+
+        if (!$tableId || !\App\Models\Table::where('id', $tableId)->exists()) {
+            session()->forget('table_id');
+            return redirect()->route('welcome')->with('warning', 'Vui lòng quét mã QR tại bàn để thực hiện gọi món.');
+        }
+
         $categories = Category::with(['food' => function($query) {
             $query->where('is_available', true);
         }])->where('is_active', true)->get();
