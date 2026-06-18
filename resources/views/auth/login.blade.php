@@ -27,24 +27,56 @@
                 <div class="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-primary"></div>
                 <div class="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-primary"></div>
 
-                <form method="POST" action="{{ route('login.post') }}" class="space-y-6">
+                <form method="POST" action="{{ route('login.post') }}" class="space-y-6" id="login-form">
                     @csrf
                     
-                    <div>
+                    <div id="username-container">
                         <label for="username" class="block text-[12px] font-semibold text-gray-400 tracking-[0.2em] uppercase mb-3">Tên đăng nhập</label>
                         <input type="text" id="username" name="username" value="{{ old('username') }}" required 
                             class="w-full bg-transparent border-b border-primary/30 focus:border-primary text-white px-0 py-4 text-base focus:outline-none focus:ring-0 transition-colors placeholder-gray-600"
                             placeholder="Nhập tên đăng nhập...">
                     </div>
 
-                    <div>
+                    <div id="remembered-user-container" class="hidden">
+                        <label class="block text-[12px] font-semibold text-gray-400 tracking-[0.2em] uppercase mb-3">Tài khoản</label>
+                        <div class="flex items-center justify-between border-b border-primary/30 py-4 w-full">
+                            <div class="flex items-center">
+                                <div id="remembered-avatar-container"></div>
+                                <span id="remembered-username-display" class="text-white text-base tracking-wider font-light break-all"></span>
+                            </div>
+                            <button type="button" id="switch-account-btn" class="text-primary hover:text-white transition-colors focus:outline-none shrink-0 ml-4" title="Đổi tài khoản">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 10H4m0 0l4 4m-4-4l4-4"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="account-list-container" class="hidden">
+                        <label class="block text-[12px] font-semibold text-gray-400 tracking-[0.2em] uppercase mb-3">Chọn tài khoản</label>
+                        <div id="accounts-list" class="space-y-0 mb-2">
+                            <!-- Accounts injected via JS -->
+                        </div>
+                        <button type="button" id="add-account-btn" class="flex items-center gap-4 w-full border-b border-primary/30 py-4 text-gray-400 hover:text-white transition-colors group focus:outline-none">
+                            <div class="w-10 h-10 flex items-center justify-center border border-primary/30 text-primary group-hover:border-primary/80 transition-colors shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                            </div>
+                            <span class="text-sm tracking-wider font-light">Thêm tài khoản khác</span>
+                        </button>
+                    </div>
+
+                    <div id="password-container">
                         <label for="password" class="block text-[12px] font-semibold text-gray-400 tracking-[0.2em] uppercase mb-3">Mật khẩu</label>
                         <input type="password" id="password" name="password" required 
                             class="w-full bg-transparent border-b border-primary/30 focus:border-primary text-white px-0 py-4 text-base focus:outline-none focus:ring-0 transition-colors placeholder-gray-600"
                             placeholder="Nhập mật khẩu...">
                     </div>
 
-                    <div class="pt-8">
+                    <!-- Remember Password Checkbox -->
+                    <div id="remember-container" class="flex items-center gap-3 mt-4">
+                        <input type="checkbox" id="remember" name="remember" class="w-4 h-4 bg-transparent border border-primary/50 text-primary focus:ring-primary focus:ring-offset-0">
+                        <label for="remember" class="text-[12px] font-light text-gray-400 tracking-wider cursor-pointer">Ghi nhớ mật khẩu</label>
+                    </div>
+
+                    <div id="submit-container" class="pt-8">
                         <button type="submit" class="w-full group relative inline-flex items-center justify-center bg-primary/10 border border-primary text-primary px-8 py-5 text-[14px] font-bold tracking-[0.3em] uppercase hover:bg-primary hover:text-[#040810] transition-all duration-300">
                             <span class="relative z-10 flex items-center">
                                 ĐĂNG NHẬP
@@ -61,4 +93,163 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameInput = document.getElementById('username');
+            const usernameContainer = document.getElementById('username-container');
+            const rememberedUserContainer = document.getElementById('remembered-user-container');
+            const rememberedUsernameDisplay = document.getElementById('remembered-username-display');
+            const switchAccountBtn = document.getElementById('switch-account-btn');
+            const loginForm = document.getElementById('login-form');
+            const passwordInput = document.getElementById('password');
+            const rememberCheckbox = document.getElementById('remember');
+
+            const accountListContainer = document.getElementById('account-list-container');
+            const accountsList = document.getElementById('accounts-list');
+            const addAccountBtn = document.getElementById('add-account-btn');
+            const passwordContainer = document.getElementById('password-container');
+            const rememberContainer = document.getElementById('remember-container');
+            const submitContainer = document.getElementById('submit-container');
+
+            let savedAccounts = JSON.parse(localStorage.getItem('saved_accounts')) || [];
+            let savedPasswords = JSON.parse(localStorage.getItem('saved_passwords')) || {};
+            let savedAvatars = JSON.parse(localStorage.getItem('saved_avatars')) || {};
+            let lastAccount = localStorage.getItem('last_account');
+
+            // Migrate old single account if it exists
+            const oldSavedUsername = localStorage.getItem('remembered_username');
+            if (oldSavedUsername && savedAccounts.length === 0) {
+                savedAccounts.push(oldSavedUsername);
+                lastAccount = oldSavedUsername;
+                localStorage.setItem('saved_accounts', JSON.stringify(savedAccounts));
+                localStorage.setItem('last_account', lastAccount);
+            }
+
+            const oldUsername = "{{ old('username') }}";
+            let displayUsername = lastAccount;
+            if (oldUsername && oldUsername !== lastAccount) {
+                displayUsername = null; 
+            }
+
+            function getAvatarHtml(username) {
+                if (savedAvatars[username]) {
+                    return `<img src="${savedAvatars[username]}" class="w-10 h-10 object-cover border border-primary/50 shrink-0 mr-6" alt="Avatar">`;
+                }
+                return `<div class="w-10 h-10 flex items-center justify-center border border-primary/50 text-primary uppercase font-bold text-lg shrink-0 mr-6">${username.charAt(0).toUpperCase()}</div>`;
+            }
+
+            function showStandardForm() {
+                accountListContainer.classList.add('hidden');
+                rememberedUserContainer.classList.add('hidden');
+                
+                usernameContainer.classList.remove('hidden');
+                passwordContainer.classList.remove('hidden');
+                rememberContainer.classList.remove('hidden');
+                submitContainer.classList.remove('hidden');
+                
+                usernameInput.value = '';
+                passwordInput.value = '';
+                if (rememberCheckbox) rememberCheckbox.checked = false;
+                
+                usernameInput.focus();
+            }
+
+            function showRememberedUser(username) {
+                accountListContainer.classList.add('hidden');
+                usernameContainer.classList.add('hidden');
+                
+                rememberedUsernameDisplay.textContent = username;
+                usernameInput.value = username;
+                
+                const avatarContainer = document.getElementById('remembered-avatar-container');
+                if (avatarContainer) {
+                    avatarContainer.innerHTML = getAvatarHtml(username);
+                }
+                
+                // Load saved password if exists
+                if (savedPasswords[username]) {
+                    passwordInput.value = savedPasswords[username];
+                    if (rememberCheckbox) rememberCheckbox.checked = true;
+                } else {
+                    passwordInput.value = '';
+                    if (rememberCheckbox) rememberCheckbox.checked = false;
+                }
+                
+                rememberedUserContainer.classList.remove('hidden');
+                passwordContainer.classList.remove('hidden');
+                rememberContainer.classList.remove('hidden');
+                submitContainer.classList.remove('hidden');
+                
+                setTimeout(() => { 
+                    if (!passwordInput.value) {
+                        passwordInput.focus(); 
+                    } else {
+                        loginForm.querySelector('button[type="submit"]').focus();
+                    }
+                }, 100);
+            }
+
+            function showAccountList() {
+                usernameContainer.classList.add('hidden');
+                rememberedUserContainer.classList.add('hidden');
+                passwordContainer.classList.add('hidden');
+                rememberContainer.classList.add('hidden');
+                submitContainer.classList.add('hidden');
+                
+                accountsList.innerHTML = '';
+                savedAccounts.forEach(account => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'flex items-center w-full border-b border-primary/30 py-4 text-gray-400 hover:text-white transition-colors focus:outline-none';
+                    btn.innerHTML = `
+                        ${getAvatarHtml(account)}
+                        <span class="text-sm tracking-wider font-light break-all text-left">${account}</span>
+                    `;
+                    btn.addEventListener('click', () => {
+                        showRememberedUser(account);
+                        lastAccount = account;
+                        localStorage.setItem('last_account', account);
+                    });
+                    accountsList.appendChild(btn);
+                });
+                
+                accountListContainer.classList.remove('hidden');
+            }
+
+            if (displayUsername && savedAccounts.includes(displayUsername)) {
+                showRememberedUser(displayUsername);
+            } else if (savedAccounts.length > 0 && !oldUsername) {
+                showRememberedUser(savedAccounts[0]);
+            }
+
+            switchAccountBtn.addEventListener('click', function() {
+                showAccountList();
+            });
+
+            addAccountBtn.addEventListener('click', function() {
+                showStandardForm();
+            });
+
+            loginForm.addEventListener('submit', function() {
+                const val = usernameInput.value.trim();
+                const pass = passwordInput.value;
+                if (val !== '') {
+                    savedAccounts = savedAccounts.filter(acc => acc !== val);
+                    savedAccounts.push(val);
+                    localStorage.setItem('saved_accounts', JSON.stringify(savedAccounts));
+                    localStorage.setItem('last_account', val);
+                    
+                    if (rememberCheckbox && rememberCheckbox.checked) {
+                        savedPasswords[val] = pass;
+                    } else {
+                        delete savedPasswords[val];
+                    }
+                    localStorage.setItem('saved_passwords', JSON.stringify(savedPasswords));
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-layouts.app>

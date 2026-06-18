@@ -98,7 +98,7 @@ class ProfileController extends Controller
 
         $response = $this->apiService->updateAvatar($token, $request->avatar);
 
-        if (isset($response['User Info']) || (isset($response['status']) && $response['status'] !== 'error')) {
+        if ((isset($response['success']) && $response['success'] === true) || isset($response['User Info']) || (isset($response['status']) && $response['status'] !== 'error')) {
             return back()->with('success', 'Cập nhật ảnh đại diện thành công.');
         }
 

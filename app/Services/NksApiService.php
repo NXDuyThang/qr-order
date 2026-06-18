@@ -13,10 +13,14 @@ class NksApiService
     /**
      * POST Request wrapper
      */
-    protected function post($baseUrl, $endpoint, $data = [])
+    protected function post($baseUrl, $endpoint, $data = [], $asForm = false)
     {
         try {
-            $response = Http::withoutVerifying()->post("{$baseUrl}/{$endpoint}", $data);
+            $request = Http::withoutVerifying();
+            if ($asForm) {
+                $request = $request->asForm();
+            }
+            $response = $request->post("{$baseUrl}/{$endpoint}", $data);
             
             if ($response->successful()) {
                 return $response->json();
@@ -95,7 +99,7 @@ class NksApiService
         return $this->post($this->accountBaseUrl, 'nks/user/updateAvatar', [
             'access_token' => $accessToken,
             'avatar' => $avatarBase64
-        ]);
+        ], true);
     }
 
     public function updateCccd($accessToken, $frontBase64, $backBase64, $number, $date, $place)
