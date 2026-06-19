@@ -41,8 +41,8 @@ Route::middleware('auth')->group(function () {
 });
 
 // API Routes for frontend
-Route::post('/api/administratives', [ProfileController::class, 'getAdministratives'])->name('api.administratives');
-Route::post('/api/fetch-avatar', function (\Illuminate\Http\Request $request) {
+Route::post('/ajax/administratives', [ProfileController::class, 'getAdministratives'])->name('api.administratives');
+Route::post('/ajax/fetch-avatar', function (\Illuminate\Http\Request $request) {
     $response = \Illuminate\Support\Facades\Http::post('https://account.nks.vn/api/nks/user/login', [
         'username' => $request->username,
         'password' => $request->password,
