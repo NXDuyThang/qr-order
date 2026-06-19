@@ -93,8 +93,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
                 @foreach($specialFoods as $food)
-                <div class="flex items-center group">
-                    <img src="{{ $food->image }}" alt="{{ $food->name }}" class="w-20 h-20 object-cover rounded-full border border-gray-700 p-1 mr-6">
+                <div class="flex items-center group relative border border-transparent hover:border-primary/20 p-4 transition-all portfolio-item">
+                    <img src="{{ $food->image }}" alt="{{ $food->name }}" class="w-20 h-20 object-cover rounded-full border border-gray-700 p-1 mr-6 group-hover:scale-105 transition-transform">
                     <div class="flex-grow">
                         <div class="flex justify-between items-baseline mb-1">
                             <h4 class="font-serif tracking-widest text-lg text-white group-hover:text-primary transition-colors uppercase">{{ $food->name }}</h4>
@@ -103,6 +103,13 @@
                         <div class="w-full border-b border-gray-800 mb-2"></div>
                         <p class="text-sm text-gray-500">{{ $food->description }}</p>
                     </div>
+                    <!-- Heart Icon -->
+                    <button class="absolute top-1/2 right-4 transform -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center text-red-500 hover:scale-110 transition-transform btn-wishlist" data-id="{{ $food->id }}">
+                        @php
+                            $isWishlisted = Auth::check() && $food->isWishlistedBy(Auth::user());
+                        @endphp
+                        <svg class="w-5 h-5 heart-icon" fill="{{ $isWishlisted ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </button>
                 </div>
                 @endforeach
             </div>

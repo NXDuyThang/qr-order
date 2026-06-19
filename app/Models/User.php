@@ -50,4 +50,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     {
         return $this->avatar_url ? Storage::url($this->avatar_url) : null;
     }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }

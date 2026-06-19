@@ -22,5 +22,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        \App\Models\Booking::observe(\App\Observers\BookingObserver::class);
     }
 }

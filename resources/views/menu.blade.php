@@ -51,9 +51,17 @@
                         <!-- Food Items -->
                         <div class="flex flex-col gap-10">
                             @foreach($category->food as $food)
-                                <div>
                                     <div class="flex items-baseline justify-between mb-3 gap-4">
-                                        <h4 class="text-[14px] md:text-[15px] tracking-[0.15em] uppercase font-medium text-white">{{ $food->name }}</h4>
+                                        <div class="flex items-center gap-2">
+                                            <h4 class="text-[14px] md:text-[15px] tracking-[0.15em] uppercase font-medium text-white">{{ $food->name }}</h4>
+                                            <!-- Heart Icon -->
+                                            <button class="w-6 h-6 flex items-center justify-center text-red-500 hover:scale-110 transition-transform btn-wishlist" data-id="{{ $food->id }}">
+                                                @php
+                                                    $isWishlisted = Auth::check() && $food->isWishlistedBy(Auth::user());
+                                                @endphp
+                                                <svg class="w-4 h-4 heart-icon" fill="{{ $isWishlisted ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                            </button>
+                                        </div>
                                         <div class="flex-grow border-b border-primary/30 relative top-[-6px]"></div>
                                         <span class="text-[15px] tracking-[0.1em] text-primary font-medium whitespace-nowrap">{{ number_format($food->price * 1000, 0, ',', '.') }} VNĐ</span>
                                     </div>

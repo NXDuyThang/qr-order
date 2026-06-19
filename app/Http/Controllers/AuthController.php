@@ -53,6 +53,24 @@ class AuthController extends Controller
                 Session::put('user_info', $userInfo);
             }
 
+            // Sync user to local database so Laravel Auth works
+            $email = $userInfo['email'] ?? ($request->username . '@nks.local');
+            $name = $userInfo['name'] ?? trim(($userInfo['firstname'] ?? '') . ' ' . ($userInfo['lastname'] ?? ''));
+            if (empty($name)) {
+                $name = $request->username;
+            }
+
+            $localUser = \App\Models\User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name,
+                    'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(16)),
+                ]
+            );
+
+            // Đăng nhập bằng Laravel Auth
+            \Illuminate\Support\Facades\Auth::login($localUser);
+
             return redirect()->route('profile.index')->with('success', 'Đăng nhập thành công.');
         }
 

@@ -33,6 +33,13 @@ Route::prefix('profile')->name('profile.')->group(function () {
     Route::post('/update-cccd', [ProfileController::class, 'updateCccd'])->name('update_cccd');
 });
 
+// Wishlist Routes
+use App\Http\Controllers\WishlistController;
+Route::middleware('auth')->group(function () {
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+});
+
 // API Routes for frontend
 Route::post('/api/administratives', [ProfileController::class, 'getAdministratives'])->name('api.administratives');
 Route::post('/api/fetch-avatar', function (\Illuminate\Http\Request $request) {

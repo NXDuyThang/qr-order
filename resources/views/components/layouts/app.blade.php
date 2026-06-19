@@ -146,6 +146,7 @@
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
                 <a href="{{ url('/admin') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] text-gray-500 hover:text-primary pointer-events-auto transition-colors duration-300 whitespace-nowrap">Quản Trị</a>
                 @if(Session::has('access_token'))
+                    <a href="{{ route('wishlist.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('wishlist.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Yêu Thích</a>
                     <a href="{{ route('profile.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Tài Khoản</a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('login') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đăng Nhập</a>
@@ -319,6 +320,55 @@
             if(relatedBtn) relatedBtn.addEventListener('click', openRelated);
             if(closeRelatedBtn) closeRelatedBtn.addEventListener('click', closeRelated);
             if(relatedOverlay) relatedOverlay.addEventListener('click', closeRelated);
+
+            // Wishlist Toggle Logic
+            const wishlistBtns = document.querySelectorAll('.btn-wishlist');
+            wishlistBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const foodId = this.dataset.id;
+                    const icon = this.querySelector('.heart-icon');
+                    const btnElement = this;
+                    
+                    fetch('{{ route("wishlist.toggle") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ food_id: foodId })
+                    })
+                    .then(async response => {
+                        if (!response.ok) {
+                            if (response.status === 401 || response.status === 419) {
+                                window.location.href = '{{ route("login") }}';
+                                return;
+                            }
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!data) return;
+                        if (data.status === 'added') {
+                            icon.setAttribute('fill', 'currentColor');
+                        } else if (data.status === 'removed') {
+                            icon.setAttribute('fill', 'none');
+                            // Nếu đang ở trang wishlist, có thể ẩn luôn item đó đi
+                            const item = btnElement.closest('.portfolio-item');
+                            if (item && window.location.pathname.includes('/wishlist')) {
+                                item.style.opacity = '0';
+                                setTimeout(() => item.remove(), 500);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        window.location.href = '{{ route("login") }}';
+                    });
+                });
+            });
         });
     </script>
     @stack('scripts')

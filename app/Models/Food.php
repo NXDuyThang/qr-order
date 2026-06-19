@@ -14,4 +14,15 @@ class Food extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function isWishlistedBy($user)
+    {
+        if (!$user) return false;
+        return $this->wishlists()->where('user_id', $user->id)->exists();
+    }
 }
