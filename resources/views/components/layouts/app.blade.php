@@ -328,9 +328,17 @@
                     e.preventDefault();
                     e.stopPropagation();
                     
+                    // Ngăn double-click bằng cách vô hiệu hóa nút
+                    if (this.classList.contains('pointer-events-none')) return;
+                    this.classList.add('pointer-events-none', 'opacity-50');
+
                     const foodId = this.dataset.id;
                     const icon = this.querySelector('.heart-icon');
                     const btnElement = this;
+                    
+                    // Xác định hành động (thêm hay xoá) dựa trên trạng thái hiện tại
+                    const isWishlisted = icon.getAttribute('fill') === 'currentColor';
+                    const action = isWishlisted ? 'remove' : 'add';
                     
                     fetch('{{ route("wishlist.toggle") }}', {
                         method: 'POST',
@@ -338,9 +346,10 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({ food_id: foodId })
+                        body: JSON.stringify({ food_id: foodId, action: action })
                     })
                     .then(async response => {
+                        btnElement.classList.remove('pointer-events-none', 'opacity-50');
                         if (!response.ok) {
                             if (response.status === 401 || response.status === 419) {
                                 window.location.href = '{{ route("login") }}';
@@ -355,17 +364,24 @@
                             icon.setAttribute('fill', 'currentColor');
                         } else if (data.status === 'removed') {
                             icon.setAttribute('fill', 'none');
-                            // Nếu đang ở trang wishlist, có thể ẩn luôn item đó đi
+                            // Nếu đang ở trang wishlist, ẩn item và hiển thị rỗng nếu hết item
                             const item = btnElement.closest('.portfolio-item');
                             if (item && window.location.pathname.includes('/wishlist')) {
                                 item.style.opacity = '0';
-                                setTimeout(() => item.remove(), 500);
+                                setTimeout(() => {
+                                    item.remove();
+                                    // Kiểm tra xem còn item nào không
+                                    const grid = document.getElementById('portfolio-grid');
+                                    if (grid && grid.children.length === 0) {
+                                        window.location.reload(); // Reload để hiện dòng chữ chưa có món ăn
+                                    }
+                                }, 500);
                             }
                         }
                     })
                     .catch(error => {
+                        btnElement.classList.remove('pointer-events-none', 'opacity-50');
                         console.error('Error:', error);
-                        window.location.href = '{{ route("login") }}';
                     });
                 });
             });

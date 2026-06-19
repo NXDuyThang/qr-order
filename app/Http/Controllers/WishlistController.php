@@ -25,28 +25,34 @@ class WishlistController extends Controller
     {
         $request->validate([
             'food_id' => 'required|exists:food,id',
+            'action' => 'nullable|in:add,remove'
         ]);
 
         $user = Auth::user();
         $foodId = $request->food_id;
+        $action = $request->action;
 
         $wishlist = Wishlist::where('user_id', $user->id)
                             ->where('food_id', $foodId)
                             ->first();
 
-        if ($wishlist) {
+        if ($action === 'remove' || ($wishlist && !$action)) {
             // Đã có thì xoá
-            $wishlist->delete();
+            if ($wishlist) {
+                $wishlist->delete();
+            }
             return response()->json([
                 'status' => 'removed',
                 'message' => 'Đã xoá khỏi danh sách yêu thích'
             ]);
         } else {
             // Chưa có thì thêm
-            Wishlist::create([
-                'user_id' => $user->id,
-                'food_id' => $foodId
-            ]);
+            if (!$wishlist) {
+                Wishlist::create([
+                    'user_id' => $user->id,
+                    'food_id' => $foodId
+                ]);
+            }
             return response()->json([
                 'status' => 'added',
                 'message' => 'Đã thêm vào danh sách yêu thích'
