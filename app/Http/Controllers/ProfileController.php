@@ -39,14 +39,20 @@ class ProfileController extends Controller
             $userInfo = Session::get('user_info');
         }
 
-        // Fetch Provinces for the select box
         $provincesResp = $this->apiService->getProvinces(237);
         $provinces = array_filter($provincesResp['data'] ?? [], function($prov) {
             $title = $prov['title'] ?? $prov['name'] ?? '';
             return strpos($title, 'Tỉnh ') === 0 || strpos($title, 'Thành phố ') === 0 || strpos($title, 'Thủ đô ') === 0;
         });
 
-        return view('profile.index', compact('userInfo', 'provinces'));
+        $userAdministratives = [];
+        $userProvinceId = $userInfo['province'] ?? $userInfo['add_province'] ?? null;
+        if ($userProvinceId) {
+            $adminResp = $this->apiService->getAdministratives($userProvinceId);
+            $userAdministratives = $adminResp['data'] ?? [];
+        }
+
+        return view('profile.index', compact('userInfo', 'provinces', 'userAdministratives'));
     }
 
     public function updateInfo(Request $request)

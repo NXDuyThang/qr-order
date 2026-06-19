@@ -144,11 +144,32 @@
                             <span class="block text-[13px] font-semibold text-gray-400 tracking-[0.1em] uppercase mb-1">Địa chỉ</span>
                             <span class="text-white text-lg font-light">
                                 @php
+                                    $provName = $userInfo['add_province'] ?? $userInfo['province'] ?? null;
+                                    $distName = $userInfo['add_district'] ?? $userInfo['administrative'] ?? null;
+
+                                    if ($provName && isset($provinces)) {
+                                        foreach ($provinces as $p) {
+                                            if ($p['id'] == $provName) {
+                                                $provName = $p['title'] ?? $p['name'] ?? $provName;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if ($distName && isset($userAdministratives)) {
+                                        foreach ($userAdministratives as $d) {
+                                            if ($d['id'] == $distName) {
+                                                $distName = $d['title'] ?? $d['name'] ?? $distName;
+                                                break;
+                                            }
+                                        }
+                                    }
+
                                     $addrParts = array_filter([
                                         $userInfo['add_street'] ?? null,
                                         $userInfo['add_ward'] ?? null,
-                                        $userInfo['add_district'] ?? null,
-                                        $userInfo['add_province'] ?? null
+                                        $distName,
+                                        $provName
                                     ]);
                                     $fullAddress = implode(', ', $addrParts);
                                 @endphp
