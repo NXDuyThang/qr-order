@@ -75,9 +75,7 @@ class AuthController extends Controller
         }
 
         // Handle error
-        $errorMessage = $response['message'] ?? 'Tài khoản hoặc mật khẩu không đúng.';
-        $debugInfo = json_encode($response);
-        return back()->with('error', "{$errorMessage} | Debug: {$debugInfo}")->withInput($request->only('username'));
+        return back()->with('error', 'Đăng nhập không thành công')->withInput($request->only('username'));
     }
 
     public function logout()

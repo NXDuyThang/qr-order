@@ -3,6 +3,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/light.css">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <style>
         .cropper-view-box, .cropper-face {
             border-radius: 50%;
@@ -10,6 +11,36 @@
         select option {
             color: #000000 !important;
             background-color: #ffffff !important;
+        }
+        /* Tom Select Dark Theme Overrides */
+        .ts-control {
+            background-color: transparent !important;
+            border: none !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 0 !important;
+            padding: 8px 0 !important;
+            box-shadow: none !important;
+        }
+        .ts-control.focus {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.8) !important;
+        }
+        .ts-wrapper.single .ts-control {
+            color: white;
+        }
+        .ts-control > input {
+            color: white !important;
+        }
+        .ts-dropdown {
+            background-color: #0a0d14 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+        }
+        .ts-dropdown .option {
+            padding: 10px !important;
+            color: white !important;
+        }
+        .ts-dropdown .option.active, .ts-dropdown .option:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
         }
     </style>
     @endpush
@@ -134,9 +165,14 @@
                                 <span class="block text-[13px] font-semibold text-gray-400 tracking-[0.1em] uppercase mb-1">Căn cước công dân</span>
                                 <span class="text-white text-lg font-light">{{ $userInfo['id_number'] ?? 'Chưa cập nhật' }}</span>
                             </div>
-                            <button type="button" onclick="openModal('cccdModal')" title="Cập nhật CCCD" class="text-primary hover:text-white transition-colors p-2 border border-primary/20 rounded hover:bg-primary/10">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" /></svg>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openModal('viewCccdModal')" title="Xem CCCD" class="text-primary hover:text-white transition-colors p-2 border border-primary/20 rounded hover:bg-primary/10">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                                <button type="button" onclick="openModal('cccdModal')" title="Cập nhật CCCD" class="text-primary hover:text-white transition-colors p-2 border border-primary/20 rounded hover:bg-primary/10">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" /></svg>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Địa chỉ -->
@@ -234,7 +270,7 @@
 
                         <div>
                             <label class="block text-[13px] font-semibold text-gray-400 tracking-[0.1em] uppercase mb-3">Tỉnh / Thành phố</label>
-                            <select id="province_select" name="province" class="w-full bg-transparent border-b border-primary/30 focus:border-primary text-white px-0 py-2 text-base focus:outline-none transition-colors" onchange="loadAdministratives(this.value)">
+                            <select id="province_select" name="province" class="w-full bg-transparent border-b border-primary/30 focus:border-primary text-white px-0 py-2 text-base focus:outline-none transition-colors">
                                 <option value="" class="text-black bg-white">Chọn tỉnh thành</option>
                                 @foreach($provinces as $prov)
                                     <option value="{{ $prov['id'] }}" class="text-black bg-white" {{ ($userInfo['province'] ?? '') == $prov['id'] ? 'selected' : '' }}>
@@ -418,6 +454,60 @@
         </div>
     </div>
 
+    <!-- View CCCD Modal -->
+    <div id="viewCccdModal" class="fixed inset-0 bg-[#0a0d14]/90 hidden flex-col items-center justify-center backdrop-blur-sm z-[9999] opacity-0 transition-opacity duration-300 overflow-y-auto" style="z-index: 9999;">
+        <div class="bg-[#0a0d14] border border-primary/30 p-8 max-w-4xl w-full m-4 shadow-2xl rounded-xl relative my-auto transform scale-95 transition-transform duration-300" id="viewCccdModalContent" style="background-color: #0a0d14;">
+            <button type="button" onclick="closeModal('viewCccdModal')" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <h3 class="text-3xl font-sans font-semibold text-white mb-8 tracking-wide">Xem Căn cước công dân</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Mặt trước -->
+                <div>
+                    <label class="block text-[13px] font-semibold text-gray-400 tracking-[0.1em] uppercase mb-3">Mặt Trước</label>
+                    <div class="h-64 border border-primary/30 rounded-lg flex items-center justify-center bg-black/50 overflow-hidden relative">
+                        @php
+                            $frontImg = $userInfo['cccd_front'] ?? $userInfo['front'] ?? null;
+                            $backImg = $userInfo['cccd_back'] ?? $userInfo['back'] ?? null;
+                            
+                            $baseUrl = 'https://data.nks.vn/storage/';
+                            if ($frontImg && !str_starts_with($frontImg, 'http')) {
+                                $frontImg = $baseUrl . ltrim($frontImg, '/');
+                            }
+                            if ($backImg && !str_starts_with($backImg, 'http')) {
+                                $backImg = $baseUrl . ltrim($backImg, '/');
+                            }
+                        @endphp
+                        @if($frontImg)
+                            <img src="{{ $frontImg }}" alt="CCCD Mặt trước" class="max-w-full max-h-full object-contain">
+                        @else
+                            <div class="text-gray-500 text-sm">Chưa có ảnh</div>
+                        @endif
+                    </div>
+                </div>
+                <!-- Mặt sau -->
+                <div>
+                    <label class="block text-[13px] font-semibold text-gray-400 tracking-[0.1em] uppercase mb-3">Mặt Sau</label>
+                    <div class="h-64 border border-primary/30 rounded-lg flex items-center justify-center bg-black/50 overflow-hidden relative">
+                        @if($backImg)
+                            <img src="{{ $backImg }}" alt="CCCD Mặt sau" class="max-w-full max-h-full object-contain">
+                        @else
+                            <div class="text-gray-500 text-sm">Chưa có ảnh</div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 flex justify-end">
+                <button type="button" onclick="closeModal('viewCccdModal')" class="bg-primary/10 border border-primary text-primary px-8 py-2.5 rounded text-[13px] font-bold tracking-[0.1em] uppercase hover:bg-primary hover:text-[#0a0d14] transition-all duration-300">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Cropper Modal -->
     <div id="cropperModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center" style="z-index: 9999;">
         <div class="border border-primary/20 p-6 rounded-lg w-full max-w-md relative animate-fade-in shadow-2xl shadow-primary/10" style="background-color: #0a0d14;">
@@ -446,6 +536,7 @@
     @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         // Modal Logic
         function openModal(modalId) {
@@ -486,6 +577,7 @@
         window.addEventListener('click', function(event) {
             if (event.target.id === 'passwordModal') closeModal('passwordModal');
             if (event.target.id === 'cccdModal') closeModal('cccdModal');
+            if (event.target.id === 'viewCccdModal') closeModal('viewCccdModal');
         });
 
         // Image to Base64 preview and input filling
@@ -504,13 +596,29 @@
         }
 
         // AJAX Load Administratives
+        let tsProvince = null;
+        let tsAdmin = null;
+
         function loadAdministratives(provinceId) {
             const adminSelect = document.getElementById('administrative_select');
-            adminSelect.innerHTML = '<option value="">Đang tải...</option>';
             
             if (!provinceId) {
-                adminSelect.innerHTML = '<option value="">Chọn quận huyện</option>';
+                if (tsAdmin) {
+                    tsAdmin.clearOptions();
+                    tsAdmin.clear();
+                    tsAdmin.addOption({value: '', text: 'Chọn quận huyện'});
+                } else {
+                    adminSelect.innerHTML = '<option value="">Chọn quận huyện</option>';
+                }
                 return;
+            }
+
+            if (tsAdmin) {
+                tsAdmin.clearOptions();
+                tsAdmin.clear();
+                tsAdmin.addOption({value: '', text: 'Đang tải...'});
+            } else {
+                adminSelect.innerHTML = '<option value="">Đang tải...</option>';
             }
 
             fetch('{{ route("api.administratives") }}', {
@@ -523,28 +631,67 @@
             })
             .then(res => res.json())
             .then(data => {
-                adminSelect.innerHTML = '<option value="">Chọn quận huyện</option>';
-                if (data && data.data) {
-                    data.data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.id;
-                        option.textContent = item.title || item.name;
-                        option.className = 'text-black bg-white';
-                        adminSelect.appendChild(option);
-                    });
+                if (tsAdmin) {
+                    tsAdmin.clearOptions();
+                    tsAdmin.clear();
+                    tsAdmin.addOption({value: '', text: 'Chọn quận huyện'});
+                    if (data && data.data) {
+                        data.data.forEach(item => {
+                            tsAdmin.addOption({value: item.id, text: item.title || item.name});
+                        });
+                    }
+                    tsAdmin.refreshOptions(false);
+                } else {
+                    adminSelect.innerHTML = '<option value="">Chọn quận huyện</option>';
+                    if (data && data.data) {
+                        data.data.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = item.title || item.name;
+                            option.className = 'text-black bg-white';
+                            adminSelect.appendChild(option);
+                        });
+                    }
                 }
             })
             .catch(err => {
                 console.error('Lỗi khi tải quận huyện', err);
-                adminSelect.innerHTML = '<option value="">Lỗi tải dữ liệu</option>';
+                if (tsAdmin) {
+                    tsAdmin.clearOptions();
+                    tsAdmin.clear();
+                    tsAdmin.addOption({value: '', text: 'Lỗi tải dữ liệu'});
+                } else {
+                    adminSelect.innerHTML = '<option value="">Lỗi tải dữ liệu</option>';
+                }
             });
         }
 
-        // Pre-load administratives if province is already selected
+        // Initialize and Pre-load administratives
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Tom Select
+            tsProvince = new TomSelect("#province_select", {
+                create: false,
+                onChange: function(value) {
+                    loadAdministratives(value);
+                }
+            });
+
+            tsAdmin = new TomSelect("#administrative_select", {
+                create: false
+            });
+
             const provSelect = document.getElementById('province_select');
             if (provSelect.value) {
                 loadAdministratives(provSelect.value);
+                // We don't want to clear the district if it was already selected previously.
+                // Note: The loaded options will overwrite the current selected district if we aren't careful.
+                // We should re-select the existing district if it exists.
+                setTimeout(() => {
+                    let existingDist = "{{ $userInfo['administrative'] ?? '' }}";
+                    if(existingDist && tsAdmin) {
+                        tsAdmin.setValue(existingDist);
+                    }
+                }, 500);
             }
         });
 

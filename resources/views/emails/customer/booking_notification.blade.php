@@ -12,5 +12,5 @@ Hệ thống đã nhận được yêu cầu đặt bàn của bạn. Dưới đ
 Nhà hàng sẽ sớm liên hệ với bạn qua số điện thoại **{{ $booking->phone }}** để xác nhận lại thông tin. Xin cảm ơn bạn đã lựa chọn dịch vụ của chúng tôi!
 
 Cảm ơn,<br>
-Nhà Hàng {{ config('app.name') }}
+{{ config('app.name') }}
 </x-mail::message>

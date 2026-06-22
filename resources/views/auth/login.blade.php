@@ -27,6 +27,12 @@
                 <div class="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-primary"></div>
                 <div class="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-primary"></div>
 
+                @if(session('error'))
+                    <div class="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded mb-6 text-center text-sm font-light tracking-wide animate-fade-in">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('login.post') }}" class="space-y-6" id="login-form">
                     @csrf
                     

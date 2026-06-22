@@ -111,6 +111,6 @@ class NksApiService
             'number' => $number,
             'date' => $date,
             'place' => $place
-        ]);
+        ], true);
     }
 }
