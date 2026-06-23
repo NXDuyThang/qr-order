@@ -49,3 +49,8 @@ Route::post('/ajax/fetch-avatar', function (\Illuminate\Http\Request $request) {
     ]);
     return $response->json();
 })->name('api.fetch_avatar');
+
+// Chatbot Routes
+use App\Http\Controllers\ChatbotController;
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+Route::post('/chatbot/send', [ChatbotController::class, 'chat'])->name('chatbot.send');

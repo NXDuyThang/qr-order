@@ -78,6 +78,10 @@
             border-bottom-color: #0077bb;
             color: #0077bb;
         }
+        /* Make all interactive elements have a pointer cursor */
+        button, a, select, input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"], .cursor-pointer {
+            cursor: pointer !important;
+        }
     </style>
     @stack('styles')
 </head>
@@ -143,6 +147,7 @@
 
                 <a href="{{ url('/menu') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('menu') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Menu</a>
                 <a href="{{ url('/vietnamese-cuisine') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('vietnamese-cuisine') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Ẩm Thực Việt</a>
+
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
                 <a href="{{ url('/admin') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] text-gray-500 hover:text-primary pointer-events-auto transition-colors duration-300 whitespace-nowrap">Quản Trị</a>
                 @if(Session::has('access_token'))
@@ -226,9 +231,9 @@
         </div>
 
         <div class="flex flex-col gap-4 items-start">
-            <a href="#" class="text-[12px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Facebook</a>
-            <a href="#" class="text-[12px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Instagram</a>
-            <a href="#" class="text-[12px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Trip Advisor</a>
+            <a href="{{ url('/vietnamese-cuisine') }}" class="text-[14px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Ẩm Thực Việt</a>
+
+            <a href="{{ url('/contact') }}" class="text-[14px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Liên Hệ</a>
         </div>
     </div>
 
@@ -387,6 +392,7 @@
             });
         });
     </script>
+    <x-chatbot-widget />
     @stack('scripts')
 </body>
 </html>
