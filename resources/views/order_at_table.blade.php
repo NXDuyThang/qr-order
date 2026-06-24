@@ -1,3 +1,28 @@
+@php
+    $allFoodsList = [];
+    $catList = [];
+    foreach($categories as $category) {
+        if ($category->food->count() > 0) {
+            $catList[] = [
+                'id' => $category->id,
+                'name' => $category->name
+            ];
+            foreach($category->food as $food) {
+                $imgSrc = str_starts_with($food->image, 'http') || str_starts_with($food->image, '/images/') 
+                    ? $food->image 
+                    : asset('storage/'.$food->image);
+                    
+                $allFoodsList[] = [
+                    'id' => $food->id,
+                    'name' => $food->name,
+                    'price' => $food->price,
+                    'image' => $imgSrc,
+                    'category_id' => $category->id
+                ];
+            }
+        }
+    }
+@endphp
 <x-layouts.app>
     @push('styles')
     <style>
@@ -101,44 +126,79 @@
         </div>
         @endif
 
-        <!-- Menu Grid -->
-        <div class="px-6 md:px-[60px] py-12">
-            @foreach($categories as $category)
-                @if($category->food->count() > 0)
-                    <div class="mb-16">
-                        <h2 class="text-white text-2xl font-serif text-center mb-10 tracking-widest">{{ $category->name }}</h2>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-                            @foreach($category->food as $item)
-                                <div class="product-card group">
-                                    <div class="product-image-container border border-white/5">
-                                        @php
-                                            $imgSrc = str_starts_with($item->image, 'http') || str_starts_with($item->image, '/images/') 
-                                                ? $item->image 
-                                                : asset('storage/'.$item->image);
-                                        @endphp
-                                        <img src="{{ $imgSrc }}" alt="{{ $item->name }}" class="product-image">
-                                        <div class="add-to-cart-overlay">
-                                            <button @click="addToCart({{ $item->id }}, '{{ addslashes($item->name) }}', {{ $item->price }}, '{{ $imgSrc }}')" class="add-to-cart-btn">
-                                                Add to cart
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="product-info">
-                                        <h3 class="product-title">{{ $item->name }}</h3>
-                                        <div class="product-rating">
-                                            &#9734; &#9734; &#9734; &#9734; &#9734;
-                                        </div>
-                                        <div class="product-price">
-                                            {{ number_format($item->price * 1000, 0, ',', '.') }} VNĐ
-                                        </div>
-                                    </div>
+        <!-- Main Content Area: Sidebar + Grid -->
+        <div class="px-6 md:px-[60px] py-12 flex flex-col md:flex-row gap-12">
+            
+            <!-- Category Sidebar -->
+            <div class="w-full md:w-1/4 lg:w-1/5 flex flex-col gap-4">
+                <h3 class="text-white text-lg font-serif tracking-widest mb-4 border-b border-white/10 pb-4">DANH MỤC</h3>
+                
+                <button @click="setCategory('all')" 
+                        :class="activeCategory === 'all' ? 'text-primary border-l-2 border-primary pl-4' : 'text-gray-400 hover:text-white pl-4'"
+                        class="text-left text-sm uppercase tracking-[0.15em] transition-all duration-300 focus:outline-none">
+                    Tất cả món ăn
+                </button>
+                
+                <template x-for="cat in categories" :key="cat.id">
+                    <button @click="setCategory(cat.id)" 
+                            :class="activeCategory === cat.id ? 'text-primary border-l-2 border-primary pl-4' : 'text-gray-400 hover:text-white pl-4'"
+                            class="text-left text-sm uppercase tracking-[0.15em] transition-all duration-300 focus:outline-none"
+                            x-text="cat.name">
+                    </button>
+                </template>
+            </div>
+
+            <!-- Menu Grid & Pagination -->
+            <div class="w-full md:w-3/4 lg:w-4/5">
+                <!-- Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+                    <template x-for="item in paginatedFoods" :key="item.id">
+                        <div class="product-card group">
+                            <div class="product-image-container border border-white/5">
+                                <img :src="item.image" :alt="item.name" class="product-image">
+                                <div class="add-to-cart-overlay">
+                                    <button @click="addToCart(item.id, item.name, item.price, item.image)" class="add-to-cart-btn">
+                                        Add to cart
+                                    </button>
                                 </div>
-                            @endforeach
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title" x-text="item.name"></h3>
+                                <div class="product-rating">
+                                    &#9734; &#9734; &#9734; &#9734; &#9734;
+                                </div>
+                                <div class="product-price" x-text="formatPrice(item.price)"></div>
+                            </div>
                         </div>
+                    </template>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="mt-16 flex justify-center items-center gap-4" x-show="totalPages > 1" style="display: none;">
+                    <button @click="prevPage()" 
+                            :disabled="currentPage === 1"
+                            class="w-10 h-10 border border-white/20 text-white flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    
+                    <div class="flex gap-2">
+                        <template x-for="page in totalPages" :key="page">
+                            <button @click="currentPage = page"
+                                    :class="currentPage === page ? 'bg-primary text-white border-primary' : 'border-white/20 text-gray-400 hover:text-white hover:border-white/50'"
+                                    class="w-10 h-10 border flex items-center justify-center text-sm transition-colors focus:outline-none"
+                                    x-text="page">
+                            </button>
+                        </template>
                     </div>
-                @endif
-            @endforeach
+                    
+                    <button @click="nextPage()" 
+                            :disabled="currentPage === totalPages"
+                            class="w-10 h-10 border border-white/20 text-white flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+                
+            </div>
         </div>
 
         <!-- Cart Sidebar Overlay -->
@@ -213,6 +273,46 @@
             Alpine.data('orderCart', () => ({
                 cartOpen: false,
                 items: [],
+                allFoods: @json($allFoodsList),
+                categories: @json($catList),
+                activeCategory: 'all',
+                currentPage: 1,
+                pageSize: 9,
+                
+                get filteredFoods() {
+                    if (this.activeCategory === 'all') {
+                        return this.allFoods;
+                    }
+                    return this.allFoods.filter(f => f.category_id === this.activeCategory);
+                },
+                
+                get totalPages() {
+                    return Math.ceil(this.filteredFoods.length / this.pageSize) || 1;
+                },
+                
+                get paginatedFoods() {
+                    const start = (this.currentPage - 1) * this.pageSize;
+                    return this.filteredFoods.slice(start, start + this.pageSize);
+                },
+                
+                setCategory(catId) {
+                    this.activeCategory = catId;
+                    this.currentPage = 1;
+                },
+                
+                nextPage() {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
+                
+                prevPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
                 
                 init() {
                     const savedCart = localStorage.getItem('qr_order_cart');
