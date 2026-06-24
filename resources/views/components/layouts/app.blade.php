@@ -150,7 +150,22 @@
 
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
                 @if(Session::has('access_token'))
-                    <a href="{{ route('profile.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Tài Khoản</a>
+                    @php
+                        $userInfo = Session::get('user_info');
+                        $avatarUrl = $userInfo['avatar'] ?? null;
+                        if ($avatarUrl && !str_starts_with($avatarUrl, 'http')) {
+                            // In case it's a relative path from the API
+                            $avatarUrl = 'https://nks.trienkhai.net' . (str_starts_with($avatarUrl, '/') ? '' : '/') . $avatarUrl;
+                        }
+                    @endphp
+                    <a href="{{ route('profile.index') }}" class="flex items-center gap-2 text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">
+                        @if($avatarUrl)
+                            <img src="{{ $avatarUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover border border-primary/50">
+                        @else
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        @endif
+                        Tài Khoản
+                    </a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('login') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đăng Nhập</a>
                 @endif
