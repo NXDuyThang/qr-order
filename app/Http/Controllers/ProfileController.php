@@ -52,7 +52,17 @@ class ProfileController extends Controller
             $userAdministratives = $adminResp['data'] ?? [];
         }
 
-        return view('profile.index', compact('userInfo', 'provinces', 'userAdministratives'));
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if ($user) {
+            $wishlists = \App\Models\Wishlist::with('food.category')->where('user_id', $user->id)->get();
+            $foods = $wishlists->map(function ($wishlist) {
+                return $wishlist->food;
+            })->filter();
+        } else {
+            $foods = collect();
+        }
+
+        return view('profile.index', compact('userInfo', 'provinces', 'userAdministratives', 'foods'));
     }
 
     public function updateInfo(Request $request)

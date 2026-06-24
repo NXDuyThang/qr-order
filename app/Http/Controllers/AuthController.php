@@ -32,6 +32,16 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+        // Thử đăng nhập bằng local database cho admin
+        if (\Illuminate\Support\Facades\Auth::attempt(['email' => $request->username, 'password' => $request->password], $request->has('remember'))) {
+            $localUser = \Illuminate\Support\Facades\Auth::user();
+            if ($localUser->is_admin) {
+                return redirect()->route('filament.admin.pages.dashboard');
+            } else {
+                \Illuminate\Support\Facades\Auth::logout();
+            }
+        }
+
         $response = $this->apiService->login(
             $request->username,
             $request->password
@@ -70,6 +80,10 @@ class AuthController extends Controller
 
             // Đăng nhập bằng Laravel Auth
             \Illuminate\Support\Facades\Auth::login($localUser);
+
+            if ($localUser->is_admin) {
+                return redirect()->route('filament.admin.pages.dashboard');
+            }
 
             return redirect()->route('profile.index')->with('success', 'Đăng nhập thành công.');
         }

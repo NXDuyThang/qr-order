@@ -14,7 +14,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['name', 'email', 'password', 'avatar_url'])]
+#[Fillable(['name', 'email', 'password', 'avatar_url', 'is_admin'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
@@ -26,6 +26,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'email',
         'password',
         'avatar_url',
+        'is_admin',
     ];
 
     /**
@@ -43,7 +44,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->is_admin;
     }
 
     public function getFilamentAvatarUrl(): ?string

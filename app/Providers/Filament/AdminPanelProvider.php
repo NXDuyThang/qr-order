@@ -26,7 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+
             ->profile(\App\Filament\Pages\Auth\EditProfile::class)
             ->brandName('Hệ thống QR Order')
             ->font('Montserrat')

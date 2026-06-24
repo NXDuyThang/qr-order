@@ -82,7 +82,7 @@
     <div class="pt-[110px] pb-24 min-h-screen bg-[#0d1114]" x-data="orderCart()">
         <!-- Header -->
         <div class="px-6 md:px-[60px] py-8 border-b border-white/5 flex justify-center items-center">
-            <h1 class="text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center">ORDER AT TABLE {{ $tableId ? '#'.$tableId : '' }}</h1>
+            <h1 class="text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center">ĐẶT MÓN TẠI BÀN {{ $tableId ? $tableId : '' }}</h1>
             <template x-teleport="#cart-icon-container">
                 <button @click="cartOpen = true" class="relative text-white hover:text-primary transition-colors focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

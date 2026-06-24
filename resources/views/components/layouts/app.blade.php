@@ -149,9 +149,7 @@
                 <a href="{{ url('/vietnamese-cuisine') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('vietnamese-cuisine') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Ẩm Thực Việt</a>
 
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
-                <a href="{{ url('/admin') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] text-gray-500 hover:text-primary pointer-events-auto transition-colors duration-300 whitespace-nowrap">Quản Trị</a>
                 @if(Session::has('access_token'))
-                    <a href="{{ route('wishlist.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('wishlist.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Yêu Thích</a>
                     <a href="{{ route('profile.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Tài Khoản</a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('login') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đăng Nhập</a>
@@ -371,7 +369,7 @@
                             icon.setAttribute('fill', 'none');
                             // Nếu đang ở trang wishlist, ẩn item và hiển thị rỗng nếu hết item
                             const item = btnElement.closest('.portfolio-item');
-                            if (item && window.location.pathname.includes('/wishlist')) {
+                            if (item && (window.location.pathname.includes('/wishlist') || window.location.pathname.includes('/profile'))) {
                                 item.style.opacity = '0';
                                 setTimeout(() => {
                                     item.remove();
