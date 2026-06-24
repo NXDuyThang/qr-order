@@ -37,6 +37,9 @@ class ProfileController extends Controller
         // If API doesn't return properly, we might fall back to session
         if (empty($userInfo) && Session::has('user_info')) {
             $userInfo = Session::get('user_info');
+        } elseif (!empty($userInfo)) {
+            // Update session with the latest user info (including avatar)
+            Session::put('user_info', $userInfo);
         }
 
         $provincesResp = $this->apiService->getProvinces(237);
