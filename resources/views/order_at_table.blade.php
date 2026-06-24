@@ -126,30 +126,26 @@
         </div>
         @endif
 
-        <!-- Main Content Area: Sidebar + Grid -->
+        <!-- Main Content Area: Grid + Sidebar -->
         <div class="px-6 md:px-[60px] py-12 flex flex-col md:flex-row gap-12">
             
-            <!-- Category Sidebar -->
-            <div class="w-full md:w-1/4 lg:w-1/5 flex flex-col gap-4">
-                <h3 class="text-white text-lg font-serif tracking-widest mb-4 border-b border-white/10 pb-4">DANH MỤC</h3>
-                
-                <button @click="setCategory('all')" 
-                        :class="activeCategory === 'all' ? 'text-primary border-l-2 border-primary pl-4' : 'text-gray-400 hover:text-white pl-4'"
-                        class="text-left text-sm uppercase tracking-[0.15em] transition-all duration-300 focus:outline-none">
-                    Tất cả món ăn
-                </button>
-                
-                <template x-for="cat in categories" :key="cat.id">
-                    <button @click="setCategory(cat.id)" 
-                            :class="activeCategory === cat.id ? 'text-primary border-l-2 border-primary pl-4' : 'text-gray-400 hover:text-white pl-4'"
-                            class="text-left text-sm uppercase tracking-[0.15em] transition-all duration-300 focus:outline-none"
-                            x-text="cat.name">
-                    </button>
-                </template>
-            </div>
-
-            <!-- Menu Grid & Pagination -->
+            <!-- Menu Grid & Pagination (Left/Center) -->
             <div class="w-full md:w-3/4 lg:w-4/5">
+                
+                <!-- Top Bar: Results Count & Sort Dropdown -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-white/10 gap-4">
+                    <span class="text-gray-400 text-sm tracking-wider">
+                        Hiển thị <span x-text="filteredFoods.length"></span> kết quả
+                    </span>
+                    <select x-model="sortBy" class="bg-transparent text-gray-300 border border-white/20 px-4 py-2 text-sm focus:outline-none focus:border-primary">
+                        <option value="latest" class="bg-[#040810]">Sắp xếp: Mới nhất</option>
+                        <option value="popularity" class="bg-[#040810]">Sắp xếp: Phổ biến nhất</option>
+                        <option value="rating" class="bg-[#040810]">Sắp xếp: Đánh giá trung bình</option>
+                        <option value="price_low" class="bg-[#040810]">Sắp xếp: Giá từ thấp đến cao</option>
+                        <option value="price_high" class="bg-[#040810]">Sắp xếp: Giá từ cao đến thấp</option>
+                    </select>
+                </div>
+
                 <!-- Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
                     <template x-for="item in paginatedFoods" :key="item.id">
@@ -158,7 +154,7 @@
                                 <img :src="item.image" :alt="item.name" class="product-image">
                                 <div class="add-to-cart-overlay">
                                     <button @click="addToCart(item.id, item.name, item.price, item.image)" class="add-to-cart-btn">
-                                        Add to cart
+                                        Thêm vào giỏ
                                     </button>
                                 </div>
                             </div>
@@ -199,6 +195,51 @@
                 </div>
                 
             </div>
+
+            <!-- Category & Filter Sidebar (Right) -->
+            <div class="w-full md:w-1/4 lg:w-1/5 flex flex-col gap-12">
+                
+                <!-- Price Filter -->
+                <div>
+                    <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-4">LỌC THEO GIÁ</h3>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-2">
+                            <input type="number" x-model.number="filterMinPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Min" min="0">
+                            <span class="text-gray-500">-</span>
+                            <input type="number" x-model.number="filterMaxPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Max" min="0">
+                        </div>
+                        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mt-2 gap-4">
+                            <button @click="minPrice = filterMinPrice; maxPrice = filterMaxPrice; currentPage = 1;" class="border border-white/20 text-white text-xs tracking-widest px-6 py-2 hover:bg-white hover:text-black transition-colors uppercase focus:outline-none">
+                                Lọc
+                            </button>
+                            <div class="text-gray-400 text-xs mt-1 xl:mt-0">
+                                Giá: <span x-text="formatPrice(minPrice)"></span> &ndash; <span x-text="formatPrice(maxPrice)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="flex flex-col gap-4">
+                    <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-2 border-b border-white/10 pb-4">DANH MỤC</h3>
+                    
+                    <button @click="setCategory('all')" 
+                            :class="activeCategory === 'all' ? 'text-primary' : 'text-gray-400 hover:text-white'"
+                            class="text-left text-sm transition-all duration-300 focus:outline-none">
+                        Tất cả món ăn
+                    </button>
+                    
+                    <template x-for="cat in categories" :key="cat.id">
+                        <button @click="setCategory(cat.id)" 
+                                :class="activeCategory === cat.id ? 'text-primary' : 'text-gray-400 hover:text-white'"
+                                class="text-left text-sm transition-all duration-300 focus:outline-none"
+                                x-text="cat.name">
+                        </button>
+                    </template>
+                </div>
+                
+            </div>
+
         </div>
 
         <!-- Cart Sidebar Overlay -->
@@ -278,12 +319,33 @@
                 activeCategory: 'all',
                 currentPage: 1,
                 pageSize: 9,
+                sortBy: 'latest',
+                minPrice: 0,
+                maxPrice: 1000,
+                filterMinPrice: 0,
+                filterMaxPrice: 1000,
                 
                 get filteredFoods() {
-                    if (this.activeCategory === 'all') {
-                        return this.allFoods;
+                    let result = [...this.allFoods];
+                    
+                    if (this.activeCategory !== 'all') {
+                        result = result.filter(f => f.category_id === this.activeCategory);
                     }
-                    return this.allFoods.filter(f => f.category_id === this.activeCategory);
+                    
+                    result = result.filter(f => f.price >= this.minPrice && f.price <= this.maxPrice);
+                    
+                    if (this.sortBy === 'latest') {
+                        result.sort((a, b) => b.id - a.id);
+                    } else if (this.sortBy === 'price_low') {
+                        result.sort((a, b) => a.price - b.price);
+                    } else if (this.sortBy === 'price_high') {
+                        result.sort((a, b) => b.price - a.price);
+                    } else if (this.sortBy === 'popularity' || this.sortBy === 'rating') {
+                        // Mock fallback for popularity/rating
+                        result.sort((a, b) => a.id - b.id);
+                    }
+                    
+                    return result;
                 },
                 
                 get totalPages() {
@@ -315,6 +377,12 @@
                 },
                 
                 init() {
+                    if (this.allFoods.length > 0) {
+                        const maxP = Math.max(...this.allFoods.map(f => f.price));
+                        this.maxPrice = maxP;
+                        this.filterMaxPrice = maxP;
+                    }
+                    
                     const savedCart = localStorage.getItem('qr_order_cart');
                     if (savedCart) {
                         try {
