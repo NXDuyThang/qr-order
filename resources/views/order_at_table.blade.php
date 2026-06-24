@@ -92,10 +92,11 @@
         }
         .product-price {
             color: #0077bb; /* Primary price */
-            font-size: 13px;
+            font-size: 14px;
             text-align: center;
             margin-top: 5px;
             font-weight: 500;
+            font-family: var(--font-sans, 'Jost', sans-serif);
         }
         /* Cart Sidebar */
         #cart-sidebar {
@@ -107,13 +108,15 @@
     <div class="pt-[110px] pb-24 min-h-screen bg-[#0d1114]" x-data="orderCart()">
         <!-- Header -->
         <div class="px-6 md:px-[60px] py-8 border-b border-white/5 flex justify-center items-center">
-            <h1 class="text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center">ĐẶT MÓN TẠI BÀN {{ $tableId ? $tableId : '' }}</h1>
+            <h1 class="text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center" style="font-family: var(--font-serif, 'Playfair Display', serif);">
+                ĐẶT MÓN TẠI BÀN <span class="font-sans" style="font-family: var(--font-sans, 'Jost', sans-serif);">{{ $tableId ? $tableId : '' }}</span>
+            </h1>
             <template x-teleport="#cart-icon-container">
                 <button @click="cartOpen = true" class="relative text-white hover:text-primary transition-colors focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                     </svg>
-                    <span x-show="totalItems() > 0" x-text="totalItems()" class="absolute -top-2 -right-2 bg-[#ef2853] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full"></span>
+                    <span x-show="totalItems() > 0" x-text="totalItems()" class="absolute -top-2 -right-2 bg-[#ef2853] text-white text-[11px] font-sans font-medium w-5 h-5 flex items-center justify-center rounded-full"></span>
                 </button>
             </template>
         </div>
