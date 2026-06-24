@@ -216,7 +216,7 @@
                                 Lọc
                             </button>
                             <div class="text-gray-400 text-xs mt-1 xl:mt-0">
-                                Giá: <span x-text="formatPrice(minPrice)"></span> &ndash; <span x-text="formatPrice(maxPrice)"></span>
+                                Giá: <span x-text="new Intl.NumberFormat('vi-VN').format(minPrice) + ' VNĐ'"></span> &ndash; <span x-text="new Intl.NumberFormat('vi-VN').format(maxPrice) + ' VNĐ'"></span>
                             </div>
                         </div>
                     </div>
@@ -335,7 +335,7 @@
                         result = result.filter(f => f.category_id === this.activeCategory);
                     }
                     
-                    result = result.filter(f => f.price >= this.minPrice && f.price <= this.maxPrice);
+                    result = result.filter(f => (f.price * 1000) >= this.minPrice && (f.price * 1000) <= this.maxPrice);
                     
                     if (this.sortBy === 'latest') {
                         result.sort((a, b) => b.id - a.id);
@@ -381,7 +381,7 @@
                 
                 init() {
                     if (this.allFoods.length > 0) {
-                        const maxP = Math.max(...this.allFoods.map(f => f.price));
+                        const maxP = Math.max(...this.allFoods.map(f => f.price)) * 1000;
                         this.maxPrice = maxP;
                         this.filterMaxPrice = maxP;
                     }
