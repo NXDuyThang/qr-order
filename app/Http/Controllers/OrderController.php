@@ -86,6 +86,29 @@ class OrderController extends Controller
         // Clear checkout session
         session()->forget('checkout_data');
 
+        if ($validated['payment_method'] === 'transfer') {
+            return redirect()->route('checkout.transfer', ['order' => $order->id]);
+        }
+
         return redirect()->route('order_at_table', ['table_id' => $tableId])->with('success', 'Thanh toán thành công! Đơn hàng của bạn đã được ghi nhận. Vui lòng chờ trong giây lát.');
+    }
+
+    public function showTransferQR(Order $order)
+    {
+        // Ensure the order belongs to the user or table logic
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $bankId = env('VIETQR_BANK_ID', 'MB');
+        $accountNo = env('VIETQR_ACCOUNT_NO', '0123456789');
+        $accountName = env('VIETQR_ACCOUNT_NAME', 'NGUYEN VAN A');
+        $amount = (int) ($order->total_price * 1000); // Because price is stored as e.g. 50.00 representing 50k
+        $addInfo = 'Thanh toan don hang ' . $order->id;
+
+        // Generate VietQR URL
+        $qrUrl = "https://img.vietqr.io/image/{$bankId}-{$accountNo}-compact2.png?amount={$amount}&addInfo=" . urlencode($addInfo) . "&accountName=" . urlencode($accountName);
+
+        return view('checkout_transfer', compact('order', 'qrUrl', 'amount', 'addInfo', 'accountName', 'accountNo', 'bankId'));
     }
 }

@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/prepare', [\App\Http\Controllers\OrderController::class, 'prepareCheckout'])->name('checkout.prepare');
     Route::get('/checkout', [\App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout.index');
     Route::post('/checkout', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
+    Route::get('/checkout/transfer/{order}', [\App\Http\Controllers\OrderController::class, 'showTransferQR'])->name('checkout.transfer');
 });
 
 // API Routes for frontend
