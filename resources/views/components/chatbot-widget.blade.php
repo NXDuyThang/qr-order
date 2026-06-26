@@ -82,6 +82,13 @@
         background-color: #005f9e;
         transform: translateY(-50%) scale(1.05);
     }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
 </style>
 
 <!-- Chatbot Floating Button -->
@@ -167,8 +174,16 @@
 
     </div>
 
+    <!-- Suggestions -->
+    <div class="px-4 pb-3 pt-3 bg-[#1e293b] border-t border-white/5 flex gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap">
+        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Gợi ý món ăn ngon</button>
+        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Tư vấn giảm cân</button>
+        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Món chay hôm nay</button>
+        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Đồ uống giải nhiệt</button>
+    </div>
+
     <!-- Chat Input Area -->
-    <div id="chatbot-input-area" class="shrink-0">
+    <div id="chatbot-input-area" class="shrink-0 pt-2">
         <form id="chat-form" class="relative flex items-center">
             @csrf
             <input type="text" id="chat-input" placeholder="Nhập câu hỏi..." autocomplete="off" required>
@@ -223,6 +238,16 @@
         function scrollToBottom() {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+
+        // Handle suggestion clicks
+        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+        suggestionBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                chatInput.value = this.innerText;
+                // Optionally Auto-submit
+                chatForm.dispatchEvent(new Event('submit'));
+            });
+        });
 
         // Handle form submit
         chatForm.addEventListener('submit', async function(e) {
