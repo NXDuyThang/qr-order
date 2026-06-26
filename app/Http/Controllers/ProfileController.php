@@ -38,8 +38,19 @@ class ProfileController extends Controller
         if (empty($userInfo) && Session::has('user_info')) {
             $userInfo = Session::get('user_info');
         } elseif (!empty($userInfo)) {
+            // Prevent large data from bloating the session cookie
+            unset($userInfo['cccd_front']);
+            unset($userInfo['cccd_back']);
             // Update session with the latest user info (including avatar)
             Session::put('user_info', $userInfo);
+            if (isset($userInfo['avatar'])) {
+                Session::put('user_avatar', $userInfo['avatar']);
+                if (auth()->check()) {
+                    $localUser = auth()->user();
+                    $localUser->avatar_url = $userInfo['avatar'];
+                    $localUser->save();
+                }
+            }
         }
 
         $provincesResp = $this->apiService->getProvinces(237);

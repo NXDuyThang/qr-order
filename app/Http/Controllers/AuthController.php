@@ -60,7 +60,13 @@ class AuthController extends Controller
 
             Session::put('access_token', $token);
             if ($userInfo) {
+                // Prevent large data from bloating the session cookie
+                unset($userInfo['cccd_front']);
+                unset($userInfo['cccd_back']);
                 Session::put('user_info', $userInfo);
+                if (isset($userInfo['avatar'])) {
+                    Session::put('user_avatar', $userInfo['avatar']);
+                }
             }
 
             // Sync user to local database so Laravel Auth works
@@ -77,6 +83,11 @@ class AuthController extends Controller
                     'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(16)),
                 ]
             );
+            
+            if (isset($userInfo['avatar'])) {
+                $localUser->avatar_url = $userInfo['avatar'];
+                $localUser->save();
+            }
 
             // Đăng nhập bằng Laravel Auth
             \Illuminate\Support\Facades\Auth::login($localUser);

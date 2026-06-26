@@ -161,8 +161,14 @@
                 
                 @if(Session::has('access_token'))
                     @php
-                        $userInfo = Session::get('user_info');
-                        $avatarUrl = $userInfo['avatar'] ?? null;
+                        $avatarUrl = Session::get('user_avatar');
+                        if (!$avatarUrl && auth()->check()) {
+                            $avatarUrl = auth()->user()->avatar_url;
+                        }
+                        if (!$avatarUrl && Session::has('user_info')) {
+                            $avatarUrl = Session::get('user_info')['avatar'] ?? null;
+                        }
+                        
                         if ($avatarUrl && !str_starts_with($avatarUrl, 'http')) {
                             // In case it's a relative path from the API
                             $avatarUrl = 'https://nks.trienkhai.net' . (str_starts_with($avatarUrl, '/') ? '' : '/') . $avatarUrl;
