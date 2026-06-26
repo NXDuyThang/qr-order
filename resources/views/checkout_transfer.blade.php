@@ -59,4 +59,9 @@
             
         </div>
     </div>
+    
+    <script>
+        // Clear the cart when the user reaches this page since the order has already been created
+        localStorage.removeItem('qr_order_cart');
+    </script>
 </x-layouts.app>
