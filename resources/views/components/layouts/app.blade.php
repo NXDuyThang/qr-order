@@ -150,6 +150,16 @@
 
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
                 @if(Session::has('access_token'))
+                    <a href="{{ route('profile.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Tài Khoản</a>
+                @else
+                    <a href="{{ route('login') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('login') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đăng Nhập</a>
+                @endif
+            </nav>
+
+            <!-- Right Side Controls -->
+            <div class="flex items-center gap-4 pointer-events-auto">
+                
+                @if(Session::has('access_token'))
                     @php
                         $userInfo = Session::get('user_info');
                         $avatarUrl = $userInfo['avatar'] ?? null;
@@ -158,21 +168,19 @@
                             $avatarUrl = 'https://nks.trienkhai.net' . (str_starts_with($avatarUrl, '/') ? '' : '/') . $avatarUrl;
                         }
                     @endphp
-                    <a href="{{ route('profile.index') }}" class="flex items-center gap-2 text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">
+                    <a href="{{ route('profile.index') }}" class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-primary/50 overflow-hidden hover:border-primary transition-colors bg-[#0d1114]">
                         @if($avatarUrl)
-                            <img src="{{ $avatarUrl }}" alt="Avatar" class="w-6 h-6 rounded-full object-cover border border-primary/50">
+                            <img src="{{ $avatarUrl }}" alt="Avatar" class="w-full h-full object-cover">
                         @else
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         @endif
-                        Tài Khoản
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('login') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đăng Nhập</a>
+                    <a href="{{ route('login') }}" class="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-gray-400 hover:text-white transition-colors bg-[#0d1114]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                    </a>
                 @endif
-            </nav>
 
-            <!-- Right Side Controls -->
-            <div class="flex items-center gap-4 pointer-events-auto">
                 <!-- Cart Icon Container (Teleported from order page) -->
                 <div id="cart-icon-container" class="flex items-center"></div>
 
