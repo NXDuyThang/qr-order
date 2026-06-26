@@ -85,7 +85,7 @@ class AuthController extends Controller
                 return redirect()->route('filament.admin.pages.dashboard');
             }
 
-            return redirect()->route('profile.index')->with('success', 'Đăng nhập thành công.');
+            return redirect()->intended(route('profile.index'))->with('success', 'Đăng nhập thành công.');
         }
 
         // Handle error

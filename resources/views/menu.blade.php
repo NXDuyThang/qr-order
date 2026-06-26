@@ -51,6 +51,7 @@
                         <!-- Food Items -->
                         <div class="flex flex-col gap-10">
                             @foreach($category->food as $food)
+                                <div>
                                     <div class="flex items-baseline justify-between mb-3 gap-4">
                                         <div class="flex items-center gap-2">
                                             <h4 class="text-[14px] md:text-[15px] tracking-[0.15em] uppercase font-medium text-white">{{ $food->name }}</h4>
