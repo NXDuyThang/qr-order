@@ -297,7 +297,7 @@
                     <span class="text-primary font-serif text-lg" x-text="formatPrice(cartTotal())"></span>
                 </div>
                 
-                <form action="{{ route('order.store') }}" method="POST">
+                <form action="{{ route('checkout.prepare') }}" method="POST">
                     @csrf
                     <input type="hidden" name="table_id" value="{{ $tableId }}">
                     <input type="hidden" name="items" :value="JSON.stringify(items)">

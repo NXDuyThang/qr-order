@@ -13,8 +13,6 @@ Route::get('/restaurant', [PageController::class, 'restaurantHome'])->name('rest
 Route::get('/menu', [PageController::class, 'menu'])->name('menu');
 Route::get('/booking', [PageController::class, 'booking'])->name('booking');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
-Route::get('/order', [PageController::class, 'orderAtTable'])->name('order_at_table');
-Route::post('/order', [OrderController::class, 'store'])->name('order.store');
 Route::get('/vietnamese-cuisine', [PageController::class, 'vietnameseCuisine'])->name('vietnamese_cuisine');
 Route::get('/vietnamese-cuisine/{slug}', [PageController::class, 'vietnameseCuisineDetail'])->name('vietnamese_cuisine_detail');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
@@ -38,6 +36,12 @@ use App\Http\Controllers\WishlistController;
 Route::middleware('auth')->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    
+    // Table Ordering & Checkout Routes
+    Route::get('/order', [PageController::class, 'orderAtTable'])->name('order_at_table');
+    Route::post('/checkout/prepare', [\App\Http\Controllers\OrderController::class, 'prepareCheckout'])->name('checkout.prepare');
+    Route::get('/checkout', [\App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout.index');
+    Route::post('/checkout', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
 });
 
 // API Routes for frontend
