@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="{{ url('/') }}/">
     <title>Order-QR - Hệ thống gọi món thông minh</title>
     
     <!-- SEO Meta Tags -->
