@@ -30,6 +30,12 @@ class PageController extends Controller
         
         return view('menu', compact('categories')); 
     }
+
+    public function productDetail($slug)
+    {
+        $food = Food::with('category')->where('slug', $slug)->firstOrFail();
+        return view('product_detail', compact('food'));
+    }
     public function booking() { return view('booking'); }
     public function orderAtTable(Request $request) 
     { 

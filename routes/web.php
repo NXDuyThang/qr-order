@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 Route::get('/', [PageController::class, 'welcome'])->name('welcome');
 Route::get('/restaurant', [PageController::class, 'restaurantHome'])->name('restaurant_home');
 Route::get('/menu', [PageController::class, 'menu'])->name('menu');
+Route::get('/product/{slug}', [PageController::class, 'productDetail'])->name('product.detail');
 Route::get('/booking', [PageController::class, 'booking'])->name('booking');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 Route::get('/vietnamese-cuisine', [PageController::class, 'vietnameseCuisine'])->name('vietnamese_cuisine');

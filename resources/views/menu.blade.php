@@ -54,7 +54,9 @@
                                 <div>
                                     <div class="flex items-baseline justify-between mb-3 gap-4">
                                         <div class="flex items-center gap-2">
-                                            <h4 class="text-[14px] md:text-[15px] tracking-[0.15em] uppercase font-medium text-white">{{ $food->name }}</h4>
+                                            <a href="{{ route('product.detail', $food->slug) }}" class="text-[14px] md:text-[15px] tracking-[0.15em] uppercase font-medium text-white hover:text-primary transition-colors">
+                                                {{ $food->name }}
+                                            </a>
                                             <!-- Heart Icon -->
                                             <button class="w-6 h-6 flex items-center justify-center text-red-500 hover:scale-110 transition-transform btn-wishlist" data-id="{{ $food->id }}">
                                                 @php

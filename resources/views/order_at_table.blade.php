@@ -15,6 +15,7 @@
                 $allFoodsList[] = [
                     'id' => $food->id,
                     'name' => $food->name,
+                    'slug' => $food->slug,
                     'price' => $food->price,
                     'image' => $imgSrc,
                     'category_id' => $category->id
@@ -152,17 +153,22 @@
                 <!-- Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
                     <template x-for="item in paginatedFoods" :key="item.id">
-                        <div class="product-card group">
-                            <div class="product-image-container border border-white/5">
-                                <img :src="item.image" :alt="item.name" class="product-image">
-                                <div class="add-to-cart-overlay">
-                                    <button @click="addToCart(item.id, item.name, item.price, item.image)" class="add-to-cart-btn">
-                                        Thêm vào giỏ
-                                    </button>
+                        <div class="product-card group relative">
+                            <a :href="'/product/' + item.slug" class="block">
+                                <div class="product-image-container border border-white/5 relative">
+                                    <img :src="item.image" :alt="item.name" class="product-image">
+                                    <!-- Add to cart overlay is now absolutely positioned inside the relative anchor but z-index must be higher so it captures clicks -->
                                 </div>
+                            </a>
+                            <div class="add-to-cart-overlay z-20">
+                                <button @click.prevent.stop="addToCart(item.id, item.name, item.price, item.image)" class="add-to-cart-btn bg-black/50 hover:bg-[#0077bb]">
+                                    Thêm vào giỏ
+                                </button>
                             </div>
                             <div class="product-info">
-                                <h3 class="product-title" x-text="item.name"></h3>
+                                <a :href="'/product/' + item.slug" class="block hover:opacity-80 transition-opacity">
+                                    <h3 class="product-title" x-text="item.name"></h3>
+                                </a>
                                 <div class="product-rating">
                                     &#9734; &#9734; &#9734; &#9734; &#9734;
                                 </div>
