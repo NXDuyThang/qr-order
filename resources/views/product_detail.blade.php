@@ -177,8 +177,8 @@
                     
                     this.showSuccess = true;
                     setTimeout(() => {
-                        this.showSuccess = false;
-                    }, 3000);
+                        window.location.href = "{{ route('order_at_table') }}";
+                    }, 800);
                 }
             }));
         });
