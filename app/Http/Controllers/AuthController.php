@@ -56,7 +56,7 @@ class AuthController extends Controller
         // Based on the docs, output has: "User Info", "access_token"
         if (isset($response['access_token']) || (isset($response['data']) && isset($response['data']['access_token']))) {
             $token = $response['access_token'] ?? $response['data']['access_token'];
-            $userInfo = $response['User Info'] ?? ($response['data']['User Info'] ?? null);
+            $userInfo = $response['User Info'] ?? ($response['data']['User Info'] ?? ($response['data'] ?? null));
 
             Session::put('access_token', $token);
             if ($userInfo) {
@@ -84,10 +84,17 @@ class AuthController extends Controller
                 ]
             );
             
+            // Cập nhật lại tên nếu lúc trước bị lưu nhầm thành email (hoặc API có tên mới)
+            if (!empty($name) && $name !== $request->username && str_contains($localUser->name, '@')) {
+                $localUser->name = $name;
+            }
+            // Hoặc luôn luôn update theo thông tin API mới nhất
+            $localUser->name = $name;
+
             if (isset($userInfo['avatar'])) {
                 $localUser->avatar_url = $userInfo['avatar'];
-                $localUser->save();
             }
+            $localUser->save();
 
             // Đăng nhập bằng Laravel Auth
             \Illuminate\Support\Facades\Auth::login($localUser);

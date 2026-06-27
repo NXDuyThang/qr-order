@@ -48,6 +48,13 @@ class ProfileController extends Controller
                 if (auth()->check()) {
                     $localUser = auth()->user();
                     $localUser->avatar_url = $userInfo['avatar'];
+                    
+                    // Cập nhật lại tên nếu lúc trước bị lưu nhầm thành email (hoặc API có tên mới)
+                    $apiName = $userInfo['name'] ?? trim(($userInfo['firstname'] ?? '') . ' ' . ($userInfo['lastname'] ?? ''));
+                    if (!empty($apiName)) {
+                        $localUser->name = $apiName;
+                    }
+
                     $localUser->save();
                 }
             }
