@@ -175,11 +175,11 @@
     </div>
 
     <!-- Suggestions -->
-    <div class="px-4 pb-3 pt-3 bg-[#1e293b] border-t border-white/5 flex gap-2 overflow-x-auto scrollbar-hide whitespace-nowrap">
-        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Gợi ý món ăn ngon</button>
-        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Tư vấn giảm cân</button>
-        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Món chay hôm nay</button>
-        <button type="button" class="suggestion-btn text-[12px] bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30 hover:bg-primary hover:text-white transition-colors shrink-0">Đồ uống giải nhiệt</button>
+    <div class="px-4 pb-3 pt-3 bg-[#1e293b] border-t border-white/5 flex flex-col gap-2">
+        <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Gợi ý món ăn ngon</button>
+        <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Tư vấn giảm cân</button>
+        <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Món chay hôm nay</button>
+        <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Đồ uống giải nhiệt</button>
     </div>
 
     <!-- Chat Input Area -->
