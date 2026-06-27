@@ -37,14 +37,14 @@ use App\Http\Controllers\WishlistController;
 Route::middleware('auth')->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
-    
-    // Table Ordering & Checkout Routes
-    Route::get('/order', [PageController::class, 'orderAtTable'])->name('order_at_table');
-    Route::post('/checkout/prepare', [\App\Http\Controllers\OrderController::class, 'prepareCheckout'])->name('checkout.prepare');
-    Route::get('/checkout', [\App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout.index');
-    Route::post('/checkout', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
-    Route::get('/checkout/transfer/{order}', [\App\Http\Controllers\OrderController::class, 'showTransferQR'])->name('checkout.transfer');
 });
+
+// Table Ordering & Checkout Routes (Guest allowed)
+Route::get('/order', [PageController::class, 'orderAtTable'])->name('order_at_table');
+Route::post('/checkout/prepare', [\App\Http\Controllers\OrderController::class, 'prepareCheckout'])->name('checkout.prepare');
+Route::get('/checkout', [\App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout.index');
+Route::post('/checkout', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
+Route::get('/checkout/transfer/{order}', [\App\Http\Controllers\OrderController::class, 'showTransferQR'])->name('checkout.transfer');
 
 // API Routes for frontend
 Route::post('/ajax/administratives', [ProfileController::class, 'getAdministratives'])->name('api.administratives');

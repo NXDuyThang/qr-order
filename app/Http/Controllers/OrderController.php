@@ -96,8 +96,15 @@ class OrderController extends Controller
     public function showTransferQR(Order $order)
     {
         // Ensure the order belongs to the user or table logic
-        if ($order->user_id !== auth()->id()) {
-            abort(403);
+        if ($order->user_id) {
+            if ($order->user_id !== auth()->id()) {
+                abort(403, 'Không có quyền truy cập');
+            }
+        } else {
+            // Guest order
+            if ((string)$order->table_id !== (string)session('table_id')) {
+                abort(403, 'Không có quyền truy cập (Sai bàn)');
+            }
         }
 
         $bankId = env('VIETQR_BANK_ID', 'MB');
