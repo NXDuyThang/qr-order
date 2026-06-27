@@ -2,7 +2,7 @@
     @push('styles')
     <style>
         .product-detail-bg {
-            background-color: #111417; /* Very dark grayish blue/black to match Laurent theme */
+            background-color: #040810; /* Very dark grayish blue/black to match Laurent theme */
             min-height: 100vh;
             color: #ffffff;
             font-family: var(--font-sans, 'Jost', sans-serif);
@@ -11,13 +11,13 @@
         }
         .laurent-title {
             font-family: var(--font-serif, 'Playfair Display', serif);
-            color: #cda873; /* Golden/Primary color from Laurent theme */
+            color: #0077bb; /* Golden/Primary color from Laurent theme */
             letter-spacing: 0.25em;
             text-transform: uppercase;
         }
         .add-cart-btn {
-            border: 1px solid #cda873;
-            color: #cda873;
+            border: 1px solid #0077bb;
+            color: #0077bb;
             background: transparent;
             padding: 12px 30px;
             font-size: 11px;
@@ -26,8 +26,8 @@
             transition: all 0.3s ease;
         }
         .add-cart-btn:hover {
-            background: #cda873;
-            color: #111417;
+            background: #0077bb;
+            color: #040810;
         }
         .qty-input {
             background: transparent;
@@ -39,7 +39,7 @@
         }
         .qty-input:focus {
             outline: none;
-            border-color: #cda873;
+            border-color: #0077bb;
         }
         /* Hide number arrows */
         .qty-input::-webkit-outer-spin-button,
@@ -59,9 +59,9 @@
         <div class="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center mb-12 border-b border-white/5 pb-8">
             <h1 class="laurent-title text-sm md:text-base mb-4 md:mb-0 tracking-[0.3em]">SHOP</h1>
             <div class="text-[12px] md:text-[13px] tracking-widest flex items-center text-gray-400">
-                <a href="{{ route('welcome') }}" class="hover:text-[#cda873] transition-colors">Trang chủ</a> 
+                <a href="{{ route('welcome') }}" class="hover:text-[#0077bb] transition-colors">Trang chủ</a> 
                 <span class="mx-3 text-white/30">»</span> 
-                <a href="{{ route('menu') }}" class="hover:text-[#cda873] transition-colors">Thực đơn</a> 
+                <a href="{{ route('menu') }}" class="hover:text-[#0077bb] transition-colors">Thực đơn</a> 
                 <span class="mx-3 text-white/30">»</span> 
                 <span class="text-white">{{ $food->name }}</span>
             </div>
@@ -91,14 +91,14 @@
                 
                 <!-- Rating -->
                 <div class="flex items-center gap-2 mb-6">
-                    <div class="text-[#cda873] text-sm tracking-[0.2em]">
+                    <div class="text-[#0077bb] text-sm tracking-[0.2em]">
                         &#9733; &#9733; &#9733; &#9733; &#9734;
                     </div>
                     <span class="text-gray-400 text-xs tracking-wider">(2 đánh giá của khách hàng)</span>
                 </div>
                 
                 <!-- Price -->
-                <div class="text-[#cda873] text-2xl font-serif mb-8 tracking-widest">
+                <div class="text-[#0077bb] text-2xl font-serif mb-8 tracking-widest">
                     {{ number_format($food->price * 1000, 0, ',', '.') }} VNĐ
                 </div>
                 
@@ -124,20 +124,20 @@
                 </div>
                 
                 <!-- Success Message -->
-                <div x-show="showSuccess" x-transition class="text-[#cda873] text-sm tracking-wider mb-6" style="display: none;">
+                <div x-show="showSuccess" x-transition class="text-[#0077bb] text-sm tracking-wider mb-6" style="display: none;">
                     ✓ Đã thêm vào giỏ hàng thành công! (Vui lòng vào giỏ hàng hoặc về trang Đặt món tại bàn để tiếp tục)
                 </div>
                 
                 <!-- Meta Info -->
                 <div class="flex flex-col gap-4 text-[13px] tracking-[0.15em] text-gray-400 border-t border-white/5 pt-8">
                     <div>
-                        <span class="text-[#cda873] uppercase mr-2 font-serif">SKU:</span> {{ str_pad($food->id, 3, '0', STR_PAD_LEFT) }}
+                        <span class="text-[#0077bb] uppercase mr-2 font-serif">SKU:</span> {{ str_pad($food->id, 3, '0', STR_PAD_LEFT) }}
                     </div>
                     <div>
-                        <span class="text-[#cda873] uppercase mr-2 font-serif">CATEGORY:</span> {{ $food->category->name ?? 'Thực đơn' }}
+                        <span class="text-[#0077bb] uppercase mr-2 font-serif">CATEGORY:</span> {{ $food->category->name ?? 'Thực đơn' }}
                     </div>
                     <div>
-                        <span class="text-[#cda873] uppercase mr-2 font-serif">TAGS:</span> Nổi bật, Đặc sản
+                        <span class="text-[#0077bb] uppercase mr-2 font-serif">TAGS:</span> Nổi bật, Đặc sản
                     </div>
                 </div>
                 
