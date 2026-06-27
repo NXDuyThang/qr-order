@@ -69,7 +69,19 @@ class ChatbotController extends Controller
         if (auth()->check()) {
             $user = auth()->user();
             // Đảm bảo lấy tên (name) hoặc fallback sang thông tin khác, tránh gọi bằng email
-            $displayName = $user->name ?? ($user->firstname . ' ' . $user->lastname) ?? 'Khách hàng';
+            $displayName = trim($user->name);
+            if (empty($displayName)) {
+                $displayName = trim(($user->firstname ?? '') . ' ' . ($user->lastname ?? ''));
+            }
+            if (empty($displayName)) {
+                $displayName = 'Khách hàng';
+            }
+            
+            // Nếu displayName là một email (có chứa @), cắt lấy phần trước @ làm tên gọi
+            if (str_contains($displayName, '@')) {
+                $displayName = explode('@', $displayName)[0];
+            }
+
             $userInfo = "Tên của khách hàng đang trò chuyện là: '$displayName'. Tuyệt đối gọi khách hàng bằng tên này, KHÔNG được gọi bằng email hay số điện thoại.";
         }
 
