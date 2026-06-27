@@ -39,10 +39,15 @@ class ProfileController extends Controller
             $userInfo = Session::get('user_info');
         } elseif (!empty($userInfo)) {
             // Prevent large data from bloating the session cookie
-            unset($userInfo['cccd_front']);
-            unset($userInfo['cccd_back']);
+            $filteredUserInfo = [
+                'id' => $userInfo['id'] ?? null,
+                'name' => $userInfo['name'] ?? null,
+                'email' => $userInfo['email'] ?? null,
+                'avatar' => $userInfo['avatar'] ?? null,
+                'phone' => $userInfo['phone'] ?? null,
+            ];
             // Update session with the latest user info (including avatar)
-            Session::put('user_info', $userInfo);
+            Session::put('user_info', $filteredUserInfo);
             if (isset($userInfo['avatar'])) {
                 Session::put('user_avatar', $userInfo['avatar']);
                 if (auth()->check()) {

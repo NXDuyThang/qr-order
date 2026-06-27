@@ -61,9 +61,14 @@ class AuthController extends Controller
             Session::put('access_token', $token);
             if ($userInfo) {
                 // Prevent large data from bloating the session cookie
-                unset($userInfo['cccd_front']);
-                unset($userInfo['cccd_back']);
-                Session::put('user_info', $userInfo);
+                // Chỉ lưu những thông tin thật sự cần thiết (tránh lỗi vượt quá giới hạn 4KB của cookie)
+                $filteredUserInfo = [
+                    'id' => $userInfo['id'] ?? null,
+                    'name' => $userInfo['name'] ?? null,
+                    'email' => $userInfo['email'] ?? null,
+                    'avatar' => $userInfo['avatar'] ?? null,
+                ];
+                Session::put('user_info', $filteredUserInfo);
                 if (isset($userInfo['avatar'])) {
                     Session::put('user_avatar', $userInfo['avatar']);
                 }
