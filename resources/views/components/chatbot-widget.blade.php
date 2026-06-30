@@ -175,12 +175,14 @@
     </div>
 
     <!-- Suggestions -->
-    <div class="px-4 pb-3 pt-3 bg-[#1e293b] border-t border-white/5 flex flex-col gap-2">
+    @if(empty($chatHistory))
+    <div id="suggestions-container" class="px-4 pb-3 pt-3 bg-[#1e293b] border-t border-white/5 flex flex-col gap-2 shrink-0">
         <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Gợi ý món ăn ngon</button>
         <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Tư vấn giảm cân</button>
         <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Món chay hôm nay</button>
         <button type="button" class="suggestion-btn text-[12px] text-left bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/30 hover:bg-primary hover:text-white transition-colors w-full">Đồ uống giải nhiệt</button>
     </div>
+    @endif
 
     <!-- Chat Input Area -->
     <div id="chatbot-input-area" class="shrink-0 pt-2">
@@ -260,6 +262,12 @@
             chatInput.value = '';
             chatInput.disabled = true;
             sendBtn.disabled = true;
+
+            // Hide suggestions on first message
+            const suggestionsContainer = document.getElementById('suggestions-container');
+            if (suggestionsContainer) {
+                suggestionsContainer.style.display = 'none';
+            }
 
             // Append user message to UI
             appendUserMessage(message);

@@ -22,6 +22,15 @@ class AuthController extends Controller
             return redirect()->route('profile.index');
         }
 
+        // Lưu lại trang trước đó nếu người dùng đang ở trang đặt món (quét QR)
+        $previous = url()->previous();
+        if (str_contains($previous, '/order') || str_contains($previous, '/checkout')) {
+            session()->put('url.intended', $previous);
+        } else {
+            // Đảm bảo xóa url intended cũ nếu vào trực tiếp trang login
+            session()->forget('url.intended');
+        }
+
         return view('auth.login');
     }
 
