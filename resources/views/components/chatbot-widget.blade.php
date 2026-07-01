@@ -8,6 +8,29 @@
         background-color: #0f172a; /* Slate 900 */
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         border: 1px solid rgba(0, 119, 187, 0.3);
+        position: fixed;
+        z-index: 99999;
+        /* Default for Mobile/Tablet: Full Screen */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        max-height: 100%;
+        border-radius: 0;
+    }
+    
+    /* Desktop */
+    @media (min-width: 1024px) {
+        #chatbot-window {
+            bottom: 100px;
+            right: 24px;
+            left: auto;
+            width: 400px;
+            height: 650px;
+            max-height: 80vh;
+            border-radius: 1rem; /* rounded-2xl equivalent */
+        }
     }
     #chatbot-header {
         background-color: #1e293b; /* Slate 800 */
@@ -99,7 +122,7 @@
 </button>
 
 <!-- Chatbot Window -->
-<div id="chatbot-window" style="position: fixed; bottom: 100px; right: 24px; z-index: 99999; width: 400px; height: 650px; max-height: 80vh;" class="rounded-2xl flex-col overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0 hidden">
+<div id="chatbot-window" class="flex-col overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0 hidden">
     
     <!-- Chat Header -->
     <div id="chatbot-header" class="flex items-center justify-between shrink-0">
