@@ -85,7 +85,12 @@ class ChatbotController extends Controller
             $userInfo = "Tên của khách hàng đang trò chuyện là: '$displayName'. Tuyệt đối gọi khách hàng bằng tên này, KHÔNG được gọi bằng email hay số điện thoại.";
         }
 
-        $systemPrompt = "Bạn là một chuyên gia dinh dưỡng làm việc cho 'Nhà Hàng Ẩm Thực Việt'. Nhiệm vụ của bạn là tư vấn sức khỏe và gợi ý các món ăn dinh dưỡng dựa trên chỉ số BMI của khách hàng. Hãy hỏi chiều cao và cân nặng của họ nếu chưa biết để tính BMI. Công thức BMI = Cân nặng (kg) / (Chiều cao (m) * Chiều cao (m)). Đưa ra đánh giá (Gầy, Bình thường, Thừa cân, Béo phì) và sau đó đề xuất các món ăn ẩm thực Việt Nam phù hợp với thể trạng của họ. Chỉ trả lời bằng tiếng Việt, thân thiện và nhiệt tình.\n\n$userInfo\n\n$menuList\nLƯU Ý: CHỈ đề xuất các món ăn có trong 'Danh sách thực đơn của nhà hàng' ở trên, tuyệt đối không tự bịa ra món khác.";
+        $tableId = Session::get('table_id');
+        if ($tableId) {
+            $systemPrompt = "Bạn là một AI Waiter (nhân viên phục vụ AI) tại 'Nhà Hàng Ẩm Thực Việt', đang phục vụ khách tại bàn số $tableId. Nhiệm vụ của bạn là chào đón khách, giới thiệu thực đơn, trả lời các câu hỏi về giá cả hoặc thành phần món ăn. Ví dụ nếu khách hỏi món nào dưới 300.000 thì bạn phải liệt kê ra. Hãy tỏ ra thân thiện, chuyên nghiệp và nhiệt tình. Chỉ trả lời bằng tiếng Việt.\n\n$userInfo\n\n$menuList\nLƯU Ý: CHỈ đề xuất các món ăn có trong 'Danh sách thực đơn của nhà hàng' ở trên, tuyệt đối không tự bịa ra món khác.";
+        } else {
+            $systemPrompt = "Bạn là một AI Lễ tân kiêm chuyên gia dinh dưỡng làm việc cho 'Nhà Hàng Ẩm Thực Việt'.\nNhiệm vụ 1: Nhận diện ý định Đặt Bàn (Reservation). Nếu khách muốn đặt bàn, hãy hỏi Tên, Số điện thoại, Số người, Ngày, Giờ và Khu vực. Khi đã có ĐỦ TẤT CẢ thông tin, trả về ĐÚNG MỘT DÒNG JSON theo định dạng sau và KHÔNG THÊM BẤT KỲ VĂN BẢN NÀO KHÁC VÀO TRONG DÒNG ĐÓ: `{\"action\":\"book_table\",\"name\":\"Tên\",\"phone\":\"Số điện thoại\",\"guests\":2,\"date\":\"YYYY-MM-DD\",\"time\":\"HH:MM\",\"notes\":\"Khu vực\"}`\nNhiệm vụ 2: Nếu khách hỏi về dinh dưỡng, hãy tính BMI (hỏi chiều cao, cân nặng nếu chưa có) và tư vấn món ăn.\nChỉ trả lời bằng tiếng Việt, thân thiện và nhiệt tình.\n\n$userInfo\n\n$menuList\nLƯU Ý: CHỈ đề xuất các món ăn có trong thực đơn, không bịa món khác.";
+        }
 
         $payload = [
             'system_instruction' => [
@@ -110,6 +115,50 @@ class ChatbotController extends Controller
                 if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
                     $botMessage = $responseData['candidates'][0]['content']['parts'][0]['text'];
                     
+                    // Kiểm tra xem có JSON action đặt bàn không
+                    if (preg_match('/\{.*?"action"\s*:\s*"book_table".*?\}/s', $botMessage, $matches)) {
+                        try {
+                            $bookingData = json_decode($matches[0], true);
+                            if ($bookingData && isset($bookingData['action']) && $bookingData['action'] === 'book_table') {
+                                // Xóa đoạn JSON khỏi botMessage
+                                $botMessage = str_replace($matches[0], "", $botMessage);
+                                
+                                // Tạo Booking record
+                                $booking = \App\Models\Booking::create([
+                                    'name' => $bookingData['name'] ?? 'Khách',
+                                    'phone' => $bookingData['phone'] ?? '',
+                                    'guests' => $bookingData['guests'] ?? 1,
+                                    'date' => $bookingData['date'] ?? date('Y-m-d'),
+                                    'time' => $bookingData['time'] ?? date('H:i'),
+                                    'notes' => $bookingData['notes'] ?? '',
+                                    'status' => 'pending'
+                                ]);
+
+                                // Tạo link QR code
+                                $qrData = "Booking ID: " . $booking->id . " | Tên: " . $booking->name . " | Giờ: " . $booking->time . " " . $booking->date;
+                                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($qrData);
+                                
+                                $successMessage = "<br><br><b>🎉 Tôi đã đặt bàn thành công cho bạn!</b><br>";
+                                $successMessage .= "Mã đặt bàn: <b>#" . $booking->id . "</b><br>";
+                                $successMessage .= "Tên: " . $booking->name . "<br>";
+                                $successMessage .= "Thời gian: " . $booking->time . " " . $booking->date . "<br>";
+                                $successMessage .= "Số người: " . $booking->guests . "<br>";
+                                $successMessage .= "Khu vực: " . ($booking->notes ?: 'Không') . "<br><br>";
+                                $successMessage .= "Đây là mã QR của bạn:<br><img src='{$qrUrl}' alt='QR Code' class='mt-2 rounded-lg border border-white/10 shadow-lg' style='width: 200px;'><br><br>";
+                                $successMessage .= "<span class='text-primary'><i>🔔 Hệ thống đã lưu nhắc lịch cho bạn.</i></span>";
+
+                                $botMessage .= $successMessage;
+                            }
+                        } catch (\Exception $e) {
+                            // Bỏ qua nếu lỗi parse
+                        }
+                    }
+
+                    // Đảm bảo tin nhắn không bị trống
+                    if (trim(strip_tags($botMessage)) === '') {
+                        $botMessage = "Tuyệt vời! Tôi đã ghi nhận thông tin đặt bàn của bạn.";
+                    }
+
                     // Thêm phản hồi của bot vào lịch sử
                     $chatHistory[] = ['role' => 'bot', 'content' => $botMessage];
                     Session::put('chat_history', $chatHistory);
