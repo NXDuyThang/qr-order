@@ -153,31 +153,60 @@ EOT;
                                 // Xóa đoạn JSON khỏi botMessage
                                 $botMessage = str_replace($matches[0], "", $botMessage);
                                 
-                                // Tạo Booking record
-                                $booking = \App\Models\Booking::create([
-                                    'name' => $bookingData['name'] ?? 'Khách',
-                                    'phone' => $bookingData['phone'] ?? '',
-                                    'guests' => $bookingData['guests'] ?? 1,
-                                    'date' => $bookingData['date'] ?? date('Y-m-d'),
-                                    'time' => $bookingData['time'] ?? date('H:i'),
-                                    'notes' => $bookingData['notes'] ?? '',
-                                    'status' => 'pending'
-                                ]);
-
-                                // Tạo link QR code
-                                $qrData = "Booking ID: " . $booking->id . " | Tên: " . $booking->name . " | Giờ: " . $booking->time . " " . $booking->date;
-                                $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($qrData);
+                                $requestedDate = $bookingData['date'] ?? date('Y-m-d');
+                                $requestedTime = $bookingData['time'] ?? date('H:i');
                                 
-                                $successMessage = "<br><br><b>🎉 Tôi đã đặt bàn thành công cho bạn!</b><br>";
-                                $successMessage .= "Mã đặt bàn: <b>#" . $booking->id . "</b><br>";
-                                $successMessage .= "Tên: " . $booking->name . "<br>";
-                                $successMessage .= "Thời gian: " . $booking->time . " " . $booking->date . "<br>";
-                                $successMessage .= "Số người: " . $booking->guests . "<br>";
-                                $successMessage .= "Khu vực: " . ($booking->notes ?: 'Không') . "<br><br>";
-                                $successMessage .= "Đây là mã QR của bạn:<br><img src='{$qrUrl}' alt='QR Code' class='mt-2 rounded-lg border border-white/10 shadow-lg' style='width: 200px;'><br><br>";
-                                $successMessage .= "<span class='text-primary'><i>🔔 Hệ thống đã lưu nhắc lịch cho bạn.</i></span>";
+                                // Tìm các bàn đã được đặt trong khoảng +/- 2 tiếng
+                                try {
+                                    $requestedDateTime = \Carbon\Carbon::parse($requestedDate . ' ' . $requestedTime);
+                                    $startTime = $requestedDateTime->copy()->subHours(2)->format('H:i:s');
+                                    $endTime = $requestedDateTime->copy()->addHours(2)->format('H:i:s');
+                                    
+                                    $bookedTableIds = \App\Models\Booking::where('date', $requestedDate)
+                                        ->whereBetween('time', [$startTime, $endTime])
+                                        ->pluck('table_id')
+                                        ->filter()
+                                        ->toArray();
+                                        
+                                    $table = \App\Models\Table::whereNotIn('id', $bookedTableIds)->first();
+                                } catch (\Exception $e) {
+                                    $table = \App\Models\Table::first(); // Fallback nếu lỗi parse time
+                                }
 
-                                $botMessage .= $successMessage;
+                                if (!$table) {
+                                    $botMessage .= "Rất xin lỗi bạn, nhà hàng chúng tôi đã **kín bàn** vào lúc **$requestedTime ngày $requestedDate** (do các bàn đã được đặt trong khung giờ này). Bạn có thể vui lòng chọn một khung giờ khác được không?";
+                                } else {
+                                    $assignedTableId = $table->id;
+
+                                    // Tạo Booking record
+                                    $booking = \App\Models\Booking::create([
+                                        'name' => $bookingData['name'] ?? 'Khách',
+                                        'phone' => $bookingData['phone'] ?? '',
+                                        'guests' => $bookingData['guests'] ?? 1,
+                                        'date' => $requestedDate,
+                                        'time' => $requestedTime,
+                                        'notes' => $bookingData['notes'] ?? '',
+                                        'table_id' => $assignedTableId,
+                                        'status' => 'pending'
+                                    ]);
+
+                                    // Tạo link QR code trỏ thẳng tới trang order của bàn
+                                    $qrData = url('/order?table_id=' . $assignedTableId);
+                                    $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($qrData);
+                                    
+                                    $successMessage = "<br><br><b>🎉 Tôi đã đặt bàn thành công cho bạn!</b><br>";
+                                    $successMessage .= "Mã đặt bàn: <b>#" . $booking->id . "</b><br>";
+                                    $successMessage .= "Tên: " . $booking->name . "<br>";
+                                    $successMessage .= "Thời gian: " . $booking->time . " " . $booking->date . "<br>";
+                                    $successMessage .= "Số người: " . $booking->guests . "<br>";
+                                    $successMessage .= "Khu vực: " . ($booking->notes ?: 'Không') . "<br>";
+                                    $successMessage .= "Đã xếp bàn số: <b>" . $assignedTableId . "</b><br><br>";
+                                    $successMessage .= "Bạn có thể quét mã QR dưới đây để vào thẳng trang gọi món cho bàn của mình:<br>";
+                                    $successMessage .= "<img src='{$qrUrl}' alt='QR Code' class='mt-2 rounded-lg border border-white/10 shadow-lg' style='width: 200px;'><br><br>";
+                                    $successMessage .= "<span class='text-primary'><i>🔔 Hệ thống đã lưu nhắc lịch cho bạn.</i></span>";
+
+                                    $botMessage .= $successMessage;
+                                }
                             }
                         } catch (\Exception $e) {
                             // Bỏ qua nếu lỗi parse
