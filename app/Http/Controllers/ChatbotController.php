@@ -93,12 +93,13 @@ class ChatbotController extends Controller
             $bookingInstructions = "";
             if ($isLoggedIn) {
                 $bookingInstructions = <<<EOT
-- ĐỂ ĐẶT BÀN, cần ĐỦ 5 thông tin: [Số điện thoại], [Số người], [Ngày], [Giờ], [Khu vực (trong nhà/ngoài trời)]. (Tên đã có sẵn, không cần hỏi tên).
-- Nếu còn thiếu: Chỉ hỏi những thông tin chưa có.
-- NẾU ĐÃ ĐỦ TẤT CẢ THÔNG TIN: DỪNG VIỆC CHAT LẠI. BẠN PHẢI TRẢ VỀ DUY NHẤT 1 DÒNG ĐỊNH DẠNG JSON. KHÔNG KÈM THEO BẤT KỲ CÂU CHÀO HAY VĂN BẢN NÀO KHÁC.
+- ĐỂ ĐẶT BÀN, cần gom đủ 5 thông tin: [Số điện thoại], [Số người], [Ngày], [Giờ], [Khu vực / Số bàn cụ thể]. (Tên đã có sẵn).
+- LỖI HAY GẶP CẦN TRÁNH: Bạn thường xuyên QUÊN các thông tin khách đã cung cấp ở những tin nhắn đầu tiên. LƯU Ý, BẠN PHẢI ĐỌC TỪNG TIN NHẮN TRONG LỊCH SỬ. Nếu khách cung cấp rải rác: Tin 1 cho SĐT+Giờ, Tin 2 cho Số người, Tin 3 cho Ngày -> NGHĨA LÀ BẠN ĐÃ ĐỦ THÔNG TIN. KHÔNG ĐƯỢC HỎI LẠI.
+- Nếu còn thiếu: Chỉ hỏi đúng những thông tin chưa có.
+- NẾU ĐÃ ĐỦ TẤT CẢ THÔNG TIN: DỪNG CHAT. CHỈ TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON.
 
-Mẫu JSON TRẢ VỀ (khi đã đủ thông tin):
-{"action":"book_table","name":"$displayName","phone":"Số ĐT","guests":2,"date":"YYYY-MM-DD","time":"HH:MM","notes":"Khu vực"}
+Mẫu JSON TRẢ VỀ (khi đủ thông tin):
+{"action":"book_table","name":"$displayName","phone":"Số ĐT","guests":2,"date":"YYYY-MM-DD","time":"HH:MM","notes":"Khu vực (trong nhà/ngoài trời)","table_id":"số bàn nếu khách yêu cầu cụ thể, ví dụ 3, hoặc null nếu không yêu cầu"}
 EOT;
             } else {
                 $bookingInstructions = <<<EOT
@@ -108,11 +109,12 @@ EOT;
             }
 
             $systemPrompt = <<<EOT
-Bạn là một AI Lễ tân làm việc cho 'Nhà Hàng Ẩm Thực Việt'.
+Bạn là AI Lễ tân làm việc cho 'Nhà Hàng Ẩm Thực Việt'.
 
 *** QUY TẮC CỐT LÕI: ***
-- Bạn PHẢI đọc toàn bộ lịch sử trò chuyện để biết khách đã cung cấp thông tin gì.
-- KHÔNG BAO GIỜ hỏi lại thông tin mà khách đã cung cấp trong các tin nhắn trước.
+1. Bạn là máy đọc dữ liệu. Hãy ghép nối TẤT CẢ thông tin khách đã nhắn từ trước tới nay.
+2. KHÔNG BAO GIỜ yêu cầu khách cung cấp lại những gì họ đã từng nhắn (kể cả ở các câu chat trước).
+3. ĐỐI VỚI ĐẶT BÀN:
 $bookingInstructions
 
 Thông tin khách hàng:
@@ -155,6 +157,7 @@ EOT;
                                 
                                 $requestedDate = $bookingData['date'] ?? date('Y-m-d');
                                 $requestedTime = $bookingData['time'] ?? date('H:i');
+                                $requestedTableId = $bookingData['table_id'] ?? null;
                                 
                                 // Tìm các bàn đã được đặt trong khoảng +/- 2 tiếng
                                 try {
@@ -168,14 +171,29 @@ EOT;
                                         ->filter()
                                         ->toArray();
                                         
-                                    $table = \App\Models\Table::whereNotIn('id', $bookedTableIds)->first();
+                                    if ($requestedTableId && is_numeric($requestedTableId)) {
+                                        // Khách yêu cầu bàn cụ thể
+                                        if (in_array($requestedTableId, $bookedTableIds)) {
+                                            $table = null; // Bàn này đã bị đặt
+                                            $botMessage .= "Rất xin lỗi bạn, **Bàn số $requestedTableId** đã có người đặt vào lúc **$requestedTime ngày $requestedDate**. Bạn có thể đổi sang khung giờ khác, hoặc chọn bàn khác được không ạ?";
+                                        } else {
+                                            $table = \App\Models\Table::find($requestedTableId);
+                                            if (!$table) {
+                                                $botMessage .= "Xin lỗi bạn, nhà hàng không có Bàn số $requestedTableId. Vui lòng chọn bàn khác.";
+                                            }
+                                        }
+                                    } else {
+                                        // Khách không yêu cầu bàn cụ thể, tự tìm bàn trống
+                                        $table = \App\Models\Table::whereNotIn('id', $bookedTableIds)->first();
+                                        if (!$table) {
+                                            $botMessage .= "Rất xin lỗi bạn, nhà hàng chúng tôi đã **kín bàn** vào lúc **$requestedTime ngày $requestedDate**. Bạn có thể vui lòng chọn một khung giờ khác được không?";
+                                        }
+                                    }
                                 } catch (\Exception $e) {
                                     $table = \App\Models\Table::first(); // Fallback nếu lỗi parse time
                                 }
 
-                                if (!$table) {
-                                    $botMessage .= "Rất xin lỗi bạn, nhà hàng chúng tôi đã **kín bàn** vào lúc **$requestedTime ngày $requestedDate** (do các bàn đã được đặt trong khung giờ này). Bạn có thể vui lòng chọn một khung giờ khác được không?";
-                                } else {
+                                if ($table) {
                                     $assignedTableId = $table->id;
 
                                     // Tạo Booking record

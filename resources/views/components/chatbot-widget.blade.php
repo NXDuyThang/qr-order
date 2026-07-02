@@ -32,6 +32,17 @@
             border-radius: 1rem; /* rounded-2xl equivalent */
         }
     }
+    #chatbot-window.chatbot-fullscreen {
+        bottom: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        border-radius: 0 !important;
+        z-index: 999999 !important;
+    }
     #chatbot-header {
         background-color: #1e293b; /* Slate 800 */
         border-bottom: 1px solid rgba(0, 119, 187, 0.2);
@@ -135,9 +146,14 @@
                 <p class="text-primary/70 text-[10px] tracking-wider">Trí tuệ nhân tạo (AI)</p>
             </div>
         </div>
-        <button id="chatbot-close-btn" class="text-gray-400 hover:text-white transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+        <div class="flex items-center gap-3">
+            <button id="chatbot-maximize-btn" class="text-gray-400 hover:text-white transition-colors" title="Phóng to">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+            </button>
+            <button id="chatbot-close-btn" class="text-gray-400 hover:text-white transition-colors" title="Đóng">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
     </div>
 
     <!-- Chat Messages Area -->
@@ -232,6 +248,24 @@
         const chatMessages = document.getElementById('chat-messages');
         const typingIndicator = document.getElementById('typing-indicator');
         const sendBtn = document.getElementById('send-btn');
+        const maximizeBtn = document.getElementById('chatbot-maximize-btn');
+
+        let isMaximized = false;
+
+        // Toggle Maximize
+        maximizeBtn.addEventListener('click', () => {
+            isMaximized = !isMaximized;
+            if (isMaximized) {
+                chatWindow.classList.add('chatbot-fullscreen');
+                maximizeBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 14h6m0 0v6m0-6l-7 7m17-11h-6m0 0V4m0 6l7-7M4 10h6m0 0V4m0 6l-7-7m17 11h-6m0 0v6m0-6l7 7"></path></svg>';
+                maximizeBtn.title = "Thu nhỏ";
+            } else {
+                chatWindow.classList.remove('chatbot-fullscreen');
+                maximizeBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>';
+                maximizeBtn.title = "Phóng to";
+            }
+            setTimeout(scrollToBottom, 300); // adjust scroll after animation
+        });
 
         // Toggle chat window
         toggleBtn.addEventListener('click', () => {
