@@ -64,11 +64,13 @@ class ChatbotController extends Controller
             $menuList .= "- {$food->name} ({$priceVND} VNĐ): {$food->description}\n";
         }
 
-        // Lấy thông tin khách hàng nếu đã đăng nhập
+        // Kiểm tra trạng thái đăng nhập
+        $isLoggedIn = auth()->check();
         $userInfo = "";
-        if (auth()->check()) {
+        $displayName = "Khách hàng";
+
+        if ($isLoggedIn) {
             $user = auth()->user();
-            // Đảm bảo lấy tên (name) hoặc fallback sang thông tin khác, tránh gọi bằng email
             $displayName = trim($user->name);
             if (empty($displayName)) {
                 $displayName = trim(($user->firstname ?? '') . ' ' . ($user->lastname ?? ''));
@@ -76,20 +78,48 @@ class ChatbotController extends Controller
             if (empty($displayName)) {
                 $displayName = 'Khách hàng';
             }
-            
-            // Nếu displayName là một email (có chứa @), cắt lấy phần trước @ làm tên gọi
             if (str_contains($displayName, '@')) {
                 $displayName = explode('@', $displayName)[0];
             }
-
-            $userInfo = "Tên của khách hàng đang trò chuyện là: '$displayName'. Tuyệt đối gọi khách hàng bằng tên này, KHÔNG được gọi bằng email hay số điện thoại.";
+            $userInfo = "Tên của khách hàng đang trò chuyện là: '$displayName'. KHÔNG cần hỏi tên khách nữa. (Coi như thông tin [Tên] = '$displayName' đã có).";
+        } else {
+            $userInfo = "Tình trạng: KHÁCH HÀNG CHƯA ĐĂNG NHẬP.";
         }
 
         $tableId = Session::get('table_id');
         if ($tableId) {
             $systemPrompt = "Bạn là một AI Waiter (nhân viên phục vụ AI) tại 'Nhà Hàng Ẩm Thực Việt', đang phục vụ khách tại bàn số $tableId. Nhiệm vụ của bạn là chào đón khách, giới thiệu thực đơn, trả lời các câu hỏi về giá cả hoặc thành phần món ăn. Ví dụ nếu khách hỏi món nào dưới 300.000 thì bạn phải liệt kê ra. Hãy tỏ ra thân thiện, chuyên nghiệp và nhiệt tình. Chỉ trả lời bằng tiếng Việt.\n\n$userInfo\n\n$menuList\nLƯU Ý: CHỈ đề xuất các món ăn có trong 'Danh sách thực đơn của nhà hàng' ở trên, tuyệt đối không tự bịa ra món khác.";
         } else {
-            $systemPrompt = "Bạn là một AI Lễ tân kiêm chuyên gia dinh dưỡng làm việc cho 'Nhà Hàng Ẩm Thực Việt'.\nNhiệm vụ 1: Nhận diện ý định Đặt Bàn (Reservation). Nếu khách muốn đặt bàn, hãy hỏi Tên, Số điện thoại, Số người, Ngày, Giờ và Khu vực. Khi đã có ĐỦ TẤT CẢ thông tin, trả về ĐÚNG MỘT DÒNG JSON theo định dạng sau và KHÔNG THÊM BẤT KỲ VĂN BẢN NÀO KHÁC VÀO TRONG DÒNG ĐÓ: `{\"action\":\"book_table\",\"name\":\"Tên\",\"phone\":\"Số điện thoại\",\"guests\":2,\"date\":\"YYYY-MM-DD\",\"time\":\"HH:MM\",\"notes\":\"Khu vực\"}`\nNhiệm vụ 2: Nếu khách hỏi về dinh dưỡng, hãy tính BMI (hỏi chiều cao, cân nặng nếu chưa có) và tư vấn món ăn.\nChỉ trả lời bằng tiếng Việt, thân thiện và nhiệt tình.\n\n$userInfo\n\n$menuList\nLƯU Ý: CHỈ đề xuất các món ăn có trong thực đơn, không bịa món khác.";
+            $bookingInstructions = "";
+            if ($isLoggedIn) {
+                $bookingInstructions = <<<EOT
+- ĐỂ ĐẶT BÀN, cần ĐỦ 5 thông tin: [Số điện thoại], [Số người], [Ngày], [Giờ], [Khu vực (trong nhà/ngoài trời)]. (Tên đã có sẵn, không cần hỏi tên).
+- Nếu còn thiếu: Chỉ hỏi những thông tin chưa có.
+- NẾU ĐÃ ĐỦ TẤT CẢ THÔNG TIN: DỪNG VIỆC CHAT LẠI. BẠN PHẢI TRẢ VỀ DUY NHẤT 1 DÒNG ĐỊNH DẠNG JSON. KHÔNG KÈM THEO BẤT KỲ CÂU CHÀO HAY VĂN BẢN NÀO KHÁC.
+
+Mẫu JSON TRẢ VỀ (khi đã đủ thông tin):
+{"action":"book_table","name":"$displayName","phone":"Số ĐT","guests":2,"date":"YYYY-MM-DD","time":"HH:MM","notes":"Khu vực"}
+EOT;
+            } else {
+                $bookingInstructions = <<<EOT
+- ĐỂ ĐẶT BÀN: Khách hàng BẮT BUỘC phải đăng nhập.
+- Bạn PHẢI TỪ CHỐI việc đặt bàn và thông báo lịch sự rằng khách cần phải đăng nhập tài khoản vào hệ thống trước thì mới có thể đặt bàn. Tuyệt đối không tiến hành thu thập thông tin đặt bàn.
+EOT;
+            }
+
+            $systemPrompt = <<<EOT
+Bạn là một AI Lễ tân làm việc cho 'Nhà Hàng Ẩm Thực Việt'.
+
+*** QUY TẮC CỐT LÕI: ***
+- Bạn PHẢI đọc toàn bộ lịch sử trò chuyện để biết khách đã cung cấp thông tin gì.
+- KHÔNG BAO GIỜ hỏi lại thông tin mà khách đã cung cấp trong các tin nhắn trước.
+$bookingInstructions
+
+Thông tin khách hàng:
+$userInfo
+
+$menuList
+EOT;
         }
 
         $payload = [
