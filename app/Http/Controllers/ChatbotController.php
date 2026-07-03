@@ -101,9 +101,7 @@ class ChatbotController extends Controller
   5. Khu vực (trong nhà / ngoài trời) hoặc Số bàn cụ thể.
 - LƯU Ý ĐẶC BIỆT: BẠN PHẢI ĐỌC VÀ GHI NHỚ TOÀN BỘ LỊCH SỬ TRÒ CHUYỆN. Khách hàng có thể đã cung cấp các thông tin này ở những tin nhắn trước đó. BẠN TUYỆT ĐỐI KHÔNG ĐƯỢC HỎI LẠI NHỮNG THÔNG TIN ĐÃ CUNG CẤP.
 - NẾU CHƯA ĐỦ THÔNG TIN: Hãy liệt kê lại những gì bạn đã ghi nhận được từ đầu đến giờ, và LỊCH SỰ HỎI THÊM CÁC THÔNG TIN CÒN THIẾU.
-- NẾU ĐÃ ĐỦ TẤT CẢ 5 THÔNG TIN: BẠN BẮT BUỘC PHẢI DỪNG TRÒ CHUYỆN. KHÔNG SINH RA BẤT KỲ VĂN BẢN NÀO KHÁC. BẠN CHỈ ĐƯỢC PHÉP TRẢ VỀ DUY NHẤT MỘT CHUỖI JSON NHƯ MẪU DƯỚI ĐÂY (không bọc trong markdown):
-
-{"action":"book_table","name":"$displayName","phone":"<số điện thoại>","guests":<số người (kiểu số)>,"date":"YYYY-MM-DD","time":"HH:MM","notes":"<khu vực>","table_id":<số bàn (hoặc null nếu không yêu cầu)>}
+- NẾU ĐÃ ĐỦ TẤT CẢ 5 THÔNG TIN: BẠN BẮT BUỘC PHẢI GỌI HÀM `book_table` ĐỂ HOÀN TẤT ĐẶT BÀN.
 EOT;
             } else {
                 $bookingInstructions = <<<EOT
@@ -128,6 +126,33 @@ $menuList
 EOT;
         }
 
+        $tools = [];
+        if (!$tableId && $isLoggedIn) {
+            $tools = [
+                [
+                    'function_declarations' => [
+                        [
+                            'name' => 'book_table',
+                            'description' => 'Hoàn tất đặt bàn khi đã thu thập đủ thông tin.',
+                            'parameters' => [
+                                'type' => 'OBJECT',
+                                'properties' => [
+                                    'name' => ['type' => 'STRING', 'description' => 'Tên khách hàng'],
+                                    'phone' => ['type' => 'STRING', 'description' => 'Số điện thoại của khách'],
+                                    'guests' => ['type' => 'INTEGER', 'description' => 'Số lượng người'],
+                                    'date' => ['type' => 'STRING', 'description' => 'Ngày khách muốn đặt, định dạng YYYY-MM-DD'],
+                                    'time' => ['type' => 'STRING', 'description' => 'Giờ khách muốn đặt, định dạng HH:MM'],
+                                    'notes' => ['type' => 'STRING', 'description' => 'Khu vực muốn ngồi (trong nhà, ngoài trời)'],
+                                    'table_id' => ['type' => 'INTEGER', 'description' => 'Số bàn yêu cầu cụ thể (nếu có, nếu không thì truyền null)']
+                                ],
+                                'required' => ['name', 'phone', 'guests', 'date', 'time', 'notes']
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
+
         $payload = [
             'system_instruction' => [
                 'parts' => [
@@ -139,6 +164,10 @@ EOT;
             'contents' => $contents
         ];
 
+        if (!empty($tools)) {
+            $payload['tools'] = $tools;
+        }
+
         try {
             $response = Http::withoutVerifying()->withHeaders([
                 'Content-Type' => 'application/json',
@@ -147,102 +176,107 @@ EOT;
             if ($response->successful()) {
                 $responseData = $response->json();
                 
-                // Trích xuất văn bản trả về
-                if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
-                    $botMessage = $responseData['candidates'][0]['content']['parts'][0]['text'];
+                $botMessage = "";
+                $isBookingSuccess = false;
+
+                // Kiểm tra xem model có gọi function đặt bàn không
+                if (isset($responseData['candidates'][0]['content']['parts'][0]['functionCall'])) {
+                    $functionCall = $responseData['candidates'][0]['content']['parts'][0]['functionCall'];
                     
-                    // Kiểm tra xem có JSON action đặt bàn không
-                    if (preg_match('/\{.*?"action"\s*:\s*"book_table".*?\}/s', $botMessage, $matches)) {
+                    if ($functionCall['name'] === 'book_table') {
+                        $bookingData = $functionCall['args'];
+                        $requestedDate = $bookingData['date'] ?? date('Y-m-d');
+                        $requestedTime = $bookingData['time'] ?? date('H:i');
+                        $requestedTableId = $bookingData['table_id'] ?? null;
+                        
+                        // Tìm các bàn đã được đặt trong khoảng +/- 2 tiếng
                         try {
-                            $bookingData = json_decode($matches[0], true);
-                            if ($bookingData && isset($bookingData['action']) && $bookingData['action'] === 'book_table') {
-                                // Xóa đoạn JSON khỏi botMessage
-                                $botMessage = str_replace($matches[0], "", $botMessage);
+                            $requestedDateTime = \Carbon\Carbon::parse($requestedDate . ' ' . $requestedTime);
+                            $startTime = $requestedDateTime->copy()->subHours(2)->format('H:i:s');
+                            $endTime = $requestedDateTime->copy()->addHours(2)->format('H:i:s');
+                            
+                            $bookedTableIds = \App\Models\Booking::where('date', $requestedDate)
+                                ->whereBetween('time', [$startTime, $endTime])
+                                ->pluck('table_id')
+                                ->filter()
+                                ->toArray();
                                 
-                                $requestedDate = $bookingData['date'] ?? date('Y-m-d');
-                                $requestedTime = $bookingData['time'] ?? date('H:i');
-                                $requestedTableId = $bookingData['table_id'] ?? null;
-                                
-                                // Tìm các bàn đã được đặt trong khoảng +/- 2 tiếng
-                                try {
-                                    $requestedDateTime = \Carbon\Carbon::parse($requestedDate . ' ' . $requestedTime);
-                                    $startTime = $requestedDateTime->copy()->subHours(2)->format('H:i:s');
-                                    $endTime = $requestedDateTime->copy()->addHours(2)->format('H:i:s');
-                                    
-                                    $bookedTableIds = \App\Models\Booking::where('date', $requestedDate)
-                                        ->whereBetween('time', [$startTime, $endTime])
-                                        ->pluck('table_id')
-                                        ->filter()
-                                        ->toArray();
-                                        
-                                    if ($requestedTableId && is_numeric($requestedTableId)) {
-                                        // Khách yêu cầu bàn cụ thể
-                                        if (in_array($requestedTableId, $bookedTableIds)) {
-                                            $table = null; // Bàn này đã bị đặt
-                                            $botMessage .= "Rất xin lỗi bạn, **Bàn số $requestedTableId** đã có người đặt vào lúc **$requestedTime ngày $requestedDate**. Bạn có thể đổi sang khung giờ khác, hoặc chọn bàn khác được không ạ?";
-                                        } else {
-                                            $table = \App\Models\Table::find($requestedTableId);
-                                            if (!$table) {
-                                                $botMessage .= "Xin lỗi bạn, nhà hàng không có Bàn số $requestedTableId. Vui lòng chọn bàn khác.";
-                                            }
-                                        }
-                                    } else {
-                                        // Khách không yêu cầu bàn cụ thể, tự tìm bàn trống
-                                        $table = \App\Models\Table::whereNotIn('id', $bookedTableIds)->first();
-                                        if (!$table) {
-                                            $botMessage .= "Rất xin lỗi bạn, nhà hàng chúng tôi đã **kín bàn** vào lúc **$requestedTime ngày $requestedDate**. Bạn có thể vui lòng chọn một khung giờ khác được không?";
-                                        }
+                            if ($requestedTableId && is_numeric($requestedTableId)) {
+                                // Khách yêu cầu bàn cụ thể
+                                if (in_array($requestedTableId, $bookedTableIds)) {
+                                    $table = null; // Bàn này đã bị đặt
+                                    $botMessage = "Rất xin lỗi bạn, **Bàn số $requestedTableId** đã có người đặt vào lúc **$requestedTime ngày $requestedDate**. Bạn có thể đổi sang khung giờ khác, hoặc chọn bàn khác được không ạ?";
+                                } else {
+                                    $table = \App\Models\Table::find($requestedTableId);
+                                    if (!$table) {
+                                        $botMessage = "Xin lỗi bạn, nhà hàng không có Bàn số $requestedTableId. Vui lòng chọn bàn khác.";
                                     }
-                                } catch (\Exception $e) {
-                                    $table = \App\Models\Table::first(); // Fallback nếu lỗi parse time
                                 }
-
-                                if ($table) {
-                                    $assignedTableId = $table->id;
-
-                                    // Tạo Booking record
-                                    $booking = \App\Models\Booking::create([
-                                        'name' => $bookingData['name'] ?? 'Khách',
-                                        'phone' => $bookingData['phone'] ?? '',
-                                        'guests' => $bookingData['guests'] ?? 1,
-                                        'date' => $requestedDate,
-                                        'time' => $requestedTime,
-                                        'notes' => $bookingData['notes'] ?? '',
-                                        'table_id' => $assignedTableId,
-                                        'status' => 'pending'
-                                    ]);
-
-                                    // Tạo link QR code trỏ thẳng tới trang order của bàn
-                                    $qrData = url('/order?table_id=' . $assignedTableId);
-                                    $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($qrData);
-                                    
-                                    $successMessage = "<br><br><b>🎉 Tôi đã đặt bàn thành công cho bạn!</b><br>";
-                                    $successMessage .= "Mã đặt bàn: <b>#" . $booking->id . "</b><br>";
-                                    $successMessage .= "Tên: " . $booking->name . "<br>";
-                                    $successMessage .= "Thời gian: " . $booking->time . " " . $booking->date . "<br>";
-                                    $successMessage .= "Số người: " . $booking->guests . "<br>";
-                                    $successMessage .= "Khu vực: " . ($booking->notes ?: 'Không') . "<br>";
-                                    $successMessage .= "Đã xếp bàn số: <b>" . $assignedTableId . "</b><br><br>";
-                                    $successMessage .= "Bạn có thể quét mã QR dưới đây để vào thẳng trang gọi món cho bàn của mình:<br>";
-                                    $successMessage .= "<img src='{$qrUrl}' alt='QR Code' class='mt-2 rounded-lg border border-white/10 shadow-lg' style='width: 200px;'><br><br>";
-                                    $successMessage .= "<span class='text-primary'><i>🔔 Hệ thống đã lưu nhắc lịch cho bạn.</i></span>";
-
-                                    $botMessage .= $successMessage;
+                            } else {
+                                // Khách không yêu cầu bàn cụ thể, tự tìm bàn trống
+                                $table = \App\Models\Table::whereNotIn('id', $bookedTableIds)->first();
+                                if (!$table) {
+                                    $botMessage = "Rất xin lỗi bạn, nhà hàng chúng tôi đã **kín bàn** vào lúc **$requestedTime ngày $requestedDate**. Bạn có thể vui lòng chọn một khung giờ khác được không?";
                                 }
                             }
                         } catch (\Exception $e) {
-                            // Bỏ qua nếu lỗi parse
+                            $table = \App\Models\Table::first(); // Fallback nếu lỗi parse time
+                        }
+
+                        if ($table) {
+                            $assignedTableId = $table->id;
+
+                            // Tạo Booking record
+                            $booking = \App\Models\Booking::create([
+                                'name' => $bookingData['name'] ?? 'Khách',
+                                'phone' => $bookingData['phone'] ?? '',
+                                'guests' => $bookingData['guests'] ?? 1,
+                                'date' => $requestedDate,
+                                'time' => $requestedTime,
+                                'notes' => $bookingData['notes'] ?? '',
+                                'table_id' => $assignedTableId,
+                                'status' => 'pending'
+                            ]);
+
+                            // Tạo link QR code trỏ thẳng tới trang order của bàn
+                            $qrData = url('/order?table_id=' . $assignedTableId);
+                            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" . urlencode($qrData);
+                            
+                            $successMessage = "<br><br><b>🎉 Tôi đã đặt bàn thành công cho bạn!</b><br>";
+                            $successMessage .= "Mã đặt bàn: <b>#" . $booking->id . "</b><br>";
+                            $successMessage .= "Tên: " . $booking->name . "<br>";
+                            $successMessage .= "Thời gian: " . $booking->time . " " . $booking->date . "<br>";
+                            $successMessage .= "Số người: " . $booking->guests . "<br>";
+                            $successMessage .= "Khu vực: " . ($booking->notes ?: 'Không') . "<br>";
+                            $successMessage .= "Đã xếp bàn số: <b>" . $assignedTableId . "</b><br><br>";
+                            $successMessage .= "Bạn có thể quét mã QR dưới đây để vào thẳng trang gọi món cho bàn của mình:<br>";
+                            $successMessage .= "<img src='{$qrUrl}' alt='QR Code' class='mt-2 rounded-lg border border-white/10 shadow-lg' style='width: 200px;'><br><br>";
+                            $successMessage .= "<span class='text-primary'><i>🔔 Hệ thống đã lưu nhắc lịch cho bạn.</i></span>";
+
+                            $botMessage = $successMessage;
+                            $isBookingSuccess = true;
                         }
                     }
+                } 
+                // Nếu model chỉ trả về văn bản thông thường
+                elseif (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
+                    $botMessage = $responseData['candidates'][0]['content']['parts'][0]['text'];
+                }
 
+                if (!empty($botMessage)) {
                     // Đảm bảo tin nhắn không bị trống
                     if (trim(strip_tags($botMessage)) === '') {
                         $botMessage = "Tuyệt vời! Tôi đã ghi nhận thông tin đặt bàn của bạn.";
                     }
 
-                    // Thêm phản hồi của bot vào lịch sử
-                    $chatHistory[] = ['role' => 'bot', 'content' => $botMessage];
-                    Session::put('chat_history', $chatHistory);
+                    if ($isBookingSuccess) {
+                        // Đặt bàn thành công thì xóa lịch sử để bắt đầu luồng chat mới nếu cần
+                        Session::put('chat_history', []);
+                    } else {
+                        // Thêm phản hồi của bot vào lịch sử
+                        $chatHistory[] = ['role' => 'bot', 'content' => $botMessage];
+                        Session::put('chat_history', $chatHistory);
+                    }
                     
                     return response()->json([
                         'success' => true,
