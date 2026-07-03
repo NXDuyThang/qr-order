@@ -110,8 +110,14 @@ EOT;
 EOT;
             }
 
+            $currentDate = date('Y-m-d');
+            $currentTime = date('H:i');
             $systemPrompt = <<<EOT
 Bạn là AI Lễ tân làm việc cho 'Nhà Hàng Ẩm Thực Việt'.
+
+*** THÔNG TIN HỆ THỐNG: ***
+- Ngày hôm nay: $currentDate
+- Giờ hiện tại: $currentTime
 
 *** QUY TẮC CỐT LÕI: ***
 1. Bạn là máy đọc dữ liệu. Hãy ghép nối TẤT CẢ thông tin khách đã nhắn từ trước tới nay.
