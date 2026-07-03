@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 class ChatbotController extends Controller
 {
     // Cấu hình URL và model của Gemini
-    private $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent';
+    private $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
     public function index()
     {
@@ -93,13 +93,17 @@ class ChatbotController extends Controller
             $bookingInstructions = "";
             if ($isLoggedIn) {
                 $bookingInstructions = <<<EOT
-- ĐỂ ĐẶT BÀN, cần gom đủ 5 thông tin: [Số điện thoại], [Số người], [Ngày], [Giờ], [Khu vực / Số bàn cụ thể]. (Tên đã có sẵn).
-- LỖI HAY GẶP CẦN TRÁNH: Bạn thường xuyên QUÊN các thông tin khách đã cung cấp ở những tin nhắn đầu tiên. LƯU Ý, BẠN PHẢI ĐỌC TỪNG TIN NHẮN TRONG LỊCH SỬ. Nếu khách cung cấp rải rác: Tin 1 cho SĐT+Giờ, Tin 2 cho Số người, Tin 3 cho Ngày -> NGHĨA LÀ BẠN ĐÃ ĐỦ THÔNG TIN. KHÔNG ĐƯỢC HỎI LẠI.
-- Nếu còn thiếu: Chỉ hỏi đúng những thông tin chưa có.
-- NẾU ĐÃ ĐỦ TẤT CẢ THÔNG TIN: DỪNG CHAT. CHỈ TRẢ VỀ DUY NHẤT ĐỊNH DẠNG JSON.
+- NHIỆM VỤ CỦA BẠN: Thu thập ĐỦ 5 thông tin để đặt bàn:
+  1. Số điện thoại
+  2. Số lượng người
+  3. Ngày (ví dụ: hôm nay, ngày mai, 20/11...)
+  4. Giờ (ví dụ: 11 giờ tối, 19:00...)
+  5. Khu vực (trong nhà / ngoài trời) hoặc Số bàn cụ thể.
+- LƯU Ý ĐẶC BIỆT: BẠN PHẢI ĐỌC VÀ GHI NHỚ TOÀN BỘ LỊCH SỬ TRÒ CHUYỆN. Khách hàng có thể đã cung cấp các thông tin này ở những tin nhắn trước đó. BẠN TUYỆT ĐỐI KHÔNG ĐƯỢC HỎI LẠI NHỮNG THÔNG TIN ĐÃ CUNG CẤP.
+- NẾU CHƯA ĐỦ THÔNG TIN: Hãy liệt kê lại những gì bạn đã ghi nhận được từ đầu đến giờ, và LỊCH SỰ HỎI THÊM CÁC THÔNG TIN CÒN THIẾU.
+- NẾU ĐÃ ĐỦ TẤT CẢ 5 THÔNG TIN: BẠN BẮT BUỘC PHẢI DỪNG TRÒ CHUYỆN. KHÔNG SINH RA BẤT KỲ VĂN BẢN NÀO KHÁC. BẠN CHỈ ĐƯỢC PHÉP TRẢ VỀ DUY NHẤT MỘT CHUỖI JSON NHƯ MẪU DƯỚI ĐÂY (không bọc trong markdown):
 
-Mẫu JSON TRẢ VỀ (khi đủ thông tin):
-{"action":"book_table","name":"$displayName","phone":"Số ĐT","guests":2,"date":"YYYY-MM-DD","time":"HH:MM","notes":"Khu vực (trong nhà/ngoài trời)","table_id":"số bàn nếu khách yêu cầu cụ thể, ví dụ 3, hoặc null nếu không yêu cầu"}
+{"action":"book_table","name":"$displayName","phone":"<số điện thoại>","guests":<số người (kiểu số)>,"date":"YYYY-MM-DD","time":"HH:MM","notes":"<khu vực>","table_id":<số bàn (hoặc null nếu không yêu cầu)>}
 EOT;
             } else {
                 $bookingInstructions = <<<EOT
