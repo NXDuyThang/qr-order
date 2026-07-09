@@ -33,8 +33,8 @@
                     
                     <!-- Nội dung bài viết -->
                     <div class="px-5 pb-4 space-y-3">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ $generatedTitle }}</h3>
-                        <div class="prose dark:prose-invert max-w-none whitespace-pre-wrap text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $generatedTitle }}</h3>
+                        <div class="prose dark:prose-invert max-w-none whitespace-pre-wrap text-gray-800 dark:text-gray-200 text-base leading-relaxed">
                             {{ $generatedContent }}
                         </div>
                     </div>
@@ -42,16 +42,16 @@
                     <!-- Hình ảnh -->
                     @if($generatedImageUrl)
                         <div class="w-full bg-gray-100 dark:bg-gray-900">
-                            <img src="{{ $generatedImageUrl }}" alt="AI Generated Image" class="w-full h-auto object-cover border-y border-gray-100 dark:border-gray-700">
+                            <img src="{{ $generatedImageUrl }}" alt="AI Generated Image" class="w-full aspect-square object-cover border-y border-gray-100 dark:border-gray-700">
                         </div>
                         
                         <!-- Footer tương tác -->
                         <div class="p-4 bg-gray-50 dark:bg-gray-800/50 flex justify-center">
-                            <a href="{{ $generatedImageUrl }}" target="_blank" class="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 font-medium text-sm transition-colors">
+                            <a href="{{ $generatedImageUrl }}" target="_blank" class="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 font-medium text-base transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                                 </svg>
-                                Xem và tải ảnh gốc
+                                Xem và tải ảnh gốc (1080x1080)
                             </a>
                         </div>
                     @endif
