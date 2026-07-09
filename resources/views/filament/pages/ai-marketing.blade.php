@@ -5,7 +5,7 @@
             <form wire:submit="generateContent" class="flex flex-col md:flex-row gap-4 items-end w-full">
                 <div class="flex-grow w-full md:w-auto">
                     <label for="dishName" class="block text-sm font-medium mb-1 whitespace-nowrap">Tên món ăn / Khuyến mãi</label>
-                    <input type="text" id="dishName" wire:model="dishName" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600" placeholder="Ví dụ: Phở bò Nam Định" required>
+                    <input type="text" id="dishName" wire:model="dishName" class="w-full h-[42px] rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600" placeholder="Ví dụ: Phở bò Nam Định" required>
                 </div>
                 
                 <div class="flex-shrink-0 w-full md:w-auto">
