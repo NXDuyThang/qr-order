@@ -58,12 +58,17 @@ class AiMarketing extends Page
 
             if ($response->successful()) {
                 $data = $response->json();
-                $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                $text = data_get($data, 'candidates.0.content.parts.0.text', '');
                 
-                // Tách dòng đầu làm tiêu đề
-                $lines = explode("\n", trim($text));
-                $this->generatedTitle = str_replace(['#', '**', '*'], '', array_shift($lines));
-                $this->generatedContent = trim(implode("\n", $lines));
+                if (!empty($text)) {
+                    // Tách dòng đầu làm tiêu đề
+                    $lines = explode("\n", trim($text));
+                    $this->generatedTitle = str_replace(['#', '**', '*'], '', array_shift($lines));
+                    $this->generatedContent = trim(implode("\n", $lines));
+                } else {
+                    $this->generatedTitle = "Quảng cáo " . $this->dishName;
+                    $this->generatedContent = "Mời bạn thưởng thức " . $this->dishName . " ngon tuyệt!";
+                }
                 
             } else {
                 Notification::make()->title('Lỗi sinh nội dung')->danger()->send();
@@ -84,7 +89,7 @@ class AiMarketing extends Page
 
             if ($response2->successful()) {
                 $data2 = $response2->json();
-                $englishPrompt = trim($data2['candidates'][0]['content']['parts'][0]['text'] ?? '');
+                $englishPrompt = trim(data_get($data2, 'candidates.0.content.parts.0.text', ''));
                 if (!empty($englishPrompt)) {
                     $this->generatedImageUrl = 'https://image.pollinations.ai/prompt/' . urlencode($englishPrompt) . '?width=1080&height=1080&nologo=true';
                 } else {
