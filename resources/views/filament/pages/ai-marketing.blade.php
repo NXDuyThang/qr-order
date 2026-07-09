@@ -2,16 +2,18 @@
     <div class="flex flex-col gap-6">
         <!-- Form nhập liệu -->
         <x-filament::section>
-            <form wire:submit="generateContent" class="flex flex-col md:flex-row gap-4 items-end">
-                <div class="flex-1 w-full">
-                    <label for="dishName" class="block text-sm font-medium mb-1">Tên món ăn / Khuyến mãi</label>
+            <form wire:submit="generateContent" class="flex flex-col md:flex-row gap-4 items-end w-full">
+                <div class="flex-grow w-full md:w-auto">
+                    <label for="dishName" class="block text-sm font-medium mb-1 whitespace-nowrap">Tên món ăn / Khuyến mãi</label>
                     <input type="text" id="dishName" wire:model="dishName" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600" placeholder="Ví dụ: Phở bò Nam Định" required>
                 </div>
                 
-                <x-filament::button type="submit" class="w-full md:w-auto h-[42px]" wire:loading.attr="disabled">
-                    <span wire:loading.remove wire:target="generateContent">✨ Tạo nội dung AI</span>
-                    <span wire:loading wire:target="generateContent">⏳ Đang xử lý...</span>
-                </x-filament::button>
+                <div class="flex-shrink-0 w-full md:w-auto">
+                    <x-filament::button type="submit" class="w-full h-[42px]" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="generateContent">✨ Tạo nội dung AI</span>
+                        <span wire:loading wire:target="generateContent">⏳ Đang xử lý...</span>
+                    </x-filament::button>
+                </div>
             </form>
         </x-filament::section>
 
