@@ -41,11 +41,15 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // Thử đăng nhập bằng local database cho admin
+        // Thử đăng nhập bằng local database cho admin & staff
         if (\Illuminate\Support\Facades\Auth::attempt(['email' => $request->username, 'password' => $request->password], $request->has('remember'))) {
             $localUser = \Illuminate\Support\Facades\Auth::user();
-            if ($localUser->is_admin) {
+            if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin'])) {
                 return redirect()->route('filament.admin.pages.dashboard');
+            } elseif ($localUser->role === 'chef') {
+                return redirect()->route('chef.dashboard');
+            } elseif ($localUser->role === 'waiter') {
+                return redirect()->route('waiter.dashboard');
             } else {
                 \Illuminate\Support\Facades\Auth::logout();
             }
@@ -113,8 +117,12 @@ class AuthController extends Controller
             // Đăng nhập bằng Laravel Auth
             \Illuminate\Support\Facades\Auth::login($localUser);
 
-            if ($localUser->is_admin) {
+            if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin'])) {
                 return redirect()->route('filament.admin.pages.dashboard');
+            } elseif ($localUser->role === 'chef') {
+                return redirect()->route('chef.dashboard');
+            } elseif ($localUser->role === 'waiter') {
+                return redirect()->route('waiter.dashboard');
             }
 
             return redirect()->intended(route('profile.index'))->with('success', 'Đăng nhập thành công.');

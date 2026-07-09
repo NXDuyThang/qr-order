@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @source "../views";
 
+@custom-variant dark (&:is(.dark, .dark *));
+
 @theme {
   --color-primary: #0077bb;
   --color-dark: #111518;
@@ -10,15 +12,28 @@
 }
 
 @layer base {
-  body {
+  body:not(.employee-layout) {
     background-color: var(--color-dark);
     color: #d1d5db;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 
+  body.employee-layout {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
+  }
+
+  body:not(.employee-layout) h1, 
+  body:not(.employee-layout) h2, 
+  body:not(.employee-layout) h3, 
+  body:not(.employee-layout) h4, 
+  body:not(.employee-layout) h5, 
+  body:not(.employee-layout) h6 {
     color: #ffffff;
   }
 }

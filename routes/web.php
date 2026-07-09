@@ -22,7 +22,7 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('filament.admin.auth.logout');
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/', [ProfileController::class, 'index'])->name('index');
@@ -60,3 +60,23 @@ Route::post('/ajax/fetch-avatar', function (\Illuminate\Http\Request $request) {
 use App\Http\Controllers\ChatbotController;
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
 Route::post('/chatbot/send', [ChatbotController::class, 'chat'])->name('chatbot.send');
+
+// Employee Routes
+use App\Http\Controllers\EmployeeController;
+Route::middleware(['auth', 'role:chef'])->group(function () {
+    Route::get('/chef', [EmployeeController::class, 'chefDashboard'])->name('chef.dashboard');
+});
+
+Route::middleware(['auth', 'role:waiter'])->group(function () {
+    Route::get('/waiter', [EmployeeController::class, 'waiterDashboard'])->name('waiter.dashboard');
+});
+
+// Common Employee Actions (Check-in/out, Leave)
+Route::middleware('auth')->group(function () {
+    Route::post('/employee/check-in', [EmployeeController::class, 'checkIn'])->name('employee.check_in');
+    Route::post('/employee/check-out', [EmployeeController::class, 'checkOut'])->name('employee.check_out');
+    Route::post('/employee/leave-request', [EmployeeController::class, 'submitLeaveRequest'])->name('employee.leave_request');
+    Route::get('/employee/leave-history', [EmployeeController::class, 'leaveHistory'])->name('employee.leave_history');
+    Route::get('/employee/my-salary', [EmployeeController::class, 'mySalary'])->name('employee.my_salary');
+    Route::get('/employee/timekeeping-history', [EmployeeController::class, 'timekeepingHistory'])->name('employee.timekeeping_history');
+});
