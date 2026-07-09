@@ -27,10 +27,10 @@
                         </div>
                     </div>
                     @if($generatedImageUrl)
-                        <div class="w-full flex flex-col items-center border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <div class="w-full flex flex-col items-start border-t border-gray-200 dark:border-gray-700 pt-6">
                             <p class="text-sm text-gray-500 mb-4 italic">Hình ảnh minh họa AI tạo:</p>
                             <img src="{{ $generatedImageUrl }}" alt="AI Generated Image" class="max-w-full md:max-w-2xl rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-                            <a href="{{ $generatedImageUrl }}" target="_blank" class="block mt-4 text-center text-primary-600 hover:underline text-sm">Xem kích thước đầy đủ</a>
+                            <a href="{{ $generatedImageUrl }}" target="_blank" class="block mt-4 text-left text-primary-600 hover:underline text-sm">Xem kích thước đầy đủ</a>
                         </div>
                     @endif
                 </div>
