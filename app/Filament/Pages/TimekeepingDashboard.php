@@ -70,6 +70,18 @@ class TimekeepingDashboard extends Page
     {
         if ($this->todayRecord && !$this->todayRecord->check_out) {
             $now = now();
+            
+            if ($this->todayRecord->check_in) {
+                $checkInTime = \Carbon\Carbon::parse($this->todayRecord->check_in);
+                if ($checkInTime->diffInHours($now) < 6) {
+                    \Filament\Notifications\Notification::make()
+                        ->title('Bạn phải làm việc tối thiểu 6 tiếng mới được phép check-out.')
+                        ->danger()
+                        ->send();
+                    return;
+                }
+            }
+
             $this->todayRecord->update([
                 'check_out' => $now,
             ]);

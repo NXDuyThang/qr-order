@@ -94,6 +94,14 @@ class EmployeeController extends Controller
 
         if ($todayRecord && !$todayRecord->check_out) {
             $now = now();
+            
+            if ($todayRecord->check_in) {
+                $checkInTime = \Carbon\Carbon::parse($todayRecord->check_in);
+                if ($checkInTime->diffInHours($now) < 6) {
+                    return back()->with('error', 'Bạn phải làm việc tối thiểu 6 tiếng mới được phép check-out.');
+                }
+            }
+
             $statusUpdate = ['check_out' => $now];
             
             // Nếu về trước 17:00
