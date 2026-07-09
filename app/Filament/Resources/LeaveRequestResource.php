@@ -110,7 +110,7 @@ class LeaveRequestResource extends Resource
                         ]);
                     })
                     ->requiresConfirmation()
-                    ->visible(fn (LeaveRequest $record) => $record->status === 'pending' && (auth()->user()->is_admin || auth()->user()->role === 'manager')),
+                    ->visible(fn (LeaveRequest $record) => $record->status === 'pending' && (auth()->user()->is_admin || (auth()->user()->role === 'manager' && auth()->id() !== $record->user_id))),
                 Tables\Actions\Action::make('reject')
                     ->label('Từ chối')
                     ->icon('heroicon-o-x-mark')
@@ -122,7 +122,7 @@ class LeaveRequestResource extends Resource
                         ]);
                     })
                     ->requiresConfirmation()
-                    ->visible(fn (LeaveRequest $record) => $record->status === 'pending' && (auth()->user()->is_admin || auth()->user()->role === 'manager')),
+                    ->visible(fn (LeaveRequest $record) => $record->status === 'pending' && (auth()->user()->is_admin || (auth()->user()->role === 'manager' && auth()->id() !== $record->user_id))),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
