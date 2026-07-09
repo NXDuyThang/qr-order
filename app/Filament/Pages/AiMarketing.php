@@ -87,7 +87,11 @@ class AiMarketing extends Page
                 $englishPrompt = trim($data2['candidates'][0]['content']['parts'][0]['text'] ?? '');
                 if (!empty($englishPrompt)) {
                     $this->generatedImageUrl = 'https://image.pollinations.ai/prompt/' . urlencode($englishPrompt) . '?width=1080&height=1080&nologo=true';
+                } else {
+                    $this->generatedImageUrl = 'https://image.pollinations.ai/prompt/' . urlencode("delicious " . $this->dishName . " food photography high quality") . '?width=1080&height=1080&nologo=true';
                 }
+            } else {
+                $this->generatedImageUrl = 'https://image.pollinations.ai/prompt/' . urlencode("delicious " . $this->dishName . " food photography high quality") . '?width=1080&height=1080&nologo=true';
             }
 
             Notification::make()->title('Tạo nội dung thành công!')->success()->send();
