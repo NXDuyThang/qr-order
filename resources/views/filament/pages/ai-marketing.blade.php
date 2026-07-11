@@ -22,7 +22,7 @@
                 <div class="flex flex-col gap-6">
                     <div class="w-full space-y-4">
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $generatedTitle }}</h3>
-                        <div class="prose dark:prose-invert whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+                        <div class="prose max-w-none dark:prose-invert whitespace-pre-wrap text-gray-700 dark:text-gray-300">
                             {{ $generatedContent }}
                         </div>
                     </div>
