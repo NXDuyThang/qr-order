@@ -37,6 +37,27 @@ class TimekeepingHistory extends Page
             ->orderBy('date', 'desc')
             ->get();
             
-        return compact('records');
+        $totalHours = 0;
+        $calendarData = [];
+
+        foreach ($records as $record) {
+            $day = Carbon::parse($record->date)->day;
+            $calendarData[$day] = $record->status;
+
+            if ($record->check_in && $record->check_out) {
+                $hours = Carbon::parse($record->check_in)->diffInMinutes($record->check_out) / 60;
+                if (Carbon::parse($record->check_out)->format('H:i') >= '13:00') {
+                    $hours -= 1;
+                }
+                $hours = max(0, round($hours, 2));
+                $totalHours += $hours;
+            }
+        }
+        
+        $date = Carbon::create($this->year, $this->month, 1);
+        $daysInMonth = $date->daysInMonth;
+        $startDayOfWeek = $date->dayOfWeekIso;
+
+        return compact('records', 'totalHours', 'calendarData', 'daysInMonth', 'startDayOfWeek');
     }
 }
