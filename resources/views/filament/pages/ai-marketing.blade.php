@@ -20,17 +20,58 @@
         @if($generatedTitle || $generatedContent)
             <x-filament::section class="relative overflow-hidden">
                 <div class="flex flex-col gap-6">
-                    <div class="w-full space-y-4">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $generatedTitle }}</h3>
-                        <div class="prose max-w-none dark:prose-invert whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+                    <div class="w-full space-y-4 relative group" x-data="{
+                        copyText() {
+                            const text = $refs.content.innerText;
+                            navigator.clipboard.writeText(text).then(() => {
+                                new FilamentNotification()
+                                    .title('Đã copy nội dung!')
+                                    .success()
+                                    .send();
+                            });
+                        }
+                    }">
+                        <div class="flex justify-between items-start gap-4">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $generatedTitle }}</h3>
+                            <x-filament::button size="sm" color="gray" icon="heroicon-o-clipboard-document" x-on:click="copyText">
+                                Copy nội dung
+                            </x-filament::button>
+                        </div>
+                        <div x-ref="content" class="prose max-w-none dark:prose-invert whitespace-pre-wrap text-gray-700 dark:text-gray-300">
                             {{ $generatedContent }}
                         </div>
                     </div>
                     @if($generatedImageUrl)
-                        <div class="w-full flex flex-col items-start border-t border-gray-200 dark:border-gray-700 pt-6">
-                            <p class="text-sm text-gray-500 mb-4 italic">Hình ảnh minh họa AI tạo:</p>
-                            <img src="{{ $generatedImageUrl }}" alt="AI Generated Image" class="max-w-full md:max-w-2xl rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-                            <a href="{{ $generatedImageUrl }}" target="_blank" class="block mt-4 text-left text-primary-600 hover:underline text-sm">Xem kích thước đầy đủ</a>
+                        <div class="w-full flex flex-col items-center border-t border-gray-200 dark:border-gray-700 pt-6 mt-6" x-data="{
+                            copyImage() {
+                                fetch('{{ $generatedImageUrl }}')
+                                    .then(response => response.blob())
+                                    .then(blob => {
+                                        const item = new ClipboardItem({ [blob.type]: blob });
+                                        navigator.clipboard.write([item]).then(() => {
+                                            new FilamentNotification()
+                                                .title('Đã copy hình ảnh!')
+                                                .success()
+                                                .send();
+                                        });
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                        new FilamentNotification()
+                                            .title('Không thể copy hình trực tiếp, vui lòng nhấp chuột phải và chọn Copy Image')
+                                            .danger()
+                                            .send();
+                                    });
+                            }
+                        }">
+                            <div class="flex justify-between w-full max-w-2xl items-end mb-4">
+                                <p class="text-sm text-gray-500 italic">Hình ảnh minh họa AI tạo:</p>
+                                <x-filament::button size="sm" color="gray" icon="heroicon-o-photo" x-on:click="copyImage">
+                                    Copy hình ảnh
+                                </x-filament::button>
+                            </div>
+                            <img src="{{ $generatedImageUrl }}" alt="AI Generated Image" class="max-w-full md:max-w-2xl rounded-lg shadow-md border border-gray-200 dark:border-gray-700 mx-auto">
+                            <a href="{{ $generatedImageUrl }}" target="_blank" class="block mt-4 text-center text-primary-600 hover:underline text-sm">Xem kích thước đầy đủ</a>
                         </div>
                     @endif
                 </div>
