@@ -54,21 +54,25 @@
                     @for($day = 1; $day <= $daysInMonth; $day++)
                         @php
                             $status = $calendarData[$day] ?? null;
-                            $colorClass = 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500';
-                            if ($status === 'present') $colorClass = 'bg-green-500 text-white font-bold shadow-sm';
-                            elseif (in_array($status, ['absent', 'late_early'])) $colorClass = 'bg-red-500 text-white font-bold shadow-sm';
-                            elseif (in_array($status, ['early_leave', 'late'])) $colorClass = 'bg-orange-500 text-white font-bold shadow-sm';
+                            $style = 'background-color: #f3f4f6; color: #9ca3af;'; // Default empty
+                            if ($status === 'present') {
+                                $style = 'background-color: #22c55e; color: white; font-weight: bold; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);';
+                            } elseif (in_array($status, ['absent', 'late_early'])) {
+                                $style = 'background-color: #ef4444; color: white; font-weight: bold; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);';
+                            } elseif (in_array($status, ['early_leave', 'late'])) {
+                                $style = 'background-color: #f97316; color: white; font-weight: bold; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);';
+                            }
                         @endphp
-                        <div class="aspect-square flex items-center justify-center rounded-md {{ $colorClass }}" title="{{ $status ?? 'Trống' }}">
+                        <div class="aspect-square flex items-center justify-center rounded-md" style="{{ $style }}" title="{{ $status ?? 'Trống' }}">
                             {{ $day }}
                         </div>
                     @endfor
                 </div>
                 
                 <div class="mt-5 grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300">
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-500"></span> Đúng giờ</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-500"></span> Trễ / Sớm</div>
-                    <div class="flex items-center gap-2 col-span-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Không đi làm / Vi phạm nặng</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background-color: #22c55e;"></span> Đúng giờ</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background-color: #f97316;"></span> Trễ / Sớm</div>
+                    <div class="flex items-center gap-2 col-span-2"><span class="w-3 h-3 rounded-full" style="background-color: #ef4444;"></span> Không đi làm / Vi phạm nặng</div>
                 </div>
             </div>
         </div>

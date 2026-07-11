@@ -71,7 +71,8 @@ class AiMarketing extends Page
                 }
                 
             } else {
-                Notification::make()->title('Lỗi sinh nội dung')->danger()->send();
+                \Illuminate\Support\Facades\Log::error('AI Marketing Gemini Error: ' . $response->body());
+                Notification::make()->title('Lỗi API Gemini: ' . $response->status())->body($response->body())->danger()->send();
             }
 
             // 2. Sinh prompt tiếng Anh để tạo hình ảnh
@@ -99,10 +100,13 @@ class AiMarketing extends Page
                 $this->generatedImageUrl = 'https://image.pollinations.ai/prompt/' . urlencode("delicious " . $this->dishName . " food photography high quality") . '?width=1080&height=1080&nologo=true';
             }
 
-            Notification::make()->title('Tạo nội dung thành công!')->success()->send();
+            if ($response->successful()) {
+                Notification::make()->title('Tạo nội dung thành công!')->success()->send();
+            }
 
         } catch (\Exception $e) {
-            Notification::make()->title('Đã có lỗi xảy ra')->danger()->send();
+            \Illuminate\Support\Facades\Log::error('AI Marketing Exception: ' . $e->getMessage());
+            Notification::make()->title('Lỗi hệ thống: ' . $e->getMessage())->danger()->send();
         }
     }
 }

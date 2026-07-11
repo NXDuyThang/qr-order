@@ -26,7 +26,7 @@ class TimekeepingHistory extends Page
 
     public static function canAccess(): bool
     {
-        return in_array(auth()->user()->role, ['chef', 'waiter']);
+        return in_array(auth()->user()->role, ['chef', 'waiter', 'admin', 'manager']);
     }
 
     protected function getViewData(): array
