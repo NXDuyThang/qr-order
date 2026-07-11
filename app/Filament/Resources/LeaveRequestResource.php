@@ -22,6 +22,11 @@ class LeaveRequestResource extends Resource
     protected static ?string $modelLabel = 'Nghỉ phép';
     protected static ?string $pluralModelLabel = 'Yêu cầu nghỉ phép';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+    }
+
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
         return auth()->user()->is_admin || auth()->user()->role === 'manager';

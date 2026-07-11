@@ -10,6 +10,11 @@ class TimekeepingDashboard extends Page
     protected static ?string $navigationGroup = 'Cá nhân';
     protected static ?string $title = 'Điểm danh cá nhân';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+    }
+
     protected static string $view = 'filament.pages.timekeeping-dashboard';
 
     public $todayRecord;
