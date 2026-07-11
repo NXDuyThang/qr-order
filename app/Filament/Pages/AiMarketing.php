@@ -40,7 +40,7 @@ class AiMarketing extends Page
             return;
         }
 
-        $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
         // 1. Sinh nội dung bài đăng
         $prompt = "Viết một bài đăng mạng xã hội (Facebook/Instagram) quảng cáo món ăn '{$this->dishName}'. Yêu cầu bao gồm: Một tiêu đề hấp dẫn, nội dung quảng cáo thật ngon miệng và hấp dẫn, có sử dụng emoji phù hợp, kèm theo các hashtag. Tách riêng tiêu đề ở dòng đầu tiên.";
