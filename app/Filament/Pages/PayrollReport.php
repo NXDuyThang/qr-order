@@ -12,6 +12,11 @@ class PayrollReport extends Page
     protected static ?string $navigationGroup = 'Quản lý nhân sự';
     protected static ?int $navigationSort = 3;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+    }
+
     protected static string $view = 'filament.pages.payroll-report';
 
     public $month;

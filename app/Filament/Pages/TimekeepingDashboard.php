@@ -7,7 +7,7 @@ use Filament\Pages\Page;
 class TimekeepingDashboard extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
-    protected static ?string $navigationGroup = 'Nhân sự';
+    protected static ?string $navigationGroup = 'Cá nhân';
     protected static ?string $title = 'Điểm danh cá nhân';
 
     protected static string $view = 'filament.pages.timekeeping-dashboard';

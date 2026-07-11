@@ -18,9 +18,15 @@ class TimekeepingResource extends Resource
     protected static ?string $model = Timekeeping::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
-    protected static ?string $navigationGroup = 'Nhân sự';
+    protected static ?string $navigationGroup = 'Quản lý nhân sự';
+    protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Chấm công';
     protected static ?string $pluralModelLabel = 'Bảng chấm công';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+    }
 
     public static function canViewAny(): bool
     {

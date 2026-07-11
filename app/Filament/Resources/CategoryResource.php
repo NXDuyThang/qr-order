@@ -19,6 +19,11 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

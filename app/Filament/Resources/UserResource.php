@@ -18,6 +18,11 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+    }
     protected static ?string $navigationGroup = 'Nhân sự';
     protected static ?string $modelLabel = 'Nhân viên';
 
