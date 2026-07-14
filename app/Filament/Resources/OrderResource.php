@@ -18,6 +18,10 @@ class OrderResource extends Resource
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $modelLabel = 'Đơn hàng';
+    protected static ?string $pluralModelLabel = 'Quản lý Đơn hàng';
+    protected static ?string $navigationGroup = 'Nhà hàng';
 
     public static function canAccess(): bool
     {
@@ -44,8 +48,9 @@ class OrderResource extends Resource
                     ->label('Trạng thái món')
                     ->options([
                         'new' => 'Mới đặt',
-                        'preparing' => 'Đang chuẩn bị',
+                        'ready' => 'Nấu xong (Sẵn sàng)',
                         'served' => 'Đã phục vụ',
+                        'completed' => 'Hoàn tất',
                         'cancelled' => 'Đã hủy',
                     ])
                     ->required()
@@ -68,6 +73,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('3s')
             ->columns([
                 Tables\Columns\TextColumn::make('table.name')
                     ->label('Bàn')
@@ -81,15 +87,17 @@ class OrderResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'new' => 'primary',
-                        'preparing' => 'warning',
-                        'served' => 'success',
+                        'ready' => 'warning',
+                        'served' => 'info',
+                        'completed' => 'success',
                         'cancelled' => 'danger',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'new' => 'Mới đặt',
-                        'preparing' => 'Đang chuẩn bị',
-                        'served' => 'Đã phục vụ',
+                        'new' => 'Mới đặt (Bếp)',
+                        'ready' => 'Nấu xong (Phục vụ)',
+                        'served' => 'Đã giao (Chờ thanh toán)',
+                        'completed' => 'Hoàn tất',
                         'cancelled' => 'Đã hủy',
                         default => $state,
                     })
@@ -114,6 +122,7 @@ class OrderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -122,7 +131,22 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('finish')
+                    ->label('Nấu xong (Finish)')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Order $record) => $record->status === 'new')
+                    ->action(function (Order $record) {
+                        $record->update(['status' => 'ready']);
+                    }),
+                Tables\Actions\Action::make('serve')
+                    ->label('Đã giao (Serve)')
+                    ->icon('heroicon-o-arrow-right-circle')
+                    ->color('info')
+                    ->visible(fn (Order $record) => $record->status === 'ready')
+                    ->action(function (Order $record) {
+                        $record->update(['status' => 'served']);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

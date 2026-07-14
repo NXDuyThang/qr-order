@@ -15,8 +15,15 @@ class AiMarketing extends Page
     protected static string $view = 'filament.pages.ai-marketing';
 
     public $dishName = '';
+    public $platform = 'facebook';
+    public $style = 'hấp dẫn, sinh động';
+    public $length = 'vừa phải (khoảng 150-200 từ)';
+    public $targetAudience = 'chung';
+    public $promotion = '';
+    
     public $generatedTitle = '';
     public $generatedContent = '';
+    public $generatedHashtags = '';
     public $generatedImageUrl = '';
 
     public static function canAccess(): bool
@@ -32,6 +39,7 @@ class AiMarketing extends Page
 
         $this->generatedTitle = '';
         $this->generatedContent = '';
+        $this->generatedHashtags = '';
         $this->generatedImageUrl = '';
 
         $apiKey = config('services.gemini.key');
@@ -43,7 +51,22 @@ class AiMarketing extends Page
         $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
         // 1. Sinh nội dung bài đăng
-        $prompt = "Viết một bài đăng mạng xã hội (Facebook/Instagram) quảng cáo món ăn '{$this->dishName}'. Yêu cầu bao gồm: Một tiêu đề hấp dẫn, nội dung quảng cáo thật ngon miệng và hấp dẫn, có sử dụng emoji phù hợp, kèm theo các hashtag. Tách riêng tiêu đề ở dòng đầu tiên.";
+        $prompt = "Viết nội dung quảng cáo cho món ăn/dịch vụ: '{$this->dishName}'. Yêu cầu chi tiết:\n";
+        $prompt .= "- Nền tảng đăng tải: {$this->platform}.\n";
+        $prompt .= "- Phong cách viết: {$this->style}.\n";
+        $prompt .= "- Độ dài bài viết: {$this->length}.\n";
+        if ($this->targetAudience !== 'chung') {
+            $prompt .= "- Khách hàng mục tiêu: {$this->targetAudience}.\n";
+        }
+        if (!empty($this->promotion)) {
+            $prompt .= "- Thông tin khuyến mãi/Ưu đãi cần nhấn mạnh: {$this->promotion}.\n";
+        }
+        $prompt .= "Quan trọng: Hãy trả kết quả DUY NHẤT ở định dạng JSON hợp lệ (không chứa markdown nào khác). Ví dụ định dạng:\n";
+        $prompt .= "{\n";
+        $prompt .= '  "title": "Tiêu đề hấp dẫn, ngắn gọn",'."\n";
+        $prompt .= '  "content": "Nội dung quảng cáo thu hút, dùng emoji phù hợp, xuống dòng rõ ràng",'."\n";
+        $prompt .= '  "hashtags": "#hashtag1 #hashtag2"'."\n";
+        $prompt .= "}";
         
         $payload = [
             'contents' => [
@@ -61,13 +84,23 @@ class AiMarketing extends Page
                 $text = data_get($data, 'candidates.0.content.parts.0.text', '');
                 
                 if (!empty($text)) {
-                    // Tách dòng đầu làm tiêu đề
-                    $lines = explode("\n", trim($text));
-                    $this->generatedTitle = str_replace(['#', '**', '*'], '', array_shift($lines));
-                    $this->generatedContent = trim(implode("\n", $lines));
+                    $text = trim(str_replace(['```json', '```'], '', $text));
+                    $decoded = json_decode($text, true);
+                    
+                    if ($decoded && is_array($decoded)) {
+                        $this->generatedTitle = str_replace(['#', '**', '*'], '', $decoded['title'] ?? '');
+                        $this->generatedContent = trim($decoded['content'] ?? '');
+                        $this->generatedHashtags = trim($decoded['hashtags'] ?? '');
+                    } else {
+                        // Fallback
+                        $this->generatedTitle = "Quảng cáo " . $this->dishName;
+                        $this->generatedContent = $text;
+                        $this->generatedHashtags = '';
+                    }
                 } else {
                     $this->generatedTitle = "Quảng cáo " . $this->dishName;
                     $this->generatedContent = "Mời bạn thưởng thức " . $this->dishName . " ngon tuyệt!";
+                    $this->generatedHashtags = '';
                 }
                 
             } else {

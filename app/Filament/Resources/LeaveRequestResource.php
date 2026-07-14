@@ -18,7 +18,7 @@ class LeaveRequestResource extends Resource
     protected static ?string $model = LeaveRequest::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationGroup = 'Nhân sự';
+    protected static ?string $navigationGroup = 'Quản lý nhân sự';
     protected static ?string $modelLabel = 'Nghỉ phép';
     protected static ?string $pluralModelLabel = 'Yêu cầu nghỉ phép';
 
@@ -100,6 +100,12 @@ class LeaveRequestResource extends Resource
                         'pending' => 'warning',
                         'rejected' => 'danger',
                         default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'approved' => 'Đã duyệt',
+                        'pending' => 'Chờ duyệt',
+                        'rejected' => 'Từ chối',
+                        default => $state,
                     }),
                 Tables\Columns\TextColumn::make('approver.name')
                     ->label('Người duyệt')

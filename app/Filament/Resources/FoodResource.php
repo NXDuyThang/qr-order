@@ -18,6 +18,10 @@ class FoodResource extends Resource
     protected static ?string $model = Food::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $modelLabel = 'Món ăn';
+    protected static ?string $pluralModelLabel = 'Quản lý Món ăn';
+    protected static ?string $navigationGroup = 'Thực đơn';
 
     public static function canAccess(): bool
     {
@@ -29,23 +33,30 @@ class FoodResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('category_id')
+                    ->label('Danh mục')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('name')
+                    ->label('Tên món ăn')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
+                    ->label('Đường dẫn (slug)')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label('Mô tả')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('price')
+                    ->label('Giá bán')
                     ->required()
                     ->numeric()
                     ->suffix('VNĐ'),
                 Forms\Components\FileUpload::make('image')
+                    ->label('Hình ảnh')
                     ->image(),
                 Forms\Components\Toggle::make('is_available')
+                    ->label('Còn hàng')
                     ->required(),
             ]);
     }
@@ -55,23 +66,31 @@ class FoodResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('category_id')
+                    ->label('Danh mục')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Tên món ăn')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('Đường dẫn (slug)')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
+                    ->label('Giá bán')
                     ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
                     ->sortable(),
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Hình ảnh'),
                 Tables\Columns\IconColumn::make('is_available')
+                    ->label('Còn hàng')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

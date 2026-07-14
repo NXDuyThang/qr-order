@@ -18,6 +18,10 @@ class BookingResource extends Resource
     protected static ?string $model = Booking::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $modelLabel = 'Đặt bàn';
+    protected static ?string $pluralModelLabel = 'Quản lý Đặt bàn';
+    protected static ?string $navigationGroup = 'Nhà hàng';
 
     public static function canAccess(): bool
     {
@@ -32,25 +36,33 @@ class BookingResource extends Resource
                     ->description('Quản lý thông tin đặt bàn của khách.')
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('Tên khách hàng')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('phone')
+                            ->label('Số điện thoại')
                             ->tel()
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
+                            ->label('Email')
                             ->email()
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('date')
+                            ->label('Ngày')
                             ->required(),
                         Forms\Components\TextInput::make('time')
+                            ->label('Thời gian')
                             ->required(),
                         Forms\Components\TextInput::make('guests')
+                            ->label('Số lượng khách')
                             ->required()
                             ->numeric(),
                         Forms\Components\TextInput::make('table_id')
+                            ->label('Bàn')
                             ->numeric(),
                         Forms\Components\Textarea::make('notes')
+                            ->label('Ghi chú')
                             ->columnSpanFull(),
                         Forms\Components\Select::make('status')
                             ->label('Trạng thái')
@@ -71,19 +83,26 @@ class BookingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Tên khách hàng')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Số điện thoại')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date')
+                    ->label('Ngày')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('time'),
+                Tables\Columns\TextColumn::make('time')
+                    ->label('Thời gian'),
                 Tables\Columns\TextColumn::make('guests')
+                    ->label('Số lượng khách')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('table_id')
+                    ->label('Bàn')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -105,10 +124,12 @@ class BookingResource extends Resource
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

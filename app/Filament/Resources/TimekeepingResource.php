@@ -43,13 +43,18 @@ class TimekeepingResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('user_id')
+                    ->label('Nhân viên')
                     ->relationship('user', 'name')
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                    ->label('Ngày')
                     ->required(),
-                Forms\Components\DateTimePicker::make('check_in'),
-                Forms\Components\DateTimePicker::make('check_out'),
+                Forms\Components\DateTimePicker::make('check_in')
+                    ->label('Giờ vào'),
+                Forms\Components\DateTimePicker::make('check_out')
+                    ->label('Giờ ra'),
                 Forms\Components\TextInput::make('status')
+                    ->label('Trạng thái')
                     ->maxLength(255),
             ]);
     }
@@ -82,6 +87,12 @@ class TimekeepingResource extends Resource
                         'late' => 'warning',
                         'absent' => 'danger',
                         default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'present' => 'Có mặt',
+                        'late' => 'Đi trễ',
+                        'absent' => 'Vắng mặt',
+                        default => $state,
                     }),
             ])
             ->filters([

@@ -52,16 +52,18 @@ class PageController extends Controller
             $tableId = session('table_id');
         }
 
-        if (!$tableId || !\App\Models\Table::where('id', $tableId)->exists()) {
+        $tables = \App\Models\Table::all();
+        
+        if ($tableId && !$tables->contains('id', $tableId)) {
             session()->forget('table_id');
-            return redirect()->route('welcome')->with('warning', 'Vui lòng quét mã QR tại bàn để thực hiện gọi món.');
+            $tableId = null;
         }
 
         $categories = Category::with(['food' => function($query) {
             $query->where('is_available', true);
         }])->where('is_active', true)->get();
         
-        return view('order_at_table', compact('categories', 'tableId'));
+        return view('order_at_table', compact('categories', 'tableId', 'tables'));
     }
     public function vietnameseCuisine(Request $request) { 
         $categories = Category::where('is_active', true)->get();

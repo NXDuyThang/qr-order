@@ -86,11 +86,25 @@ class OrderController extends Controller
         // Clear checkout session
         session()->forget('checkout_data');
 
-        if ($validated['payment_method'] === 'transfer') {
-            return redirect()->route('checkout.transfer', ['order' => $order->id]);
+        // Redirect to tracking page
+        return redirect()->route('order.track', ['order' => $order->id]);
+    }
+
+    public function track(Order $order)
+    {
+        // Ensure the order belongs to the user or table logic
+        if ($order->user_id) {
+            if ($order->user_id !== auth()->id()) {
+                abort(403, 'Không có quyền truy cập');
+            }
+        } else {
+            // Guest order
+            if ((string)$order->table_id !== (string)session('table_id')) {
+                abort(403, 'Không có quyền truy cập (Sai bàn)');
+            }
         }
 
-        return redirect()->route('order_at_table', ['table_id' => $tableId])->with('success', 'Thanh toán thành công! Đơn hàng của bạn đã được ghi nhận. Vui lòng chờ trong giây lát.');
+        return view('tracking.order', compact('order'));
     }
 
     public function showTransferQR(Order $order)
@@ -117,5 +131,14 @@ class OrderController extends Controller
         $qrUrl = "https://img.vietqr.io/image/{$bankId}-{$accountNo}-compact2.png?amount={$amount}&addInfo=" . urlencode($addInfo) . "&accountName=" . urlencode($accountName);
 
         return view('checkout_transfer', compact('order', 'qrUrl', 'amount', 'addInfo', 'accountName', 'accountNo', 'bankId'));
+    }
+
+    public function getStatus(Order $order)
+    {
+        // Optional: Add simple authorization here if needed
+        return response()->json([
+            'status' => $order->status,
+            'payment_status' => $order->payment_status,
+        ]);
     }
 }

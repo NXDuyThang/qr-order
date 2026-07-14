@@ -18,6 +18,10 @@ class TableResource extends Resource
     protected static ?string $model = TableModel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $modelLabel = 'Bàn';
+    protected static ?string $pluralModelLabel = 'Quản lý Bàn';
+    protected static ?string $navigationGroup = 'Nhà hàng';
 
     public static function canAccess(): bool
     {
@@ -88,10 +92,12 @@ class TableResource extends Resource
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

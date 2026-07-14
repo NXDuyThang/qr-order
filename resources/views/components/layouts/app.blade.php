@@ -150,6 +150,11 @@
                 <a href="{{ url('/vietnamese-cuisine') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('vietnamese-cuisine') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Ẩm Thực Việt</a>
 
                 <a href="{{ url('/contact') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('contact') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Liên Hệ</a>
+                
+                @if(Session::has('access_token') || Auth::check())
+                    <a href="{{ route('order_at_table') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('order_at_table') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Đặt Món</a>
+                @endif
+                
                 @if(Session::has('access_token'))
                     <a href="{{ route('profile.index') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->routeIs('profile.*') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap font-medium text-primary/80">Tài Khoản</a>
                 @else
@@ -262,6 +267,10 @@
             <a href="{{ url('/vietnamese-cuisine') }}" class="text-[14px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Ẩm Thực Việt</a>
 
             <a href="{{ url('/contact') }}" class="text-[14px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Liên Hệ</a>
+            
+            @if(Session::has('access_token') || Auth::check())
+                <a href="{{ route('order_at_table') }}" class="text-[14px] text-primary hover:text-white tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Đặt Món</a>
+            @endif
         </div>
     </div>
 

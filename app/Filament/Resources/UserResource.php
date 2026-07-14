@@ -23,8 +23,9 @@ class UserResource extends Resource
     {
         return auth()->user()->is_admin || auth()->user()->role === 'manager';
     }
-    protected static ?string $navigationGroup = 'Nhân sự';
+    protected static ?string $navigationGroup = 'Quản lý nhân sự';
     protected static ?string $modelLabel = 'Nhân viên';
+    protected static ?string $pluralModelLabel = 'Quản lý Nhân viên';
 
     public static function canViewAny(): bool
     {
@@ -36,20 +37,24 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Họ tên')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('Email')
                     ->email()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
+                    ->label('Mật khẩu')
                     ->password()
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Select::make('role')
+                    ->label('Vai trò')
                     ->options([
                         'customer' => 'Khách hàng',
-                        'admin' => 'Admin',
+                        'admin' => 'Quản trị viên (Admin)',
                         'manager' => 'Quản lý',
                         'chef' => 'Đầu bếp',
                         'waiter' => 'Phục vụ',
@@ -57,6 +62,7 @@ class UserResource extends Resource
                     ->default('customer')
                     ->required(),
                 Forms\Components\TextInput::make('base_salary')
+                    ->label('Lương cơ bản')
                     ->numeric()
                     ->default(0)
                     ->prefix('VNĐ'),
@@ -73,10 +79,13 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Họ tên')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('role')
+                    ->label('Vai trò')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'admin' => 'danger',
@@ -84,11 +93,20 @@ class UserResource extends Resource
                         'chef' => 'success',
                         'waiter' => 'info',
                         default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'admin' => 'Admin',
+                        'manager' => 'Quản lý',
+                        'chef' => 'Đầu bếp',
+                        'waiter' => 'Phục vụ',
+                        default => $state,
                     }),
                 Tables\Columns\TextColumn::make('base_salary')
+                    ->label('Lương cơ bản')
                     ->money('vnd')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -319,6 +319,26 @@
 
     </div>
 
+    @if(!$tableId)
+    <!-- Table Selection Modal -->
+    <div class="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-[#0d1114] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+            <h2 class="text-2xl text-primary font-serif mb-2 uppercase tracking-[0.1em]">Chọn Bàn</h2>
+            <p class="text-gray-400 mb-8 text-sm">Vui lòng chọn bàn bạn đang ngồi để thực hiện gọi món.</p>
+            <div class="grid grid-cols-2 gap-4">
+                @foreach($tables as $table)
+                <a href="{{ route('order_at_table', ['table_id' => $table->id]) }}" class="border border-white/20 text-white hover:bg-primary hover:border-primary hover:text-white transition-colors p-4 rounded-xl text-lg font-bold font-sans">
+                    {{ $table->name ?? 'Bàn ' . $table->id }}
+                </a>
+                @endforeach
+            </div>
+            <div class="mt-8">
+                <a href="{{ route('welcome') }}" class="text-gray-500 hover:text-white text-sm transition-colors border-b border-transparent hover:border-white pb-1">Quay lại trang chủ</a>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @push('scripts')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>

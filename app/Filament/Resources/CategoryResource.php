@@ -18,6 +18,10 @@ class CategoryResource extends Resource
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $modelLabel = 'Danh mục';
+    protected static ?string $pluralModelLabel = 'Quản lý Danh mục';
+    protected static ?string $navigationGroup = 'Thực đơn';
 
     public static function canAccess(): bool
     {
@@ -29,16 +33,21 @@ class CategoryResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Tên danh mục')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
+                    ->label('Đường dẫn (slug)')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label('Mô tả')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('image')
+                    ->label('Hình ảnh')
                     ->image(),
                 Forms\Components\Toggle::make('is_active')
+                    ->label('Trạng thái hoạt động')
                     ->required(),
             ]);
     }
@@ -48,17 +57,23 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Tên danh mục')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('Đường dẫn (slug)')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Hình ảnh'),
                 Tables\Columns\IconColumn::make('is_active')
+                    ->label('Trạng thái')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
