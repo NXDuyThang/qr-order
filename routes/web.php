@@ -47,10 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
     Route::get('/order/track/{order}', [\App\Http\Controllers\OrderController::class, 'track'])->name('order.track');
     Route::get('/checkout/transfer/{order}', [\App\Http\Controllers\OrderController::class, 'showTransferQR'])->name('checkout.transfer');
-    
-    // Order tracking API
-    Route::get('/api/order/{order}/status', [\App\Http\Controllers\OrderController::class, 'getStatus'])->name('api.order.status');
 });
+
+// Order tracking API (Must be outside auth middleware so guests can poll)
+Route::get('/api/order/{order}/status', [\App\Http\Controllers\OrderController::class, 'getStatus'])->name('api.order.status');
 
 // API Routes for frontend
 Route::post('/ajax/administratives', [ProfileController::class, 'getAdministratives'])->name('api.administratives');
