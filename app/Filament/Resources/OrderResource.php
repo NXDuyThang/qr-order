@@ -179,6 +179,10 @@ class OrderResource extends Resource
                     ->color('success')
                     ->visible(fn (Order $record) => $record->payment_status === 'pending' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['manager', 'admin'])))
                     ->requiresConfirmation()
+                    ->modalHeading('Xác nhận Thanh toán')
+                    ->modalDescription('Bạn có chắc chắn đã nhận được tiền thanh toán cho đơn hàng này không?')
+                    ->modalSubmitActionLabel('Xác nhận')
+                    ->modalCancelActionLabel('Hủy bỏ')
                     ->action(function (Order $record) {
                         $record->update(['payment_status' => 'paid', 'status' => 'completed']);
                     }),
