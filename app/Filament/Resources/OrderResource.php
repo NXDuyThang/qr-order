@@ -169,7 +169,7 @@ class OrderResource extends Resource
                     ->label('Xác nhận Thanh toán')
                     ->icon('heroicon-o-currency-dollar')
                     ->color('success')
-                    ->visible(fn (Order $record) => $record->payment_status === 'pending' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'manager', 'admin'])))
+                    ->visible(fn (Order $record) => $record->payment_status === 'pending' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['manager', 'admin'])))
                     ->requiresConfirmation()
                     ->action(function (Order $record) {
                         $record->update(['payment_status' => 'paid', 'status' => 'completed']);
