@@ -48,7 +48,7 @@ class OrderResource extends Resource
                     ->label('Trạng thái món')
                     ->options([
                         'new' => 'Mới đặt',
-                        'ready' => 'Nấu xong (Sẵn sàng)',
+                        'ready' => 'Nấu xong',
                         'served' => 'Đã phục vụ',
                         'completed' => 'Hoàn tất',
                         'cancelled' => 'Đã hủy',
