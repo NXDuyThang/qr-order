@@ -55,7 +55,8 @@ class OrderResource extends Resource
                     ])
                     ->required()
                     ->default('new')
-                    ->disabled(fn () => !auth()->user()->is_admin && !in_array(auth()->user()->role, ['manager', 'admin'])),
+                    ->disabled()
+                    ->dehydrated(),
                 Forms\Components\Select::make('payment_status')
                     ->label('Trạng thái thanh toán')
                     ->options([
@@ -64,7 +65,8 @@ class OrderResource extends Resource
                     ])
                     ->required()
                     ->default('pending')
-                    ->disabled(fn () => !auth()->user()->is_admin && !in_array(auth()->user()->role, ['manager', 'admin'])),
+                    ->disabled()
+                    ->dehydrated(),
                 Forms\Components\Textarea::make('notes')
                     ->label('Ghi chú')
                     ->columnSpanFull(),
