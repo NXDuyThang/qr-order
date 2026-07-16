@@ -134,10 +134,10 @@
         @endif
 
         <!-- Main Content Area: Grid + Sidebar -->
-        <div class="px-6 md:px-[60px] py-12 flex flex-col md:flex-row gap-12">
+        <div class="px-6 md:px-[60px] py-12 flex flex-col lg:flex-row gap-12">
             
             <!-- Menu Grid & Pagination (Left/Center) -->
-            <div class="w-full md:w-3/4 lg:w-4/5">
+            <div class="w-full lg:w-3/4 xl:w-4/5">
                 
                 <!-- Top Bar: Results Count & Sort Dropdown -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-white/10 gap-4">
@@ -154,7 +154,7 @@
                 </div>
 
                 <!-- Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
                     <template x-for="item in paginatedFoods" :key="item.id">
                         <div class="product-card group relative">
                             <a :href="'/product/' + item.slug" class="block">
@@ -209,7 +209,7 @@
             </div>
 
             <!-- Category & Filter Sidebar (Right) -->
-            <div class="w-full md:w-1/4 lg:w-1/5 flex flex-col gap-12">
+            <div class="w-full lg:w-1/4 xl:w-1/5 flex flex-col gap-12">
                 
                 <!-- Price Filter -->
                 <div>
