@@ -168,7 +168,7 @@ class OrderResource extends Resource
                 Tables\Actions\Action::make('serve')
                     ->label('Đã giao')
                     ->icon('heroicon-o-arrow-right-circle')
-                    ->color('info')
+                    ->color('success')
                     ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'served']);
