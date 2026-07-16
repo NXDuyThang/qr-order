@@ -28,6 +28,11 @@ class OrderResource extends Resource
         return in_array(auth()->user()->role, ['manager', 'admin', 'waiter', 'chef']) || auth()->user()->is_admin;
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -114,9 +119,9 @@ class OrderResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'new' => 'Mới đặt (Bếp)',
-                        'ready' => 'Nấu xong (Phục vụ)',
-                        'served' => 'Đã giao (Chờ thanh toán)',
+                        'new' => 'Mới đặt',
+                        'ready' => 'Nấu xong',
+                        'served' => 'Đã giao',
                         'completed' => 'Hoàn tất',
                         'cancelled' => 'Đã hủy',
                         default => $state,
@@ -153,7 +158,7 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('finish')
-                    ->label('Nấu xong (Finish)')
+                    ->label('Nấu xong')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn (Order $record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
@@ -161,7 +166,7 @@ class OrderResource extends Resource
                         $record->update(['status' => 'ready']);
                     }),
                 Tables\Actions\Action::make('serve')
-                    ->label('Đã giao (Serve)')
+                    ->label('Đã giao')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->color('info')
                     ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
