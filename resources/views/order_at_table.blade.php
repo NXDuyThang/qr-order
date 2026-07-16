@@ -133,6 +133,34 @@
         </div>
         @endif
 
+        @if(session('error'))
+        <div class="px-6 md:px-[60px] mt-8">
+            <div class="bg-[#2e1a1a] border border-[#5e2f2f] text-[#e98c8c] px-6 py-4 rounded relative font-sans text-sm tracking-wide">
+                {{ session('error') }}
+            </div>
+        </div>
+        @endif
+
+        @if(session('warning'))
+        <div class="px-6 md:px-[60px] mt-8">
+            <div class="bg-[#332a18] border border-[#665533] text-[#e9cc8c] px-6 py-4 rounded relative font-sans text-sm tracking-wide">
+                {{ session('warning') }}
+            </div>
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="px-6 md:px-[60px] mt-8">
+            <div class="bg-[#2e1a1a] border border-[#5e2f2f] text-[#e98c8c] px-6 py-4 rounded relative font-sans text-sm tracking-wide">
+                <ul class="list-disc pl-5">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        @endif
+
         <!-- Main Content Area: Grid + Sidebar -->
         <div class="px-6 md:px-[60px] py-12 flex flex-col lg:flex-row gap-12">
             
@@ -306,10 +334,10 @@
                     <span class="text-primary font-serif text-lg" x-text="formatPrice(cartTotal())"></span>
                 </div>
                 
-                <form action="{{ route('checkout.prepare') }}" method="POST">
+                <form action="{{ route('checkout.prepare') }}" method="POST" @submit="$refs.itemsInput.value = JSON.stringify(items)">
                     @csrf
                     <input type="hidden" name="table_id" value="{{ $tableId }}">
-                    <input type="hidden" name="items" :value="JSON.stringify(items)">
+                    <input type="hidden" name="items" x-ref="itemsInput">
                     <button type="submit" :disabled="items.length === 0" class="w-full bg-primary text-white py-3 text-[11px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         Gửi Yêu Cầu Đặt Món
                     </button>
