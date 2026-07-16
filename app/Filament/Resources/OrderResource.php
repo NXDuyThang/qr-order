@@ -153,7 +153,7 @@ class OrderResource extends Resource
                     ->label('Nấu xong (Finish)')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (Order $record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'manager', 'admin'])))
+                    ->visible(fn (Order $record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'ready']);
                     }),
@@ -161,7 +161,7 @@ class OrderResource extends Resource
                     ->label('Đã giao (Serve)')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->color('info')
-                    ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'manager', 'admin'])))
+                    ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'served']);
                     }),
