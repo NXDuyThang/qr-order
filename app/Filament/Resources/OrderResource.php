@@ -100,7 +100,8 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('total_price')
                     ->label('Tổng tiền')
                     ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(fn () => auth()->check() && (auth()->user()->is_admin || in_array(auth()->user()->role, ['manager', 'admin']))),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái món')
                     ->badge()
@@ -134,7 +135,8 @@ class OrderResource extends Resource
                         'paid' => 'Đã thanh toán',
                         default => $state,
                     })
-                    ->searchable(),
+                    ->searchable()
+                    ->visible(fn () => auth()->check() && (auth()->user()->is_admin || in_array(auth()->user()->role, ['manager', 'admin']))),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày đặt')
                     ->dateTime()
