@@ -16,17 +16,17 @@ class PageController extends Controller
 
     public function restaurantHome()
     {
-        $categories = Category::where('is_active', true)->get();
+        $categories = Category::where('is_active', 'true')->get();
         // Get some foods for the "From Our Menu" section
-        $specialFoods = Food::where('is_available', true)->take(6)->get(); 
+        $specialFoods = Food::where('is_available', 'true')->take(6)->get(); 
         
         return view('home', compact('categories', 'specialFoods'));
     }
 
     public function menu() { 
         $categories = Category::with(['food' => function($query) {
-            $query->where('is_available', true);
-        }])->where('is_active', true)->get();
+            $query->where('is_available', 'true');
+        }])->where('is_active', 'true')->get();
         
         return view('menu', compact('categories')); 
     }
@@ -60,14 +60,14 @@ class PageController extends Controller
         }
 
         $categories = Category::with(['food' => function($query) {
-            $query->where('is_available', true);
-        }])->where('is_active', true)->get();
+            $query->where('is_available', 'true');
+        }])->where('is_active', 'true')->get();
         
         return view('order_at_table', compact('categories', 'tableId', 'tables'));
     }
     public function vietnameseCuisine(Request $request) { 
-        $categories = Category::where('is_active', true)->get();
-        $query = Food::with('category')->where('is_available', true);
+        $categories = Category::where('is_active', 'true')->get();
+        $query = Food::with('category')->where('is_available', 'true');
         
         if ($request->has('category') && $request->category !== 'all') {
             $query->whereHas('category', function($q) use ($request) {
@@ -84,7 +84,7 @@ class PageController extends Controller
         $food = Food::with('category')->where('slug', $slug)->firstOrFail();
         $relatedFoods = Food::where('category_id', $food->category_id)
             ->where('id', '!=', $food->id)
-            ->where('is_available', true)
+            ->where('is_available', 'true')
             ->take(4)->get();
         return view('portfolio_detail', compact('food', 'relatedFoods')); 
     }
