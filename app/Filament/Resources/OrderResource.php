@@ -175,11 +175,17 @@ class OrderResource extends Resource
         ];
     }
 
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()->is_admin || in_array(auth()->user()->role, ['admin', 'manager']);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
+            'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
