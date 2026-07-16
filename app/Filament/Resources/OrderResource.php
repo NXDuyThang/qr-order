@@ -54,7 +54,8 @@ class OrderResource extends Resource
                         'cancelled' => 'Đã hủy',
                     ])
                     ->required()
-                    ->default('new'),
+                    ->default('new')
+                    ->disabled(fn () => !auth()->user()->is_admin && !in_array(auth()->user()->role, ['manager', 'admin'])),
                 Forms\Components\Select::make('payment_status')
                     ->label('Trạng thái thanh toán')
                     ->options([
@@ -62,7 +63,8 @@ class OrderResource extends Resource
                         'paid' => 'Đã thanh toán',
                     ])
                     ->required()
-                    ->default('pending'),
+                    ->default('pending')
+                    ->disabled(fn () => !auth()->user()->is_admin && !in_array(auth()->user()->role, ['manager', 'admin'])),
                 Forms\Components\Textarea::make('notes')
                     ->label('Ghi chú')
                     ->columnSpanFull(),
