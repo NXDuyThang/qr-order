@@ -135,7 +135,7 @@ class OrderResource extends Resource
                     ->label('Nấu xong (Finish)')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (Order $record) => $record->status === 'new')
+                    ->visible(fn (Order $record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'manager', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'ready']);
                     }),
@@ -143,9 +143,18 @@ class OrderResource extends Resource
                     ->label('Đã giao (Serve)')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->color('info')
-                    ->visible(fn (Order $record) => $record->status === 'ready')
+                    ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'manager', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'served']);
+                    }),
+                Tables\Actions\Action::make('pay')
+                    ->label('Xác nhận Thanh toán')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->color('success')
+                    ->visible(fn (Order $record) => $record->payment_status === 'pending' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'manager', 'admin'])))
+                    ->requiresConfirmation()
+                    ->action(function (Order $record) {
+                        $record->update(['payment_status' => 'paid', 'status' => 'completed']);
                     }),
             ])
             ->bulkActions([
