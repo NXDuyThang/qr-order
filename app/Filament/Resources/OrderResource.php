@@ -82,6 +82,20 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('table.name')
                     ->label('Bàn')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Khách hàng')
+                    ->sortable()
+                    ->searchable()
+                    ->default('Khách vãng lai'),
+                Tables\Columns\TextColumn::make('items_list')
+                    ->label('Danh sách món ăn')
+                    ->getStateUsing(function (Order $record) {
+                        return $record->items->map(function ($item) {
+                            return $item->food->name . ' (x' . $item->quantity . ')';
+                        })->toArray();
+                    })
+                    ->listWithLineBreaks()
+                    ->bulleted(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->label('Tổng tiền')
                     ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
