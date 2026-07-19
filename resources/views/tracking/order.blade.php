@@ -235,11 +235,12 @@
                         <a href="{{ route('checkout.transfer', ['order' => $order->id]) }}" class="inline-block bg-primary text-white px-10 py-4 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                             Mã QR Thanh Toán
                         </a>
-                    @else
-                        <p class="text-white mb-6 tracking-wide">Bạn đã chọn thanh toán bằng tiền mặt.</p>
-                        <button disabled class="inline-block bg-gray-800 text-gray-400 border border-gray-600 px-10 py-4 text-[13px] font-semibold tracking-[0.2em] uppercase cursor-not-allowed">
-                            Chờ Nhân Viên Thu Tiền
-                        </button>
+                    @elseif($order->payment_method === 'cash')
+                        <div class="bg-gray-800/50 rounded-xl p-6 border border-white/10 backdrop-blur-md">
+                            <h4 class="text-white text-lg font-serif mb-2 tracking-wider">Thanh toán Tiền mặt</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed mb-4">Vui lòng thanh toán tại quầy thu ngân.</p>
+                            <p class="text-white font-semibold text-xl">{{ number_format($order->total_price * 1000, 0, ',', '.') }} VNĐ</p>
+                        </div>
                     @endif
                 @endif
             </div>
@@ -256,11 +257,14 @@
             </div>
 
             <!-- Back to Menu or Add More -->
-            <div class="text-center mt-12 flex flex-col sm:flex-row justify-center gap-6" x-show="status !== 'completed'">
-                <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="inline-block bg-[#0d1114] text-white border border-white/20 px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-[#0d1114] transition-colors">
-                    Gọi Thêm Món
+            <!-- Order Actions -->
+            @if(!$order->payment_method)
+            <div class="mt-8 flex gap-4 justify-center relative z-10" x-show="status !== 'completed'">
+                <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="inline-block bg-transparent text-white border border-white px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-colors">
+                    Gọi thêm món
                 </a>
             </div>
+            @endif
             
         </div>
     </div>
