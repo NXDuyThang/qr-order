@@ -175,7 +175,7 @@ class OrderResource extends Resource
                         $record->update(['status' => 'served']);
                         $record->items()->where('status', 'ready')->update(['status' => 'served']);
                     }),
-                Tables\Actions\Action::make('pay')
+                Tables\Actions\Action::make('confirmPayment')
                     ->label('Xác nhận Thanh toán')
                     ->icon('heroicon-o-currency-dollar')
                     ->color('success')
@@ -187,7 +187,9 @@ class OrderResource extends Resource
                     ->modalCancelActionLabel('Hủy bỏ')
                     ->action(function (Order $record) {
                         $record->update(['payment_status' => 'paid', 'status' => 'completed']);
-                    }),
+                        $record->items()->whereNotIn('status', ['cancelled'])->update(['status' => 'completed']);
+                    })
+                    ->successNotificationTitle('Đã xác nhận thanh toán thành công'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
