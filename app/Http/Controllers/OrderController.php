@@ -143,10 +143,13 @@ class OrderController extends Controller
 
     public function getStatus(Order $order)
     {
+        $allServed = $order->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
+
         // Optional: Add simple authorization here if needed
         return response()->json([
             'status' => $order->status,
             'payment_status' => $order->payment_status,
+            'all_items_served' => $allServed,
         ]);
     }
 

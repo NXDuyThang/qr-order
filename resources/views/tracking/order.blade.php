@@ -87,6 +87,10 @@
     </style>
     @endpush
 
+    @php
+        $allServed = $order->items->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
+    @endphp
+
     <div class="pt-[110px] pb-24 min-h-screen bg-[#0d1114] tracking-container" 
          x-data="orderTracker()" 
          x-init="initTracker()">
@@ -202,7 +206,7 @@
             </div>
 
             <!-- Action Area -->
-            <div class="text-center relative z-10 transition-all duration-500 mt-12" style="display: none;" x-show="paymentStatus === 'pending'" x-data="{ showPaymentOptions: false }">
+            <div class="text-center relative z-10 transition-all duration-500 mt-12" style="display: none;" x-show="paymentStatus === 'pending' && allItemsServed" x-data="{ showPaymentOptions: false }">
                 <h3 class="text-xl text-white font-serif mb-6 tracking-[0.1em] uppercase">Thanh toán Hoá đơn</h3>
                 
                 @if(!$order->payment_method)
@@ -278,6 +282,7 @@
             Alpine.data('orderTracker', () => ({
                 status: '{{ $order->status }}',
                 paymentStatus: '{{ $order->payment_status }}',
+                allItemsServed: {{ $allServed ? 'true' : 'false' }},
                 orderId: {{ $order->id }},
                 pollInterval: null,
 
@@ -293,6 +298,7 @@
                         .then(data => {
                             this.status = data.status;
                             this.paymentStatus = data.payment_status;
+                            this.allItemsServed = data.all_items_served;
                             
                             // Stop polling if completed and paid
                             if (this.status === 'completed' && this.paymentStatus === 'paid') {
