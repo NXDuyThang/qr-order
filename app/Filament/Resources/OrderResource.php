@@ -83,7 +83,7 @@ class OrderResource extends Resource
     {
         return $table
             ->poll('3s')
-            ->defaultSort('id', 'desc')
+            ->defaultSort('updated_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('table.name')
                     ->label('Bàn')
