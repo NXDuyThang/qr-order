@@ -176,6 +176,12 @@ class OrderController extends Controller
         $deductAmount = $item->unit_price * $item->quantity;
         $order->total_price -= $deductAmount;
         if ($order->total_price < 0) $order->total_price = 0;
+        
+        // Check if all items are cancelled
+        if ($order->items()->where('status', '!=', 'cancelled')->count() === 0) {
+            $order->status = 'cancelled';
+        }
+        
         $order->save();
 
         return back()->with('success', 'Đã huỷ món thành công.');

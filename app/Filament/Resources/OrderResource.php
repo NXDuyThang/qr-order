@@ -97,7 +97,8 @@ class OrderResource extends Resource
                     ->label('Danh sách món ăn')
                     ->getStateUsing(function (Order $record) {
                         return $record->items->map(function ($item) {
-                            return $item->food->name . ' (x' . $item->quantity . ')';
+                            $cancelText = $item->status === 'cancelled' ? ' [ĐÃ HUỶ]' : '';
+                            return $item->food->name . ' (x' . $item->quantity . ')' . $cancelText;
                         })->toArray();
                     })
                     ->listWithLineBreaks()
