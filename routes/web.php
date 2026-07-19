@@ -42,11 +42,11 @@ Route::middleware('auth')->group(function () {
 // Table Ordering & Checkout Routes (Must be logged in)
 Route::middleware('auth')->group(function () {
     Route::get('/order', [PageController::class, 'orderAtTable'])->name('order_at_table');
-    Route::post('/checkout/prepare', [\App\Http\Controllers\OrderController::class, 'prepareCheckout'])->name('checkout.prepare');
-    Route::get('/checkout', [\App\Http\Controllers\OrderController::class, 'checkout'])->name('checkout.index');
-    Route::post('/checkout', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
+    Route::post('/order/store', [\App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
     Route::get('/order/track/{order}', [\App\Http\Controllers\OrderController::class, 'track'])->name('order.track');
+    Route::post('/order/{order}/payment-method', [\App\Http\Controllers\OrderController::class, 'updatePaymentMethod'])->name('order.update_payment_method');
     Route::get('/checkout/transfer/{order}', [\App\Http\Controllers\OrderController::class, 'showTransferQR'])->name('checkout.transfer');
+    Route::post('/order/{order}/item/{item}/cancel', [\App\Http\Controllers\OrderController::class, 'cancelItem'])->name('order.item.cancel');
 });
 
 // Order tracking API (Must be outside auth middleware so guests can poll)

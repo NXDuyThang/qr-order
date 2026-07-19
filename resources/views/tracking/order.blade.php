@@ -138,38 +138,119 @@
                 </div>
             </div>
 
+            <!-- Order Items List -->
+            <div class="bg-[#040810] border border-white/5 p-6 md:p-8 rounded-xl mb-12 relative overflow-hidden">
+                <h2 class="text-white text-lg font-medium tracking-wider mb-6 border-b border-white/10 pb-4">Chi tiết các món đã gọi</h2>
+                
+                @if(session('success'))
+                    <div class="bg-green-900/30 text-green-400 border border-green-500/30 px-4 py-3 rounded mb-6 text-sm">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                
+                @if(session('error'))
+                    <div class="bg-red-900/30 text-red-400 border border-red-500/30 px-4 py-3 rounded mb-6 text-sm">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                <div class="space-y-4">
+                    @foreach($order->items as $item)
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center p-4 border border-white/5 bg-[#0d1114] rounded-lg gap-4">
+                            <div>
+                                <h3 class="text-white text-md tracking-wide">{{ $item->food->name }}</h3>
+                                <p class="text-gray-400 text-sm mt-1">
+                                    Số lượng: {{ $item->quantity }} x {{ number_format($item->unit_price * 1000, 0, ',', '.') }} VNĐ 
+                                    = <strong class="text-primary">{{ number_format($item->quantity * $item->unit_price * 1000, 0, ',', '.') }} VNĐ</strong>
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider 
+                                    {{ $item->status === 'new' ? 'bg-primary/20 text-primary border border-primary/30' : '' }}
+                                    {{ $item->status === 'preparing' ? 'bg-warning/20 text-warning border border-warning/30 text-orange-400' : '' }}
+                                    {{ $item->status === 'ready' ? 'bg-info/20 text-info border border-info/30 text-blue-400' : '' }}
+                                    {{ $item->status === 'served' ? 'bg-success/20 text-success border border-success/30 text-green-400' : '' }}
+                                    {{ $item->status === 'cancelled' ? 'bg-danger/20 text-danger border border-danger/30 text-red-400' : '' }}
+                                ">
+                                    @match($item->status)
+                                        @case('new') Đang đợi bếp @break
+                                        @case('preparing') Đang nấu @break
+                                        @case('ready') Nấu xong @break
+                                        @case('served') Đã lên món @break
+                                        @case('cancelled') Đã huỷ @break
+                                        @default {{ $item->status }}
+                                    @endmatch
+                                </span>
+                                
+                                @if($item->status === 'new')
+                                    <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ món này không?');">
+                                        @csrf
+                                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm underline tracking-wide">Huỷ món</button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
+                    <span class="text-gray-400 uppercase tracking-widest text-sm">Tổng cộng:</span>
+                    <span class="text-2xl text-white font-serif">{{ number_format($order->total_price * 1000, 0, ',', '.') }} VNĐ</span>
+                </div>
+            </div>
+
             <!-- Action Area -->
-            <div class="text-center relative z-10 transition-all duration-500" style="display: none;" x-show="status === 'served' || status === 'completed'">
-                <div x-show="paymentStatus === 'pending'" style="display: none;" x-transition.opacity>
+            <div class="text-center relative z-10 transition-all duration-500 mt-12" style="display: none;" x-show="paymentStatus === 'pending'">
+                <h3 class="text-xl text-white font-serif mb-6 tracking-[0.1em] uppercase">Thanh toán Hoá đơn</h3>
+                
+                @if(!$order->payment_method)
+                    <p class="text-gray-400 mb-6 text-sm">Khi ăn xong, vui lòng chọn phương thức thanh toán</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <form action="{{ route('order.update_payment_method', ['order' => $order->id]) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="payment_method" value="cash">
+                            <button type="submit" class="w-full sm:w-auto inline-block bg-[#0d1114] text-white border border-white/20 px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-[#0d1114] transition-colors">
+                                Tiền Mặt
+                            </button>
+                        </form>
+                        <form action="{{ route('order.update_payment_method', ['order' => $order->id]) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="payment_method" value="transfer">
+                            <button type="submit" class="w-full sm:w-auto inline-block bg-primary text-white border border-primary px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)]">
+                                Chuyển Khoản
+                            </button>
+                        </form>
+                    </div>
+                @else
                     @if($order->payment_method === 'transfer')
                         <p class="text-white mb-6 tracking-wide">Vui lòng quét mã QR để thanh toán.</p>
                         <a href="{{ route('checkout.transfer', ['order' => $order->id]) }}" class="inline-block bg-primary text-white px-10 py-4 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                             Mã QR Thanh Toán
                         </a>
                     @else
-                        <p class="text-white mb-6 tracking-wide">Vui lòng thanh toán bằng tiền mặt cho nhân viên.</p>
+                        <p class="text-white mb-6 tracking-wide">Bạn đã chọn thanh toán bằng tiền mặt.</p>
                         <button disabled class="inline-block bg-gray-800 text-gray-400 border border-gray-600 px-10 py-4 text-[13px] font-semibold tracking-[0.2em] uppercase cursor-not-allowed">
-                            Chờ Thu Ngân
+                            Chờ Nhân Viên Thu Tiền
                         </button>
                     @endif
-                </div>
+                @endif
+            </div>
 
-                <div x-show="paymentStatus === 'paid'" style="display: none;" x-transition.opacity>
-                    <div class="bg-green-900/20 border border-green-500/30 text-green-400 p-6 rounded-xl inline-block">
-                        <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <p class="text-lg tracking-widest uppercase">Cảm ơn quý khách</p>
-                        <p class="text-sm mt-2 text-green-500/70">Thanh toán đã được xác nhận.</p>
-                    </div>
-                    <div class="mt-8">
-                        <a href="{{ route('welcome') }}" class="text-gray-400 hover:text-white transition-colors text-sm border-b border-transparent hover:border-white pb-1">Trở về trang chủ</a>
-                    </div>
+            <div class="text-center relative z-10 transition-all duration-500 mt-12" x-show="paymentStatus === 'paid'" style="display: none;" x-transition.opacity>
+                <div class="bg-green-900/20 border border-green-500/30 text-green-400 p-6 rounded-xl inline-block">
+                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-lg tracking-widest uppercase">Cảm ơn quý khách</p>
+                    <p class="text-sm mt-2 text-green-500/70">Thanh toán đã được xác nhận.</p>
+                </div>
+                <div class="mt-8">
+                    <a href="{{ route('welcome') }}" class="text-gray-400 hover:text-white transition-colors text-sm border-b border-transparent hover:border-white pb-1">Trở về trang chủ</a>
                 </div>
             </div>
 
-            <!-- Back to Menu (if still waiting) -->
-            <div class="text-center mt-12" x-show="status !== 'served' && status !== 'completed'">
-                <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="text-gray-500 hover:text-white transition-colors text-sm border-b border-transparent hover:border-white pb-1">
-                    Trở về danh mục đặt món
+            <!-- Back to Menu or Add More -->
+            <div class="text-center mt-12 flex flex-col sm:flex-row justify-center gap-6" x-show="status !== 'completed'">
+                <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="inline-block bg-[#0d1114] text-white border border-white/20 px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-[#0d1114] transition-colors">
+                    Gọi Thêm Món
                 </a>
             </div>
             

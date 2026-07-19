@@ -9,7 +9,7 @@ use App\Models\Table;
 
 class OrderController extends Controller
 {
-    public function prepareCheckout(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'table_id' => 'required|exists:tables,id',
@@ -22,69 +22,46 @@ class OrderController extends Controller
             return back()->with('error', 'Giỏ hàng của bạn đang trống.');
         }
 
-        // Store checkout data in session
-        session(['checkout_data' => [
-            'table_id' => $validated['table_id'],
-            'items' => $items
-        ]]);
-
-        return redirect()->route('checkout.index');
-    }
-
-    public function checkout()
-    {
-        $checkoutData = session('checkout_data');
-        
-        if (!$checkoutData) {
-            return redirect()->route('order_at_table')->with('warning', 'Không tìm thấy thông tin đơn hàng. Vui lòng thử lại.');
-        }
-
-        return view('checkout', [
-            'tableId' => $checkoutData['table_id'],
-            'items' => $checkoutData['items']
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        $checkoutData = session('checkout_data');
-        
-        if (!$checkoutData) {
-            return redirect()->route('order_at_table')->with('error', 'Phiên đặt món đã hết hạn. Vui lòng thử lại.');
-        }
-
-        $validated = $request->validate([
-            'payment_method' => 'required|in:cash,transfer'
-        ]);
-
-        $items = $checkoutData['items'];
-        $tableId = $checkoutData['table_id'];
+        $tableId = $validated['table_id'];
 
         $totalPrice = 0;
         foreach ($items as $item) {
             $totalPrice += $item['price'] * $item['quantity'];
         }
 
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'table_id' => $tableId,
-            'total_price' => $totalPrice,
-            'status' => 'new',
-            'payment_status' => 'pending',
-            'payment_method' => $validated['payment_method']
-        ]);
+        $existingOrder = Order::where('table_id', $tableId)
+            ->whereIn('status', ['new', 'ready', 'preparing'])
+            ->where('payment_status', 'pending');
+        
+        if (auth()->check()) {
+            $existingOrder->where('user_id', auth()->id());
+        }
+
+        $order = $existingOrder->first();
+
+        if ($order) {
+            $order->total_price += $totalPrice;
+            $order->save();
+        } else {
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'table_id' => $tableId,
+                'total_price' => $totalPrice,
+                'status' => 'new',
+                'payment_status' => 'pending',
+                'payment_method' => null
+            ]);
+        }
 
         foreach ($items as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
                 'food_id' => $item['id'],
                 'quantity' => $item['quantity'],
-                'unit_price' => $item['price']
+                'unit_price' => $item['price'],
+                'status' => 'new'
             ]);
         }
-
-        // Clear checkout session
-        session()->forget('checkout_data');
 
         // Redirect to tracking page
         return redirect()->route('order.track', ['order' => $order->id]);
@@ -105,6 +82,33 @@ class OrderController extends Controller
         }
 
         return view('tracking.order', compact('order'));
+    }
+
+    public function updatePaymentMethod(Request $request, Order $order)
+    {
+        // Check authorization
+        if ($order->user_id) {
+            if ($order->user_id !== auth()->id()) {
+                abort(403, 'Không có quyền truy cập');
+            }
+        } else {
+            if ((string)$order->table_id !== (string)session('table_id')) {
+                abort(403, 'Không có quyền truy cập (Sai bàn)');
+            }
+        }
+
+        $validated = $request->validate([
+            'payment_method' => 'required|in:cash,transfer'
+        ]);
+
+        $order->payment_method = $validated['payment_method'];
+        $order->save();
+
+        if ($validated['payment_method'] === 'transfer') {
+            return redirect()->route('checkout.transfer', ['order' => $order->id]);
+        }
+
+        return back()->with('success', 'Đã yêu cầu thanh toán tiền mặt. Vui lòng đợi nhân viên.');
     }
 
     public function showTransferQR(Order $order)
@@ -140,5 +144,33 @@ class OrderController extends Controller
             'status' => $order->status,
             'payment_status' => $order->payment_status,
         ]);
+    }
+
+    public function cancelItem(Request $request, Order $order, OrderItem $item)
+    {
+        // Check authorization
+        if ($order->user_id && $order->user_id !== auth()->id()) {
+            abort(403, 'Không có quyền truy cập');
+        }
+
+        // Ensure item belongs to order
+        if ($item->order_id !== $order->id) {
+            abort(404, 'Không tìm thấy món trong đơn hàng');
+        }
+
+        if ($item->status !== 'new') {
+            return back()->with('error', 'Không thể huỷ món này vì bếp đã tiếp nhận.');
+        }
+
+        // Update item status
+        $item->update(['status' => 'cancelled']);
+
+        // Update order total price
+        $deductAmount = $item->unit_price * $item->quantity;
+        $order->total_price -= $deductAmount;
+        if ($order->total_price < 0) $order->total_price = 0;
+        $order->save();
+
+        return back()->with('success', 'Đã huỷ món thành công.');
     }
 }

@@ -52,6 +52,25 @@ class ItemsRelationManager extends RelationManager
                     ->state(function ($record) {
                         return number_format($record->quantity * $record->unit_price * 1000, 0, ',', '.') . ' VNĐ';
                     }),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Trạng thái')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'new' => 'primary',
+                        'preparing' => 'warning',
+                        'ready' => 'info',
+                        'served' => 'success',
+                        'cancelled' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'new' => 'Mới gọi',
+                        'preparing' => 'Đang nấu',
+                        'ready' => 'Nấu xong',
+                        'served' => 'Đã lên bàn',
+                        'cancelled' => 'Đã huỷ',
+                        default => $state,
+                    }),
             ])
             ->filters([
                 //
@@ -60,6 +79,27 @@ class ItemsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                Tables\Actions\Action::make('prepare')
+                    ->label('Nấu')
+                    ->icon('heroicon-o-fire')
+                    ->color('warning')
+                    ->visible(fn ($record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
+                    ->action(fn ($record) => $record->update(['status' => 'preparing'])),
+                    
+                Tables\Actions\Action::make('ready')
+                    ->label('Xong')
+                    ->icon('heroicon-o-check')
+                    ->color('info')
+                    ->visible(fn ($record) => $record->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
+                    ->action(fn ($record) => $record->update(['status' => 'ready'])),
+                    
+                Tables\Actions\Action::make('serve')
+                    ->label('Lên bàn')
+                    ->icon('heroicon-o-arrow-right')
+                    ->color('success')
+                    ->visible(fn ($record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
+                    ->action(fn ($record) => $record->update(['status' => 'served'])),
+                    
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

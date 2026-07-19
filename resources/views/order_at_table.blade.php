@@ -161,16 +161,69 @@
         </div>
         @endif
 
-        <!-- Main Content Area: Grid Layout -->
-        <div class="px-4 sm:px-6 md:px-12 lg:px-[60px] py-8 md:py-12 grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 gap-x-8 lg:gap-x-12">
+        <!-- Main Content Area: Flex Layout -->
+        <div class="px-4 sm:px-6 md:px-12 lg:px-[60px] py-8 md:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
             
-            <!-- Top Bar: Results Count & Sort Dropdown -->
-            <div class="lg:col-span-3 xl:col-span-4 lg:row-start-1 lg:col-start-1">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-white/10 gap-4">
-                    <span class="text-gray-400 text-sm tracking-wider">
-                        Hiển thị <span x-text="filteredFoods.length"></span> kết quả
+            <!-- Category & Filter Sidebar (Left on Desktop, Top on Mobile) -->
+            <div class="w-full lg:w-1/4 xl:w-1/5 flex flex-col gap-4">
+                
+                <!-- Mobile Filter Toggle Button -->
+                <button @click="filterOpen = !filterOpen" class="w-full lg:hidden flex justify-between items-center bg-[#0d1114] border border-white/20 text-gray-300 px-4 py-3 text-sm focus:outline-none hover:border-primary transition-colors">
+                    <span class="font-sans">Bộ lọc & Danh mục</span>
+                    <svg class="w-4 h-4 transition-transform duration-300" :class="{'rotate-180': filterOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <!-- Filter Content -->
+                <div class="flex-col gap-8" :class="{'hidden lg:flex': !filterOpen, 'flex': filterOpen}">
+                    
+                    <!-- Categories -->
+                    <div class="flex flex-col gap-3">
+                        <h3 class="text-white text-sm font-sans uppercase mb-2 border-b border-white/10 pb-3 tracking-wider">DANH MỤC</h3>
+                        
+                        <button @click="setCategory('all'); if(window.innerWidth < 1024) filterOpen = false;" 
+                                :class="activeCategory === 'all' ? 'text-primary pl-2 border-l-2 border-primary' : 'text-gray-400 hover:text-white hover:pl-1 border-l-2 border-transparent'"
+                                class="text-left text-sm font-sans transition-all duration-300 focus:outline-none py-1">
+                            Tất cả món ăn
+                        </button>
+                        
+                        <template x-for="cat in categories" :key="cat.id">
+                            <button @click="setCategory(cat.id); if(window.innerWidth < 1024) filterOpen = false;" 
+                                    :class="activeCategory === cat.id ? 'text-primary pl-2 border-l-2 border-primary' : 'text-gray-400 hover:text-white hover:pl-1 border-l-2 border-transparent'"
+                                    class="text-left text-sm font-sans transition-all duration-300 focus:outline-none py-1"
+                                    x-text="cat.name">
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="mt-4 lg:mt-6">
+                        <h3 class="text-white text-sm font-sans uppercase mb-4 border-b border-white/10 pb-3 tracking-wider">LỌC THEO GIÁ</h3>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center gap-3">
+                                <input type="number" x-model.number="filterMinPrice" class="w-full bg-transparent border border-white/20 text-white px-3 py-2 text-sm font-sans focus:outline-none focus:border-primary" placeholder="Min" min="0">
+                                <span class="text-gray-500">-</span>
+                                <input type="number" x-model.number="filterMaxPrice" class="w-full bg-transparent border border-white/20 text-white px-3 py-2 text-sm font-sans focus:outline-none focus:border-primary" placeholder="Max" min="0">
+                            </div>
+                            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mt-2 gap-4">
+                                <button @click="minPrice = filterMinPrice; maxPrice = filterMaxPrice; currentPage = 1; if(window.innerWidth < 1024) filterOpen = false;" class="border border-white/20 text-white text-xs tracking-widest px-6 py-2 hover:bg-white hover:text-black transition-colors uppercase focus:outline-none font-sans">
+                                    Lọc
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Main Menu Area (Right on Desktop) -->
+            <div class="w-full lg:w-3/4 xl:w-4/5 flex flex-col">
+                
+                <!-- Top Bar: Results Count & Sort Dropdown -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-white/10 gap-4 mb-8">
+                    <span class="text-gray-400 text-sm tracking-wider font-sans">
+                        Hiển thị <span x-text="filteredFoods.length" class="text-white"></span> kết quả
                     </span>
-                    <select x-model="sortBy" class="w-full sm:w-auto bg-transparent text-gray-300 border border-white/20 px-4 py-3 text-sm focus:outline-none focus:border-primary">
+                    <select x-model="sortBy" class="w-full sm:w-auto bg-transparent text-gray-300 border border-white/20 px-4 py-2 text-sm font-sans focus:outline-none focus:border-primary appearance-none cursor-pointer" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cccccc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 0.75rem top 50%; background-size: 0.65rem auto; padding-right: 2.5rem;">
                         <option value="latest" class="bg-[#040810]">Sắp xếp: Mới nhất</option>
                         <option value="popularity" class="bg-[#040810]">Sắp xếp: Phổ biến nhất</option>
                         <option value="rating" class="bg-[#040810]">Sắp xếp: Đánh giá trung bình</option>
@@ -178,67 +231,9 @@
                         <option value="price_high" class="bg-[#040810]">Sắp xếp: Giá từ cao đến thấp</option>
                     </select>
                 </div>
-            </div>
-
-            <!-- Category & Filter Sidebar -->
-            <div class="lg:col-span-1 xl:col-span-1 lg:row-start-1 lg:row-span-2 lg:col-start-4 xl:col-start-5 flex flex-col gap-4 lg:gap-12">
-                
-                <!-- Mobile Filter Toggle Button -->
-                <button @click="filterOpen = !filterOpen" class="w-full lg:hidden flex justify-between items-center bg-[#0d1114] border border-white/20 text-gray-300 px-4 py-3 text-sm focus:outline-none hover:border-primary transition-colors">
-                    <span>Bộ lọc & Danh mục</span>
-                    <svg class="w-3 h-3 transition-transform duration-300" :class="{'rotate-180': filterOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-
-                <!-- Filter Content -->
-                <div class="flex-col gap-8 lg:gap-12" :class="{'hidden lg:flex': !filterOpen, 'flex': filterOpen}">
-                    
-                    <!-- Price Filter -->
-                    <div>
-                        <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-4">LỌC THEO GIÁ</h3>
-                        <div class="flex flex-col gap-4">
-                            <div class="flex items-center gap-2">
-                                <input type="number" x-model.number="filterMinPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Min" min="0">
-                                <span class="text-gray-500">-</span>
-                                <input type="number" x-model.number="filterMaxPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Max" min="0">
-                            </div>
-                            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mt-2 gap-4">
-                                <button @click="minPrice = filterMinPrice; maxPrice = filterMaxPrice; currentPage = 1; if(window.innerWidth < 1024) filterOpen = false;" class="border border-white/20 text-white text-xs tracking-widest px-6 py-2 hover:bg-white hover:text-black transition-colors uppercase focus:outline-none">
-                                    Lọc
-                                </button>
-                                <div class="text-gray-400 text-xs mt-1 xl:mt-0">
-                                    Giá: <span x-text="new Intl.NumberFormat('vi-VN').format(minPrice) + ' VNĐ'"></span> &ndash; <span x-text="new Intl.NumberFormat('vi-VN').format(maxPrice) + ' VNĐ'"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Categories -->
-                    <div class="flex flex-col gap-4 mt-8 lg:mt-0">
-                        <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-2 border-b border-white/10 pb-4">DANH MỤC</h3>
-                        
-                        <button @click="setCategory('all'); if(window.innerWidth < 1024) filterOpen = false;" 
-                                :class="activeCategory === 'all' ? 'text-primary' : 'text-gray-400 hover:text-white'"
-                                class="text-left text-sm transition-all duration-300 focus:outline-none">
-                            Tất cả món ăn
-                        </button>
-                        
-                        <template x-for="cat in categories" :key="cat.id">
-                            <button @click="setCategory(cat.id); if(window.innerWidth < 1024) filterOpen = false;" 
-                                    :class="activeCategory === cat.id ? 'text-primary' : 'text-gray-400 hover:text-white'"
-                                    class="text-left text-sm transition-all duration-300 focus:outline-none"
-                                    x-text="cat.name">
-                            </button>
-                        </template>
-                    </div>
-                </div>
-                
-            </div>
-
-            <!-- Menu Grid & Pagination -->
-            <div class="lg:col-span-3 xl:col-span-4 lg:row-start-2 lg:col-start-1">
                 
                 <!-- Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                     <template x-for="item in paginatedFoods" :key="item.id">
                         <div class="product-card group relative">
                             <a :href="'/product/' + item.slug" class="block">
@@ -345,7 +340,7 @@
                     <span class="text-primary font-serif text-lg" x-text="formatPrice(cartTotal())"></span>
                 </div>
                 
-                <form action="{{ route('checkout.prepare') }}" method="POST" @submit="$refs.itemsInput.value = JSON.stringify(items)">
+                <form action="{{ route('order.store') }}" method="POST" @submit="$refs.itemsInput.value = JSON.stringify(items); localStorage.removeItem('qr_order_cart');">
                     @csrf
                     <input type="hidden" name="table_id" value="{{ $tableId }}">
                     <input type="hidden" name="items" x-ref="itemsInput">
