@@ -104,11 +104,15 @@ class OrderController extends Controller
         $order->payment_method = $validated['payment_method'];
         $order->save();
 
-        if ($validated['payment_method'] === 'transfer') {
+        if ($request->payment_method === 'transfer') {
             return redirect()->route('checkout.transfer', ['order' => $order->id]);
         }
 
-        return back()->with('success', 'Đã yêu cầu thanh toán tiền mặt. Vui lòng đợi nhân viên.');
+        if ($request->payment_method === 'cash') {
+            return redirect('/')->with('success', 'Cảm ơn bạn đã dùng bữa! Vui lòng thanh toán tại quầy thu ngân.');
+        }
+
+        return back()->with('success', 'Đã cập nhật phương thức thanh toán.');
     }
 
     public function showTransferQR(Order $order)
