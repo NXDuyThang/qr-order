@@ -187,7 +187,7 @@
                                 @if(in_array($item->status, ['new', 'preparing']))
                                     <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ món này không?');">
                                         @csrf
-                                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm underline tracking-wide">Huỷ món</button>
+                                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm tracking-wide">Huỷ món</button>
                                     </form>
                                 @endif
                             </div>
