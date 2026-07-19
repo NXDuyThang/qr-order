@@ -170,6 +170,7 @@
                                     {{ $item->status === 'preparing' ? 'bg-warning/20 text-warning border border-warning/30 text-orange-400' : '' }}
                                     {{ $item->status === 'ready' ? 'bg-info/20 text-info border border-info/30 text-blue-400' : '' }}
                                     {{ $item->status === 'served' ? 'bg-success/20 text-success border border-success/30 text-green-400' : '' }}
+                                    {{ $item->status === 'completed' ? 'bg-gray-800/80 text-gray-300 border border-gray-600' : '' }}
                                     {{ $item->status === 'cancelled' ? 'bg-danger/20 text-danger border border-danger/30 text-red-400' : '' }}
                                 ">
                                     @switch($item->status)
@@ -177,6 +178,7 @@
                                         @case('preparing') Đang nấu @break
                                         @case('ready') Nấu xong @break
                                         @case('served') Đã lên món @break
+                                        @case('completed') Đã hoàn tất @break
                                         @case('cancelled') Đã huỷ @break
                                         @default {{ $item->status }}
                                     @endswitch
