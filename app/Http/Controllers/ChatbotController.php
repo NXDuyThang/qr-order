@@ -57,7 +57,7 @@ class ChatbotController extends Controller
         }
 
         // Lấy danh sách món ăn từ database
-        $foods = \App\Models\Food::where('is_available', true)->get(['name', 'price', 'description']);
+        $foods = \App\Models\Food::where('is_available', 'true')->get(['name', 'price', 'description']);
         $menuList = "Danh sách thực đơn của nhà hàng:\n";
         foreach ($foods as $food) {
             $priceVND = number_format($food->price * 1000, 0, ',', '.');

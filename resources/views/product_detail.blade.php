@@ -119,7 +119,7 @@
                         </button>
                     </div>
                     <button @click="addToCart({{ $food->id }}, '{{ addslashes($food->name) }}', {{ $food->price }}, '{{ $imageUrl }}')" class="add-cart-btn flex items-center gap-2">
-                        <span>ADD TO CART</span>
+                        <span>Thêm vào giỏ hàng</span>
                     </button>
                 </div>
                 

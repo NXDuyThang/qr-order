@@ -161,18 +161,16 @@
         </div>
         @endif
 
-        <!-- Main Content Area: Grid + Sidebar -->
-        <div class="px-4 sm:px-6 md:px-12 lg:px-[60px] py-8 md:py-12 flex flex-col-reverse lg:flex-row gap-8 lg:gap-12">
+        <!-- Main Content Area: Grid Layout -->
+        <div class="px-4 sm:px-6 md:px-12 lg:px-[60px] py-8 md:py-12 grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-y-8 gap-x-8 lg:gap-x-12">
             
-            <!-- Menu Grid & Pagination (Left/Center) -->
-            <div class="w-full lg:w-3/4 xl:w-4/5">
-                
-                <!-- Top Bar: Results Count & Sort Dropdown -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-white/10 gap-4">
+            <!-- Top Bar: Results Count & Sort Dropdown -->
+            <div class="lg:col-span-3 xl:col-span-4 lg:row-start-1 lg:col-start-1">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-white/10 gap-4">
                     <span class="text-gray-400 text-sm tracking-wider">
                         Hiển thị <span x-text="filteredFoods.length"></span> kết quả
                     </span>
-                    <select x-model="sortBy" class="bg-transparent text-gray-300 border border-white/20 px-4 py-2 text-sm focus:outline-none focus:border-primary">
+                    <select x-model="sortBy" class="w-full sm:w-auto bg-transparent text-gray-300 border border-white/20 px-4 py-3 text-sm focus:outline-none focus:border-primary">
                         <option value="latest" class="bg-[#040810]">Sắp xếp: Mới nhất</option>
                         <option value="popularity" class="bg-[#040810]">Sắp xếp: Phổ biến nhất</option>
                         <option value="rating" class="bg-[#040810]">Sắp xếp: Đánh giá trung bình</option>
@@ -180,15 +178,72 @@
                         <option value="price_high" class="bg-[#040810]">Sắp xếp: Giá từ cao đến thấp</option>
                     </select>
                 </div>
+            </div>
 
+            <!-- Category & Filter Sidebar -->
+            <div class="lg:col-span-1 xl:col-span-1 lg:row-start-1 lg:row-span-2 lg:col-start-4 xl:col-start-5 flex flex-col gap-4 lg:gap-12">
+                
+                <!-- Mobile Filter Toggle Button -->
+                <button @click="filterOpen = !filterOpen" class="w-full lg:hidden flex justify-between items-center bg-[#0d1114] border border-white/20 text-gray-300 px-4 py-3 text-sm focus:outline-none hover:border-primary transition-colors">
+                    <span>Bộ lọc & Danh mục</span>
+                    <svg class="w-3 h-3 transition-transform duration-300" :class="{'rotate-180': filterOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+
+                <!-- Filter Content -->
+                <div class="flex-col gap-8 lg:gap-12" :class="{'hidden lg:flex': !filterOpen, 'flex': filterOpen}">
+                    
+                    <!-- Price Filter -->
+                    <div>
+                        <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-4">LỌC THEO GIÁ</h3>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-center gap-2">
+                                <input type="number" x-model.number="filterMinPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Min" min="0">
+                                <span class="text-gray-500">-</span>
+                                <input type="number" x-model.number="filterMaxPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Max" min="0">
+                            </div>
+                            <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mt-2 gap-4">
+                                <button @click="minPrice = filterMinPrice; maxPrice = filterMaxPrice; currentPage = 1; if(window.innerWidth < 1024) filterOpen = false;" class="border border-white/20 text-white text-xs tracking-widest px-6 py-2 hover:bg-white hover:text-black transition-colors uppercase focus:outline-none">
+                                    Lọc
+                                </button>
+                                <div class="text-gray-400 text-xs mt-1 xl:mt-0">
+                                    Giá: <span x-text="new Intl.NumberFormat('vi-VN').format(minPrice) + ' VNĐ'"></span> &ndash; <span x-text="new Intl.NumberFormat('vi-VN').format(maxPrice) + ' VNĐ'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="flex flex-col gap-4 mt-8 lg:mt-0">
+                        <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-2 border-b border-white/10 pb-4">DANH MỤC</h3>
+                        
+                        <button @click="setCategory('all'); if(window.innerWidth < 1024) filterOpen = false;" 
+                                :class="activeCategory === 'all' ? 'text-primary' : 'text-gray-400 hover:text-white'"
+                                class="text-left text-sm transition-all duration-300 focus:outline-none">
+                            Tất cả món ăn
+                        </button>
+                        
+                        <template x-for="cat in categories" :key="cat.id">
+                            <button @click="setCategory(cat.id); if(window.innerWidth < 1024) filterOpen = false;" 
+                                    :class="activeCategory === cat.id ? 'text-primary' : 'text-gray-400 hover:text-white'"
+                                    class="text-left text-sm transition-all duration-300 focus:outline-none"
+                                    x-text="cat.name">
+                            </button>
+                        </template>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Menu Grid & Pagination -->
+            <div class="lg:col-span-3 xl:col-span-4 lg:row-start-2 lg:col-start-1">
+                
                 <!-- Grid -->
-                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-12">
                     <template x-for="item in paginatedFoods" :key="item.id">
                         <div class="product-card group relative">
                             <a :href="'/product/' + item.slug" class="block">
                                 <div class="product-image-container border border-white/5 relative">
                                     <img :src="item.image" :alt="item.name" class="product-image">
-                                    <!-- Add to cart overlay is now absolutely positioned inside the relative anchor but z-index must be higher so it captures clicks -->
                                 </div>
                             </a>
                             <div class="add-to-cart-overlay z-20">
@@ -232,50 +287,6 @@
                             class="w-10 h-10 border border-white/20 text-white flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-                </div>
-                
-            </div>
-
-            <!-- Category & Filter Sidebar (Right/Top on Mobile) -->
-            <div class="w-full lg:w-1/4 xl:w-1/5 flex flex-col sm:flex-row lg:flex-col gap-8 lg:gap-12">
-                
-                <!-- Price Filter -->
-                <div>
-                    <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-6 border-b border-white/10 pb-4">LỌC THEO GIÁ</h3>
-                    <div class="flex flex-col gap-4">
-                        <div class="flex items-center gap-2">
-                            <input type="number" x-model.number="filterMinPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Min" min="0">
-                            <span class="text-gray-500">-</span>
-                            <input type="number" x-model.number="filterMaxPrice" class="w-full bg-transparent border border-white/20 text-white px-2 py-2 text-sm focus:outline-none focus:border-primary" placeholder="Max" min="0">
-                        </div>
-                        <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mt-2 gap-4">
-                            <button @click="minPrice = filterMinPrice; maxPrice = filterMaxPrice; currentPage = 1;" class="border border-white/20 text-white text-xs tracking-widest px-6 py-2 hover:bg-white hover:text-black transition-colors uppercase focus:outline-none">
-                                Lọc
-                            </button>
-                            <div class="text-gray-400 text-xs mt-1 xl:mt-0">
-                                Giá: <span x-text="new Intl.NumberFormat('vi-VN').format(minPrice) + ' VNĐ'"></span> &ndash; <span x-text="new Intl.NumberFormat('vi-VN').format(maxPrice) + ' VNĐ'"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Categories -->
-                <div class="flex flex-col gap-4">
-                    <h3 class="text-white text-sm font-serif tracking-[0.2em] uppercase mb-2 border-b border-white/10 pb-4">DANH MỤC</h3>
-                    
-                    <button @click="setCategory('all')" 
-                            :class="activeCategory === 'all' ? 'text-primary' : 'text-gray-400 hover:text-white'"
-                            class="text-left text-sm transition-all duration-300 focus:outline-none">
-                        Tất cả món ăn
-                    </button>
-                    
-                    <template x-for="cat in categories" :key="cat.id">
-                        <button @click="setCategory(cat.id)" 
-                                :class="activeCategory === cat.id ? 'text-primary' : 'text-gray-400 hover:text-white'"
-                                class="text-left text-sm transition-all duration-300 focus:outline-none"
-                                x-text="cat.name">
-                        </button>
-                    </template>
                 </div>
                 
             </div>
@@ -373,6 +384,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('orderCart', () => ({
                 cartOpen: false,
+                filterOpen: false,
                 items: [],
                 allFoods: @json($allFoodsList),
                 categories: @json($catList),
