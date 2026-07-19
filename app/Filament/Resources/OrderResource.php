@@ -164,6 +164,7 @@ class OrderResource extends Resource
                     ->visible(fn (Order $record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'ready']);
+                        $record->items()->whereIn('status', ['new', 'preparing'])->update(['status' => 'ready']);
                     }),
                 Tables\Actions\Action::make('serve')
                     ->label('Đã giao')
@@ -172,6 +173,7 @@ class OrderResource extends Resource
                     ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
                     ->action(function (Order $record) {
                         $record->update(['status' => 'served']);
+                        $record->items()->where('status', 'ready')->update(['status' => 'served']);
                     }),
                 Tables\Actions\Action::make('pay')
                     ->label('Xác nhận Thanh toán')
@@ -214,5 +216,10 @@ class OrderResource extends Resource
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['items.food']);
     }
 }

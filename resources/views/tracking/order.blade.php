@@ -172,17 +172,17 @@
                                     {{ $item->status === 'served' ? 'bg-success/20 text-success border border-success/30 text-green-400' : '' }}
                                     {{ $item->status === 'cancelled' ? 'bg-danger/20 text-danger border border-danger/30 text-red-400' : '' }}
                                 ">
-                                    @match($item->status)
+                                    @switch($item->status)
                                         @case('new') Đang đợi bếp @break
                                         @case('preparing') Đang nấu @break
                                         @case('ready') Nấu xong @break
                                         @case('served') Đã lên món @break
                                         @case('cancelled') Đã huỷ @break
                                         @default {{ $item->status }}
-                                    @endmatch
+                                    @endswitch
                                 </span>
                                 
-                                @if($item->status === 'new')
+                                @if(in_array($item->status, ['new', 'preparing']))
                                     <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ món này không?');">
                                         @csrf
                                         <button type="submit" class="text-red-400 hover:text-red-300 text-sm underline tracking-wide">Huỷ món</button>
@@ -200,26 +200,34 @@
             </div>
 
             <!-- Action Area -->
-            <div class="text-center relative z-10 transition-all duration-500 mt-12" style="display: none;" x-show="paymentStatus === 'pending'">
+            <div class="text-center relative z-10 transition-all duration-500 mt-12" style="display: none;" x-show="paymentStatus === 'pending'" x-data="{ showPaymentOptions: false }">
                 <h3 class="text-xl text-white font-serif mb-6 tracking-[0.1em] uppercase">Thanh toán Hoá đơn</h3>
                 
                 @if(!$order->payment_method)
-                    <p class="text-gray-400 mb-6 text-sm">Khi ăn xong, vui lòng chọn phương thức thanh toán</p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <form action="{{ route('order.update_payment_method', ['order' => $order->id]) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_method" value="cash">
-                            <button type="submit" class="w-full sm:w-auto inline-block bg-[#0d1114] text-white border border-white/20 px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-[#0d1114] transition-colors">
-                                Tiền Mặt
-                            </button>
-                        </form>
-                        <form action="{{ route('order.update_payment_method', ['order' => $order->id]) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="payment_method" value="transfer">
-                            <button type="submit" class="w-full sm:w-auto inline-block bg-primary text-white border border-primary px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)]">
-                                Chuyển Khoản
-                            </button>
-                        </form>
+                    <div x-show="!showPaymentOptions">
+                        <button @click="showPaymentOptions = true" class="inline-block bg-primary text-white border border-primary px-10 py-4 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)]">
+                            Thanh Toán
+                        </button>
+                    </div>
+
+                    <div x-show="showPaymentOptions" style="display: none;" x-transition>
+                        <p class="text-gray-400 mb-6 text-sm">Vui lòng chọn phương thức thanh toán</p>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4">
+                            <form action="{{ route('order.update_payment_method', ['order' => $order->id]) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="cash">
+                                <button type="submit" class="w-full sm:w-auto inline-block bg-[#0d1114] text-white border border-white/20 px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-[#0d1114] transition-colors">
+                                    Tiền Mặt
+                                </button>
+                            </form>
+                            <form action="{{ route('order.update_payment_method', ['order' => $order->id]) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="transfer">
+                                <button type="submit" class="w-full sm:w-auto inline-block bg-primary text-white border border-primary px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)]">
+                                    Chuyển Khoản
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 @else
                     @if($order->payment_method === 'transfer')
