@@ -30,7 +30,6 @@ class OrderController extends Controller
         }
 
         $existingOrder = Order::where('table_id', $tableId)
-            ->whereIn('status', ['new', 'ready', 'preparing'])
             ->where('payment_status', 'pending');
         
         if (auth()->check()) {
@@ -41,6 +40,7 @@ class OrderController extends Controller
 
         if ($order) {
             $order->total_price += $totalPrice;
+            $order->status = 'new'; // Reset status to new so the kitchen is notified again
             $order->save();
         } else {
             $order = Order::create([
