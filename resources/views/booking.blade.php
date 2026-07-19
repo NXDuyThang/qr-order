@@ -14,7 +14,7 @@
                 </div>
             @endif
 
-            <div class="bg-[#0a0f16] border border-primary/20 p-8 md:p-12 shadow-2xl relative">
+            <div class="bg-[#0a0f16] border border-primary/20 p-6 sm:p-8 md:p-12 shadow-2xl relative">
                 <!-- Decorative corners -->
                 <div class="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/50"></div>
                 <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/50"></div>
@@ -24,7 +24,7 @@
                 <form action="{{ route('booking.store') }}" method="POST" class="space-y-8">
                     @csrf
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         <!-- Tên -->
                         <div>
                             <label class="block text-gray-400 text-sm tracking-widest uppercase mb-3">Tên của bạn *</label>

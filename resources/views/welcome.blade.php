@@ -27,14 +27,14 @@
     @endpush
 
     <!-- Hero Slider Section -->
-    <section class="relative w-full h-[100vh] mt-[-110px] overflow-hidden">
+    <section class="relative w-full h-[100vh] min-h-[600px] mt-[-110px] overflow-hidden">
         <!-- Slide 1 -->
         <div id="slide-0" class="slide-content absolute inset-0 slide-active">
             <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1568644396922-5c3bfae12521?auto=format&fit=crop&w=1920&q=80');"></div>
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 pt-[110px] z-20">
-                <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức những thức uống tuyệt hảo</span>
-                <h1 class="font-light text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-4">
+                <span class="font-script-tagline text-[40px] sm:text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức những thức uống tuyệt hảo</span>
+                <h1 class="font-light text-[32px] sm:text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-2 md:gap-4 flex-wrap justify-center">
                     <span class="text-white/20 font-extralight select-none">-</span>
                     <span class="text-outline-luxury">Đồ Uống</span>
                     <span class="text-outline-primary">Thượng Hạng</span>
@@ -56,8 +56,8 @@
             <div class="bg-zoom absolute inset-0 bg-cover bg-center duration-[12000ms]" style="background-image: url('https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=1920&q=80');"></div>
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 md:px-24 pt-[110px] z-20">
-                <span class="font-script-tagline text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức tinh hoa ẩm thực</span>
-                <h1 class="font-light text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-4">
+                <span class="font-script-tagline text-[40px] sm:text-[54px] md:text-[68px] lg:text-[76px] text-primary mb-1 select-none leading-none">thưởng thức tinh hoa ẩm thực</span>
+                <h1 class="font-light text-[32px] sm:text-[40px] md:text-[65px] lg:text-[85px] leading-tight select-none uppercase tracking-[0.05em] flex items-center gap-2 md:gap-4 flex-wrap justify-center">
                     <span class="text-white/20 font-extralight select-none">-</span>
                     <span class="text-outline-luxury">Tinh Hoa</span>
                     <span class="text-outline-primary">Ẩm Thực</span>
@@ -96,7 +96,7 @@
     </section>
 
     <!-- Our Tips Section -->
-    <section class="relative w-full py-32 px-6 md:px-[120px] bg-transparent z-20">
+    <section class="relative w-full py-16 md:py-32 px-6 md:px-12 lg:px-[120px] bg-transparent z-20">
         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
             <!-- Images Left -->
             <div class="w-full lg:w-1/2 flex gap-6 justify-center relative">
@@ -118,7 +118,7 @@
     </section>
 
     <!-- From Our Menu Section -->
-    <section class="relative w-full py-24 md:py-32 px-12 md:px-[120px] bg-transparent z-20">
+    <section class="relative w-full py-16 md:py-32 px-6 md:px-12 lg:px-[120px] bg-transparent z-20">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16 md:mb-20">
                 <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Lựa chọn tuyệt hảo</h3>
@@ -192,7 +192,7 @@
     </section>
 
     <!-- Our Best Specialties -->
-    <section class="relative w-full py-32 px-6 md:px-[120px] bg-transparent z-20">
+    <section class="relative w-full py-16 md:py-32 px-6 md:px-12 lg:px-[120px] bg-transparent z-20">
         <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-16">
             <!-- Image Left -->
             <div class="w-full lg:w-1/2 flex justify-center">
@@ -213,7 +213,7 @@
     </section>
 
     <!-- Testimonial Section -->
-    <section class="relative w-full flex flex-col md:flex-row h-auto md:h-[600px] bg-transparent z-20 border-y border-primary/20">
+    <section class="relative w-full flex flex-col md:flex-row h-auto md:min-h-[600px] bg-transparent z-20 border-y border-primary/20">
         <!-- Left Side -->
         <div class="w-full md:w-1/2 flex flex-col items-center justify-center p-12 md:p-24 text-center bg-[#040810]/90">
             <svg class="w-12 h-12 text-primary mb-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -234,7 +234,7 @@
     </section>
 
     <!-- About Us (Our Story) Section -->
-    <section class="relative w-full py-32 px-6 md:px-[60px] lg:px-[120px] bg-transparent z-20">
+    <section class="relative w-full py-16 md:py-32 px-6 md:px-[60px] lg:px-[120px] bg-transparent z-20">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
                 <h3 class="font-script-tagline text-[40px] md:text-[50px] text-primary mb-2">Câu chuyện của chúng tôi</h3>
@@ -261,7 +261,7 @@
         </div>
     </section>
 
-    <section class="relative w-full py-24 px-6 md:px-[120px] bg-transparent z-20 border-t border-primary/20">
+    <section class="relative w-full py-16 md:py-24 px-6 md:px-12 lg:px-[120px] bg-transparent z-20 border-t border-primary/20">
         <form action="{{ route('booking') }}" method="GET" class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 justify-center items-center">
             <!-- Guests -->
             <div class="relative w-full md:w-64">

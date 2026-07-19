@@ -141,7 +141,7 @@
             </a>
 
             <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-5 lg:gap-8 xl:gap-10 font-light">
+            <nav class="hidden lg:flex items-center gap-5 lg:gap-8 xl:gap-10 font-light">
                 <a href="{{ url('/') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('/') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Trang Chủ</a>
                 <a href="{{ url('/restaurant') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('restaurant') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Nhà Hàng</a>
                 <a href="{{ url('/booking') }}" class="text-sm lg:text-base uppercase tracking-[0.15em] lg:tracking-[0.2em] {{ request()->is('booking') ? 'text-primary border-b border-primary/60 pb-1' : 'text-gray-400 hover:text-white' }} pointer-events-auto transition-colors duration-300 whitespace-nowrap">Đặt Bàn</a>
@@ -188,7 +188,7 @@
                         @endif
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-gray-400 hover:text-white transition-colors bg-[#0d1114]">
+                    <a href="{{ route('login') }}" class="lg:hidden flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-gray-400 hover:text-white transition-colors bg-[#0d1114]">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
                     </a>
                 @endif
@@ -214,7 +214,7 @@
     </main>
 
     <!-- Footer Info Section -->
-    <footer class="relative w-full py-24 bg-transparent z-20 border-t border-primary/20 flex flex-col items-center justify-center text-center">
+    <footer class="relative w-full py-12 md:py-24 px-6 bg-transparent z-20 border-t border-primary/20 flex flex-col items-center justify-center text-center">
         <div class="mb-8">
             <!-- Logo marks -->
             <svg class="w-10 h-10 text-primary mx-auto" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -243,7 +243,7 @@
     <!-- Floating Widgets Removed -->
 
     <!-- Right Info Sidebar (Hamburger Menu) -->
-    <div id="side-menu" class="fixed top-0 right-0 h-full w-[85vw] sm:w-[350px] bg-[#040810]/95 backdrop-blur-md z-[100] transform translate-x-full transition-transform duration-500 px-10 py-16 flex flex-col pointer-events-auto border-l border-primary/20">
+    <div id="side-menu" class="fixed top-0 right-0 h-full w-[85vw] sm:w-[350px] bg-[#040810]/95 backdrop-blur-md z-[100] transform translate-x-full transition-transform duration-500 px-6 md:px-10 py-16 flex flex-col pointer-events-auto border-l border-primary/20 overflow-y-auto">
         <button id="close-menu-btn" class="absolute top-[32px] right-[24px] text-gray-400 hover:text-primary transition-colors focus:outline-none" aria-label="Close Menu">
             <svg class="w-8 h-8 font-thin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
@@ -263,13 +263,22 @@
             <p class="text-[13px] text-gray-300 font-light tracking-widest">Mở cửa: 09:00 sáng - 10:00 tối</p>
         </div>
 
-        <div class="flex flex-col gap-4 items-start">
-            <a href="{{ url('/vietnamese-cuisine') }}" class="text-[14px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Ẩm Thực Việt</a>
-
-            <a href="{{ url('/contact') }}" class="text-[14px] text-gray-300 hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Liên Hệ</a>
+        <div class="flex flex-col gap-4 items-start w-full">
+            <a href="{{ url('/') }}" class="w-full text-[14px] {{ request()->is('/') ? 'text-primary' : 'text-gray-300' }} hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Trang Chủ</a>
+            <a href="{{ url('/restaurant') }}" class="w-full text-[14px] {{ request()->is('restaurant') ? 'text-primary' : 'text-gray-300' }} hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Nhà Hàng</a>
+            <a href="{{ url('/booking') }}" class="w-full text-[14px] {{ request()->is('booking') ? 'text-primary' : 'text-gray-300' }} hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Đặt Bàn</a>
+            <a href="{{ url('/menu') }}" class="w-full text-[14px] {{ request()->is('menu') ? 'text-primary' : 'text-gray-300' }} hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Menu</a>
+            <a href="{{ url('/vietnamese-cuisine') }}" class="w-full text-[14px] {{ request()->is('vietnamese-cuisine') ? 'text-primary' : 'text-gray-300' }} hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Ẩm Thực Việt</a>
+            <a href="{{ url('/contact') }}" class="w-full text-[14px] {{ request()->is('contact') ? 'text-primary' : 'text-gray-300' }} hover:text-primary tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Liên Hệ</a>
             
             @if(Session::has('access_token') || Auth::check())
-                <a href="{{ route('order_at_table') }}" class="text-[14px] text-primary hover:text-white tracking-[0.2em] transition-colors border-b border-primary/40 pb-1">Đặt Món</a>
+                <a href="{{ route('order_at_table') }}" class="w-full text-[14px] {{ request()->routeIs('order_at_table') ? 'text-primary' : 'text-primary/80' }} hover:text-white tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Đặt Món</a>
+            @endif
+
+            @if(Session::has('access_token'))
+                <a href="{{ route('profile.index') }}" class="w-full text-[14px] {{ request()->routeIs('profile.*') ? 'text-primary' : 'text-primary/80' }} hover:text-white tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Tài Khoản</a>
+            @else
+                <a href="{{ route('login') }}" class="w-full text-[14px] {{ request()->routeIs('login') ? 'text-primary' : 'text-primary/80' }} hover:text-white tracking-[0.2em] transition-colors border-b border-primary/40 pb-2">Đăng Nhập</a>
             @endif
         </div>
     </div>

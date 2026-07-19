@@ -5,14 +5,14 @@
         <div class="absolute inset-0 bg-black/60"></div>
         <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-6 pt-[110px] z-20">
             <div class="flex flex-col items-center">
-                <span class="font-script-tagline text-[70px] md:text-[100px] text-primary leading-none select-none transform -rotate-3">Hương Vị</span>
-                <span class="font-script-tagline text-[70px] md:text-[100px] text-white leading-none select-none transform -rotate-3 ml-24 mt-[-20px]">Đích Thực</span>
+                <span class="font-script-tagline text-[50px] sm:text-[70px] md:text-[100px] text-primary leading-none select-none transform -rotate-3">Hương Vị</span>
+                <span class="font-script-tagline text-[50px] sm:text-[70px] md:text-[100px] text-white leading-none select-none transform -rotate-3 ml-12 sm:ml-24 mt-[-10px] sm:mt-[-20px]">Đích Thực</span>
             </div>
         </div>
     </section>
 
     <!-- Main Menu Content -->
-    <section class="relative w-full py-24 md:py-32 px-6 md:px-[60px] lg:px-[120px] bg-[#040810] z-20">
+    <section class="relative w-full py-16 md:py-32 px-6 md:px-12 lg:px-[120px] bg-[#040810] z-20">
         <!-- Header -->
         <div class="max-w-4xl mx-auto text-center mb-24">
             <h3 class="font-script-tagline text-[30px] md:text-[40px] text-primary mb-4">Lựa chọn hàng đầu</h3>
@@ -27,7 +27,7 @@
         </div>
 
         <!-- Menu Categories List -->
-        <div class="max-w-7xl mx-auto flex flex-col gap-32">
+        <div class="max-w-7xl mx-auto flex flex-col gap-16 md:gap-32">
             @foreach($categories as $index => $category)
                 @php
                     // Alternate layout based on even/odd index
@@ -96,7 +96,7 @@
             @endforeach
         </div>
     </section>
-    <section class="relative w-full py-24 px-6 md:px-[120px] bg-transparent z-20 border-t border-primary/20">
+    <section class="relative w-full py-16 md:py-24 px-6 md:px-12 lg:px-[120px] bg-transparent z-20 border-t border-primary/20">
         <form action="{{ route('booking') }}" method="GET" class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 justify-center items-center">
             <!-- Guests -->
             <div class="relative w-full md:w-64">

@@ -108,8 +108,8 @@
 
     <div class="pt-[110px] pb-24 min-h-screen bg-[#0d1114]" x-data="orderCart()">
         <!-- Header -->
-        <div class="px-6 md:px-[60px] py-8 border-b border-white/5 flex flex-col justify-center items-center">
-            <h1 class="text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center" style="font-family: var(--font-serif, 'Playfair Display', serif);">
+        <div class="px-4 md:px-[60px] py-6 md:py-8 border-b border-white/5 flex flex-col justify-center items-center">
+            <h1 class="text-[18px] sm:text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center" style="font-family: var(--font-serif, 'Playfair Display', serif);">
                 ĐẶT MÓN TẠI BÀN <span class="font-sans" style="font-family: var(--font-sans, 'Jost', sans-serif);">{{ $tableId ? $tableId : '' }}</span>
             </h1>
             @if(Auth::check())
@@ -162,7 +162,7 @@
         @endif
 
         <!-- Main Content Area: Grid + Sidebar -->
-        <div class="px-6 md:px-[60px] py-12 flex flex-col lg:flex-row gap-12">
+        <div class="px-4 sm:px-6 md:px-12 lg:px-[60px] py-8 md:py-12 flex flex-col-reverse lg:flex-row gap-8 lg:gap-12">
             
             <!-- Menu Grid & Pagination (Left/Center) -->
             <div class="w-full lg:w-3/4 xl:w-4/5">
@@ -182,7 +182,7 @@
                 </div>
 
                 <!-- Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12">
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-12">
                     <template x-for="item in paginatedFoods" :key="item.id">
                         <div class="product-card group relative">
                             <a :href="'/product/' + item.slug" class="block">
@@ -236,8 +236,8 @@
                 
             </div>
 
-            <!-- Category & Filter Sidebar (Right) -->
-            <div class="w-full lg:w-1/4 xl:w-1/5 flex flex-col gap-12">
+            <!-- Category & Filter Sidebar (Right/Top on Mobile) -->
+            <div class="w-full lg:w-1/4 xl:w-1/5 flex flex-col sm:flex-row lg:flex-col gap-8 lg:gap-12">
                 
                 <!-- Price Filter -->
                 <div>
@@ -328,7 +328,7 @@
                 </div>
             </div>
 
-            <div class="p-6 border-t border-white/10 bg-[#040810]">
+            <div class="p-6 pb-8 sm:pb-6 border-t border-white/10 bg-[#040810]">
                 <div class="flex justify-between items-center mb-6">
                     <span class="text-white text-[12px] tracking-[0.1em] uppercase">Tổng cộng:</span>
                     <span class="text-primary font-serif text-lg" x-text="formatPrice(cartTotal())"></span>
@@ -350,7 +350,7 @@
     @if(!$tableId)
     <!-- Table Selection Modal -->
     <div class="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-[#0d1114] border border-white/10 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+        <div class="bg-[#0d1114] border border-white/10 rounded-2xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl text-primary font-serif mb-2 uppercase tracking-[0.1em]">Chọn Bàn</h2>
             <p class="text-gray-400 mb-8 text-sm">Vui lòng chọn bàn bạn đang ngồi để thực hiện gọi món.</p>
             <div class="grid grid-cols-2 gap-4">
