@@ -96,9 +96,10 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('items_list')
                     ->label('Danh sách món ăn')
                     ->getStateUsing(function (Order $record) {
-                        return $record->items->map(function ($item) {
-                            $cancelText = $item->status === 'cancelled' ? ' [ĐÃ HUỶ]' : '';
-                            return $item->food->name . ' (x' . $item->quantity . ')' . $cancelText;
+                        return $record->items->filter(function ($item) {
+                            return $item->status !== 'cancelled';
+                        })->map(function ($item) {
+                            return $item->food->name . ' (x' . $item->quantity . ')';
                         })->toArray();
                     })
                     ->listWithLineBreaks()
