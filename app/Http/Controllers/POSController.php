@@ -22,7 +22,6 @@ class POSController extends Controller
         $request->validate([
             'phone' => 'required|string',
             'name' => 'nullable|string',
-            'email' => 'required|string',
         ]);
 
         $user = User::where('phone', $request->phone)->first();
