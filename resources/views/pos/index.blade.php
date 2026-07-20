@@ -274,18 +274,22 @@
 
         // Auto-fill logic
         function handlePhoneInput() {
-            const phone = document.getElementById('phoneInput').value;
-            const user = usersData.find(u => u.phone === phone);
+            const phone = document.getElementById('phoneInput').value.trim();
+            const user = usersData.find(u => String(u.phone).trim() === phone);
             if (user) {
                 document.getElementById('nameInput').value = user.name;
+            } else {
+                document.getElementById('nameInput').value = '';
             }
         }
 
         function handleNameInput() {
-            const name = document.getElementById('nameInput').value;
-            const user = usersData.find(u => u.name === name && u.phone);
+            const name = document.getElementById('nameInput').value.trim();
+            const user = usersData.find(u => String(u.name).trim() === name && u.phone);
             if (user) {
                 document.getElementById('phoneInput').value = user.phone;
+            } else {
+                document.getElementById('phoneInput').value = '';
             }
         }
     </script>
