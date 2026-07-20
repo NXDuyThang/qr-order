@@ -220,4 +220,38 @@ class OrderController extends Controller
 
         return back()->with('success', 'Đã huỷ món thành công.');
     }
+    public function reduceItem(Request $request, Order $order, OrderItem $item)
+    {
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff && $order->user_id && $order->user_id !== auth()->id()) {
+            abort(403, 'Không có quyền truy cập');
+        }
+
+        if ($item->order_id !== $order->id) {
+            abort(404, 'Không tìm thấy món trong đơn hàng');
+        }
+
+        if ($isStaff) {
+            if (in_array($item->status, ['ready', 'served', 'completed', 'cancelled'])) {
+                return back()->with('error', 'Không thể giảm món này vì bếp đã nấu xong hoặc món đã bị huỷ.');
+            }
+        } else {
+            if ($item->status !== 'new') {
+                return back()->with('error', 'Không thể giảm món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
+            }
+        }
+
+        if ($item->quantity > 1) {
+            $item->quantity -= 1;
+            $item->save();
+            
+            $order->total_price -= $item->unit_price;
+            if ($order->total_price < 0) $order->total_price = 0;
+            $order->save();
+            
+            return back()->with('success', 'Đã giảm 1 phần món ăn.');
+        } else {
+            return $this->cancelItem($request, $order, $item);
+        }
+    }
 }

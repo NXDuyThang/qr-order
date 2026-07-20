@@ -141,12 +141,29 @@
                                                 Xác nhận Đã Mang Lên
                                             </button>
                                         @elseif(in_array($item->status, ['new', 'preparing']))
-                                            <form action="{{ route('order.item.cancel', ['order' => $activeOrder->id, 'item' => $item->id]) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded mt-1 transition">
-                                                    Hủy món
-                                                </button>
-                                            </form>
+                                            @if($item->quantity > 1)
+                                                <div class="flex gap-2 w-full mt-1">
+                                                    <form action="{{ route('order.item.reduce', ['order' => $activeOrder->id, 'item' => $item->id]) }}" method="POST" class="flex-1">
+                                                        @csrf
+                                                        <button type="submit" class="w-full py-2 bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold rounded transition">
+                                                            -1 phần
+                                                        </button>
+                                                    </form>
+                                                    <form action="{{ route('order.item.cancel', ['order' => $activeOrder->id, 'item' => $item->id]) }}" method="POST" class="flex-1">
+                                                        @csrf
+                                                        <button type="submit" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded transition">
+                                                            Hủy toàn bộ
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                <form action="{{ route('order.item.cancel', ['order' => $activeOrder->id, 'item' => $item->id]) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded mt-1 transition">
+                                                        Hủy món
+                                                    </button>
+                                                </form>
+                                            @endif
                                         @endif
                                     </div>
                                 @endif
