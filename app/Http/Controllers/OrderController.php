@@ -193,8 +193,14 @@ class OrderController extends Controller
             abort(404, 'Không tìm thấy món trong đơn hàng');
         }
 
-        if ($item->status !== 'new') {
-            return back()->with('error', 'Không thể huỷ món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
+        if ($isStaff) {
+            if (in_array($item->status, ['ready', 'served', 'completed', 'cancelled'])) {
+                return back()->with('error', 'Không thể huỷ món này vì bếp đã nấu xong hoặc món đã bị huỷ.');
+            }
+        } else {
+            if ($item->status !== 'new') {
+                return back()->with('error', 'Không thể huỷ món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
+            }
         }
 
         // Update item status

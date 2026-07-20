@@ -140,6 +140,13 @@
                                             <button onclick="serveItem({{ $item->id }})" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded mt-1 transition">
                                                 Xác nhận Đã Mang Lên
                                             </button>
+                                        @elseif(in_array($item->status, ['new', 'preparing']))
+                                            <form action="{{ route('order.item.cancel', ['order' => $activeOrder->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn hủy món này không?');">
+                                                @csrf
+                                                <button type="submit" class="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded mt-1 transition">
+                                                    Hủy món
+                                                </button>
+                                            </form>
                                         @endif
                                     </div>
                                 @endif
