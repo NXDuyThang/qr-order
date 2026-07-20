@@ -112,8 +112,16 @@
             <h1 class="text-[18px] sm:text-[22px] md:text-[28px] uppercase tracking-[0.2em] text-primary font-medium text-center" style="font-family: var(--font-serif, 'Playfair Display', serif);">
                 ĐẶT MÓN TẠI BÀN <span class="font-sans" style="font-family: var(--font-sans, 'Jost', sans-serif);">{{ $tableId ? $tableId : '' }}</span>
             </h1>
-            @if(Auth::check())
-                <p class="text-white/70 text-sm mt-2 tracking-wider">Người đặt: <span class="text-white font-medium">{{ Auth::user()->name }}</span></p>
+            @php
+                $displayName = null;
+                if (isset($activeOrder) && $activeOrder->user) {
+                    $displayName = $activeOrder->user->name;
+                } elseif (Auth::check() && in_array(Auth::user()->role, ['customer', 'user'])) {
+                    $displayName = Auth::user()->name;
+                }
+            @endphp
+            @if($displayName)
+                <p class="text-white/70 text-sm mt-2 tracking-wider">Khách hàng: <span class="text-white font-medium">{{ $displayName }}</span></p>
             @endif
             <template x-teleport="#cart-icon-container">
                 <button @click="cartOpen = true" class="relative text-white hover:text-primary transition-colors focus:outline-none">

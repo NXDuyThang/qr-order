@@ -77,6 +77,14 @@ Route::middleware(['auth', 'role:waiter'])->group(function () {
     Route::get('/waiter', function () { return redirect('/admin/employee-dashboard'); })->name('waiter.dashboard');
 });
 
+// POS Routes for Waiter/Manager/Admin
+Route::middleware('auth')->group(function () {
+    Route::get('/staff/pos', [\App\Http\Controllers\POSController::class, 'index'])->name('pos.index');
+    Route::post('/staff/pos/table/{table}/order', [\App\Http\Controllers\POSController::class, 'createOrder'])->name('pos.create_order');
+    Route::get('/staff/pos/table/{table}/order', [\App\Http\Controllers\POSController::class, 'tableOrder'])->name('pos.table_order');
+    Route::post('/staff/pos/order-item/{item}/serve', [\App\Http\Controllers\POSController::class, 'serveItem'])->name('pos.serve_item');
+});
+
 // Common Employee Actions (Check-in/out, Leave)
 Route::middleware('auth')->group(function () {
     Route::post('/employee/check-in', [EmployeeController::class, 'checkIn'])->name('employee.check_in');

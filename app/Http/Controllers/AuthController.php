@@ -80,6 +80,7 @@ class AuthController extends Controller
                     'name' => $userInfo['name'] ?? null,
                     'email' => $userInfo['email'] ?? null,
                     'avatar' => $userInfo['avatar'] ?? null,
+                    'phone' => $userInfo['phone'] ?? null,
                 ];
                 Session::put('user_info', $filteredUserInfo);
                 if (isset($userInfo['avatar'])) {
@@ -111,6 +112,9 @@ class AuthController extends Controller
 
             if (isset($userInfo['avatar'])) {
                 $localUser->avatar_url = $userInfo['avatar'];
+            }
+            if (isset($userInfo['phone']) && !empty($userInfo['phone'])) {
+                $localUser->phone = $userInfo['phone'];
             }
             $localUser->save();
 

@@ -63,7 +63,17 @@ class PageController extends Controller
             $query->where('is_available', 'true');
         }])->where('is_active', 'true')->get();
         
-        return view('order_at_table', compact('categories', 'tableId', 'tables'));
+        $activeOrder = null;
+        if ($tableId) {
+            $activeOrder = \App\Models\Order::with('user')
+                ->where('table_id', $tableId)
+                ->whereIn('status', ['new', 'processing', 'completed']) // Assuming completed orders might still be pending payment
+                ->where('payment_status', 'pending')
+                ->latest()
+                ->first();
+        }
+        
+        return view('order_at_table', compact('categories', 'tableId', 'tables', 'activeOrder'));
     }
     public function vietnameseCuisine(Request $request) { 
         $categories = Category::where('is_active', 'true')->get();

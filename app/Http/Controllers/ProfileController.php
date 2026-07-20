@@ -59,6 +59,9 @@ class ProfileController extends Controller
                     if (!empty($apiName)) {
                         $localUser->name = $apiName;
                     }
+                    if (isset($userInfo['phone']) && !empty($userInfo['phone'])) {
+                        $localUser->phone = $userInfo['phone'];
+                    }
 
                     $localUser->save();
                 }
@@ -104,6 +107,11 @@ class ProfileController extends Controller
         $response = $this->apiService->updateInfo($token, $data);
 
         if (isset($response['User Info']) || (isset($response['status']) && $response['status'] !== 'error')) {
+            if (isset($data['phone']) && !empty($data['phone']) && auth()->check()) {
+                $localUser = auth()->user();
+                $localUser->phone = $data['phone'];
+                $localUser->save();
+            }
             return back()->with('success', 'Cập nhật thông tin thành công.');
         }
 

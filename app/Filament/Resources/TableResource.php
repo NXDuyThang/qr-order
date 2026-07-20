@@ -25,7 +25,7 @@ class TableResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->is_admin || auth()->user()->role === 'manager';
+        return auth()->user()->is_admin || in_array(auth()->user()->role, ['manager', 'admin']);
     }
 
     public static function form(Form $form): Form

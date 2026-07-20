@@ -96,10 +96,18 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('items_list')
                     ->label('Danh sách món ăn')
                     ->getStateUsing(function (Order $record) {
-                        return $record->items->filter(function ($item) {
+                        return collect($record->items)->filter(function($item) {
                             return $item->status !== 'cancelled';
                         })->map(function ($item) {
-                            return $item->food->name . ' (x' . $item->quantity . ')';
+                            $statusStr = match($item->status) {
+                                'new' => 'Mới đặt',
+                                'preparing' => 'Đang làm',
+                                'ready' => 'Nấu xong',
+                                'served' => 'Đã giao',
+                                'completed' => 'Hoàn tất',
+                                default => $item->status
+                            };
+                            return $item->food->name . ' (x' . $item->quantity . ') - [' . $statusStr . ']';
                         })->toArray();
                     })
                     ->listWithLineBreaks()
@@ -185,6 +193,17 @@ class OrderResource extends Resource
                     ->action(function (Order $record) {
                         $record->update(['payment_status' => 'paid', 'status' => 'completed']);
                         $record->items()->whereNotIn('status', ['cancelled'])->update(['status' => 'completed']);
+                        
+                        // Check if the table has any other pending orders
+                        if ($record->table_id) {
+                            $hasPendingOrders = \App\Models\Order::where('table_id', $record->table_id)
+                                ->where('payment_status', 'pending')
+                                ->exists();
+                                
+                            if (!$hasPendingOrders) {
+                                \App\Models\Table::where('id', $record->table_id)->update(['status' => 'available']);
+                            }
+                        }
                     })
                     ->successNotificationTitle('Đã xác nhận thanh toán thành công'),
             ])

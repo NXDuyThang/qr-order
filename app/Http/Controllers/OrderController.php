@@ -30,11 +30,8 @@ class OrderController extends Controller
         }
 
         $existingOrder = Order::where('table_id', $tableId)
+            ->whereNotIn('status', ['cancelled']) // Exclude cancelled etc
             ->where('payment_status', 'pending');
-        
-        if (auth()->check()) {
-            $existingOrder->where('user_id', auth()->id());
-        }
 
         $order = $existingOrder->first();
 
@@ -63,21 +60,30 @@ class OrderController extends Controller
             ]);
         }
 
-        // Redirect to tracking page
+        // Redirect staff back to POS order interface
+        if (auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter'])) {
+            return redirect()->route('pos.table_order', ['table' => $tableId])
+                ->with('success', 'Đã gửi yêu cầu đặt món tới bếp!');
+        }
+
+        // Redirect to tracking page for customers
         return redirect()->route('order.track', ['order' => $order->id]);
     }
 
     public function track(Order $order)
     {
-        // Ensure the order belongs to the user or table logic
-        if ($order->user_id) {
-            if ($order->user_id !== auth()->id()) {
-                abort(403, 'Không có quyền truy cập');
-            }
-        } else {
-            // Guest order
-            if ((string)$order->table_id !== (string)session('table_id')) {
-                abort(403, 'Không có quyền truy cập (Sai bàn)');
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff) {
+            // Ensure the order belongs to the user or table logic
+            if ($order->user_id) {
+                if ($order->user_id !== auth()->id()) {
+                    abort(403, 'Không có quyền truy cập');
+                }
+            } else {
+                // Guest order
+                if ((string)$order->table_id !== (string)session('table_id')) {
+                    abort(403, 'Không có quyền truy cập (Sai bàn)');
+                }
             }
         }
 
@@ -86,14 +92,17 @@ class OrderController extends Controller
 
     public function updatePaymentMethod(Request $request, Order $order)
     {
-        // Check authorization
-        if ($order->user_id) {
-            if ($order->user_id !== auth()->id()) {
-                abort(403, 'Không có quyền truy cập');
-            }
-        } else {
-            if ((string)$order->table_id !== (string)session('table_id')) {
-                abort(403, 'Không có quyền truy cập (Sai bàn)');
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff) {
+            // Check authorization
+            if ($order->user_id) {
+                if ($order->user_id !== auth()->id()) {
+                    abort(403, 'Không có quyền truy cập');
+                }
+            } else {
+                if ((string)$order->table_id !== (string)session('table_id')) {
+                    abort(403, 'Không có quyền truy cập (Sai bàn)');
+                }
             }
         }
 
@@ -109,6 +118,21 @@ class OrderController extends Controller
         }
 
         if ($request->payment_method === 'cash') {
+            if ($isStaff) {
+                $order->update(['payment_status' => 'paid', 'status' => 'completed']);
+                $order->items()->whereNotIn('status', ['cancelled'])->update(['status' => 'completed']);
+                
+                if ($order->table_id) {
+                    $hasPendingOrders = \App\Models\Order::where('table_id', $order->table_id)
+                        ->where('payment_status', 'pending')
+                        ->exists();
+                    if (!$hasPendingOrders) {
+                        \App\Models\Table::where('id', $order->table_id)->update(['status' => 'available']);
+                    }
+                }
+                
+                return back()->with('success', 'Thanh toán thành công. Cảm ơn quý khách!');
+            }
             return redirect('/')->with('success', 'Cảm ơn bạn đã dùng bữa! Vui lòng thanh toán tại quầy thu ngân.');
         }
 
@@ -117,15 +141,18 @@ class OrderController extends Controller
 
     public function showTransferQR(Order $order)
     {
-        // Ensure the order belongs to the user or table logic
-        if ($order->user_id) {
-            if ($order->user_id !== auth()->id()) {
-                abort(403, 'Không có quyền truy cập');
-            }
-        } else {
-            // Guest order
-            if ((string)$order->table_id !== (string)session('table_id')) {
-                abort(403, 'Không có quyền truy cập (Sai bàn)');
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff) {
+            // Ensure the order belongs to the user or table logic
+            if ($order->user_id) {
+                if ($order->user_id !== auth()->id()) {
+                    abort(403, 'Không có quyền truy cập');
+                }
+            } else {
+                // Guest order
+                if ((string)$order->table_id !== (string)session('table_id')) {
+                    abort(403, 'Không có quyền truy cập (Sai bàn)');
+                }
             }
         }
 
@@ -155,8 +182,9 @@ class OrderController extends Controller
 
     public function cancelItem(Request $request, Order $order, OrderItem $item)
     {
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
         // Check authorization
-        if ($order->user_id && $order->user_id !== auth()->id()) {
+        if (!$isStaff && $order->user_id && $order->user_id !== auth()->id()) {
             abort(403, 'Không có quyền truy cập');
         }
 
@@ -165,8 +193,8 @@ class OrderController extends Controller
             abort(404, 'Không tìm thấy món trong đơn hàng');
         }
 
-        if (in_array($item->status, ['ready', 'served', 'completed', 'cancelled'])) {
-            return back()->with('error', 'Không thể huỷ món này vì bếp đã nấu xong hoặc đã huỷ.');
+        if ($item->status !== 'new') {
+            return back()->with('error', 'Không thể huỷ món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
         }
 
         // Update item status

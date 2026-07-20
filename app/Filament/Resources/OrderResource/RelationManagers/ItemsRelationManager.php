@@ -42,6 +42,9 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('food.name')
                     ->label('Món ăn'),
+                Tables\Columns\TextColumn::make('food.preparation_time')
+                    ->label('T.gian chuẩn bị (phút)')
+                    ->numeric(),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Số lượng'),
                 Tables\Columns\TextColumn::make('unit_price')

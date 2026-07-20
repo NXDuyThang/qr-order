@@ -163,6 +163,9 @@
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center p-4 border border-white/5 bg-[#0d1114] rounded-lg gap-4">
                             <div>
                                 <h3 class="text-white text-md tracking-wide">{{ $item->food->name }}</h3>
+                                @if($item->food->preparation_time)
+                                    <p class="text-gray-400 text-xs mt-1">⏳ Thời gian làm: {{ $item->food->preparation_time }} phút</p>
+                                @endif
                                 <p class="text-gray-400 text-sm mt-1">
                                     Số lượng: {{ $item->quantity }} x {{ number_format($item->unit_price * 1000, 0, ',', '.') }} VNĐ 
                                     = <strong class="text-primary">{{ number_format($item->quantity * $item->unit_price * 1000, 0, ',', '.') }} VNĐ</strong>
@@ -188,7 +191,7 @@
                                     @endswitch
                                 </span>
                                 
-                                @if(in_array($item->status, ['new', 'preparing']))
+                                @if($item->status === 'new')
                                     <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ món này không?');">
                                         @csrf
                                         <button type="submit" class="text-red-400 hover:text-red-300 text-sm tracking-wide">Huỷ món</button>
