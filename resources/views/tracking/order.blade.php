@@ -241,14 +241,11 @@
             </div>
 
             <!-- Back to Menu or Add More -->
-            <!-- Order Actions -->
-            @if(!$order->payment_method)
             <div class="mt-8 flex gap-4 justify-center relative z-10" x-show="status !== 'completed'">
                 <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="inline-block bg-transparent text-white border border-white px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-colors">
-                    Gọi thêm món
+                    <span x-text="paymentStatus === 'paid' ? 'GỌI ĐƠN MỚI' : 'GỌI THÊM MÓN'"></span>
                 </a>
             </div>
-            @endif
             
         </div>
     </div>
@@ -265,7 +262,12 @@
                 orderId: {{ $order->id }},
                 pollInterval: null,
                 timerInterval: null,
+                serverTimeOffset: {{ now()->timestamp * 1000 }} - new Date().getTime(),
                 currentTime: new Date().getTime(),
+                
+                get syncedTime() {
+                    return this.currentTime + this.serverTimeOffset;
+                },
                 
                 items: {
                     @foreach($order->items as $item)
@@ -314,7 +316,7 @@
                     if (['ready', 'served', 'completed'].includes(item.status)) return 100;
                     if (['cancelled', 'new'].includes(item.status)) return 0;
                     
-                    const elapsed = Math.floor((this.currentTime - item.updatedAtMs) / 1000);
+                    const elapsed = Math.floor((this.syncedTime - item.updatedAtMs) / 1000);
                     const total = item.prepMins * 60;
                     let p = (elapsed / total) * 100;
                     
