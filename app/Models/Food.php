@@ -23,6 +23,14 @@ class Food extends Model
     public function isWishlistedBy($user)
     {
         if (!$user) return false;
-        return $this->wishlists()->where('user_id', $user->id)->exists();
+        
+        static $userWishlistFoodIds = [];
+        if (!array_key_exists($user->id, $userWishlistFoodIds)) {
+            $userWishlistFoodIds[$user->id] = \App\Models\Wishlist::where('user_id', $user->id)
+                ->pluck('food_id')
+                ->toArray();
+        }
+        
+        return in_array($this->id, $userWishlistFoodIds[$user->id]);
     }
 }
