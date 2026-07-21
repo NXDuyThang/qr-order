@@ -44,59 +44,58 @@
                 <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-5 pointer-events-none"></div>
                 
                 <div class="relative z-10 w-full overflow-x-auto timeline-scroll pb-4">
-                    <div class="min-w-[600px] flex justify-between items-center relative pt-6 pb-2 px-4 md:px-10">
+                    <div class="min-w-[600px] flex justify-between items-start relative pt-2 px-4 md:px-10">
                         
-                        <!-- Connecting Line Background -->
-                        <div class="absolute top-[38px] left-[10%] right-[10%] h-1 bg-white/10 -translate-y-1/2 z-0 rounded"></div>
-                        
-                        <!-- Connecting Line Active (Dynamic width based on status) -->
-                        <div class="absolute top-[38px] left-[10%] h-1 bg-primary -translate-y-1/2 z-0 rounded transition-all duration-1000 ease-in-out" 
-                             :style="{ width: getProgressWidth() }"></div>
+                        <!-- Connecting Line Background and Foreground -->
+                        <div class="absolute top-[32px] left-[40px] right-[40px] md:left-[64px] md:right-[64px] h-[2px] bg-[#1a222a] z-0">
+                            <div class="absolute top-0 left-0 h-full bg-primary z-0 transition-all duration-1000 ease-in-out shadow-[0_0_10px_rgba(0,119,187,0.8)]" 
+                                 :style="{ width: getProgressWidth() }"></div>
+                        </div>
                         
                         <!-- Step 1: New -->
-                        <div class="relative z-10 flex flex-col items-center group" :class="{ 'opacity-100': true }">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 bg-[#040810] transition-all duration-500"
+                        <div class="relative z-10 flex flex-col items-center w-28 group" :class="{ 'opacity-100': true }">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-[2px] bg-[#040810] transition-all duration-500"
                                  :class="(status === 'new' || status !== 'new') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
-                                <div class="w-4 h-4 rounded-full transition-all duration-500"
+                                <div class="w-3 h-3 rounded-full transition-all duration-500"
                                      :class="(status === 'new' || status !== 'new') ? 'bg-primary' : 'bg-transparent'"></div>
                             </div>
-                            <h3 class="mt-4 text-[13px] md:text-sm font-medium tracking-widest uppercase transition-colors"
+                            <h3 class="mt-4 text-[12px] md:text-sm font-medium tracking-widest uppercase text-center transition-colors"
                                 :class="(status === 'new' || status !== 'new') ? 'text-white' : 'text-gray-500'">Đã tiếp nhận</h3>
                         </div>
                         
                         <!-- Step 2: Ready -->
-                        <div class="relative z-10 flex flex-col items-center group transition-all duration-500" 
-                             :class="(status === 'ready' || status === 'served' || status === 'completed') ? 'opacity-100' : 'opacity-50'">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 bg-[#040810] transition-all duration-500"
-                                 :class="(status === 'ready' || status === 'served' || status === 'completed') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
-                                <div class="w-4 h-4 rounded-full transition-all duration-500"
-                                     :class="(status === 'ready' || status === 'served' || status === 'completed') ? 'bg-primary' : 'bg-transparent'"></div>
+                        <div class="relative z-10 flex flex-col items-center w-28 group transition-all duration-500" 
+                             :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'opacity-100' : 'opacity-50'">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-[2px] bg-[#040810] transition-all duration-500"
+                                 :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
+                                <div class="w-3 h-3 rounded-full transition-all duration-500"
+                                     :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'bg-primary' : 'bg-transparent'"></div>
                             </div>
-                            <h3 class="mt-4 text-[13px] md:text-sm font-medium tracking-widest uppercase transition-colors"
-                                :class="(status === 'ready' || status === 'served' || status === 'completed') ? 'text-white' : 'text-gray-500'">Nấu xong</h3>
+                            <h3 class="mt-4 text-[12px] md:text-sm font-medium tracking-widest uppercase text-center transition-colors"
+                                :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'text-white' : 'text-gray-500'">Nấu xong</h3>
                         </div>
                         
                         <!-- Step 3: Served -->
-                        <div class="relative z-10 flex flex-col items-center group transition-all duration-500"
-                             :class="(status === 'served' || status === 'completed') ? 'opacity-100' : 'opacity-50'">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 bg-[#040810] transition-all duration-500"
-                                 :class="(status === 'served' || status === 'completed') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
-                                <div class="w-4 h-4 rounded-full transition-all duration-500"
-                                     :class="(status === 'served' || status === 'completed') ? 'bg-primary' : 'bg-transparent'"></div>
+                        <div class="relative z-10 flex flex-col items-center w-28 group transition-all duration-500"
+                             :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'opacity-100' : 'opacity-50'">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-[2px] bg-[#040810] transition-all duration-500"
+                                 :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
+                                <div class="w-3 h-3 rounded-full transition-all duration-500"
+                                     :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'bg-primary' : 'bg-transparent'"></div>
                             </div>
-                            <h3 class="mt-4 text-[13px] md:text-sm font-medium tracking-widest uppercase transition-colors"
-                                :class="(status === 'served' || status === 'completed') ? 'text-white' : 'text-gray-500'">Đã giao món</h3>
+                            <h3 class="mt-4 text-[12px] md:text-sm font-medium tracking-widest uppercase text-center transition-colors"
+                                :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'text-white' : 'text-gray-500'">Đã giao món</h3>
                         </div>
                         
                         <!-- Step 4: Payment -->
-                        <div class="relative z-10 flex flex-col items-center group transition-all duration-500"
+                        <div class="relative z-10 flex flex-col items-center w-28 group transition-all duration-500"
                              :class="(paymentStatus === 'paid') ? 'opacity-100' : 'opacity-50'">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-2 bg-[#040810] transition-all duration-500"
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-[2px] bg-[#040810] transition-all duration-500"
                                  :class="(paymentStatus === 'paid') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)] bg-primary' : 'border-white/20'">
-                                <svg x-show="paymentStatus === 'paid'" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                <div x-show="paymentStatus !== 'paid'" class="w-4 h-4 rounded-full bg-transparent"></div>
+                                <svg x-show="paymentStatus === 'paid'" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                <div x-show="paymentStatus !== 'paid'" class="w-3 h-3 rounded-full bg-transparent"></div>
                             </div>
-                            <h3 class="mt-4 text-[13px] md:text-sm font-medium tracking-widest uppercase transition-colors"
+                            <h3 class="mt-4 text-[12px] md:text-sm font-medium tracking-widest uppercase text-center transition-colors"
                                 :class="(paymentStatus === 'paid') ? 'text-primary' : 'text-gray-500'">Thanh toán</h3>
                         </div>
                         
@@ -104,118 +103,121 @@
                 </div>
                 
                 <!-- Dynamic Status Subtext -->
-                <div class="text-center mt-6 h-6">
-                    <p x-show="status === 'new'" class="text-gray-400 text-sm tracking-wide animate-pulse">Bếp đang chuẩn bị món ăn của bạn...</p>
-                    <p x-show="status === 'ready'" class="text-gray-400 text-sm tracking-wide animate-pulse">Nhân viên phục vụ đang mang món ra bàn...</p>
+                <div class="text-center mt-8 h-6">
+                    <p x-show="status === 'new' && paymentStatus !== 'paid'" class="text-gray-400 text-sm tracking-wide animate-pulse">Bếp đang chuẩn bị món ăn của bạn...</p>
+                    <p x-show="status === 'ready' && paymentStatus !== 'paid'" class="text-gray-400 text-sm tracking-wide animate-pulse">Nhân viên phục vụ đang mang món ra bàn...</p>
                     <p x-show="status === 'served' && paymentStatus !== 'paid'" class="text-gray-400 text-sm tracking-wide">Chúc quý khách ngon miệng! Đang chờ thanh toán.</p>
                     <p x-show="paymentStatus === 'paid'" class="text-green-400 text-sm tracking-wide font-medium">Đã thanh toán thành công.</p>
                 </div>
             </div>
 
-            <!-- Order Items List -->
-            <div class="bg-[#040810] border border-white/5 p-6 md:p-8 rounded-xl mb-12 relative overflow-hidden shadow-2xl">
-                <h2 class="text-white text-lg font-medium tracking-wider mb-6 border-b border-white/10 pb-4">Chi tiết các món đã gọi</h2>
-                
-                @if(session('success'))
-                    <div class="bg-green-900/30 text-green-400 border border-green-500/30 px-4 py-3 rounded mb-6 text-sm">
-                        {{ session('success') }}
+            <!-- Order Items List as ONE Dropdown -->
+            <div x-data="{ showItems: true }" class="bg-[#040810] border border-white/5 rounded-xl mb-12 shadow-2xl overflow-hidden">
+                <!-- Dropdown Header -->
+                <div @click="showItems = !showItems" class="p-6 md:p-8 cursor-pointer flex justify-between items-center bg-[#0d1114] border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <h2 class="text-white text-lg font-medium tracking-wider">Chi tiết các món đã gọi</h2>
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" :class="showItems ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
-                @endif
-                
-                @if(session('error'))
-                    <div class="bg-red-900/30 text-red-400 border border-red-500/30 px-4 py-3 rounded mb-6 text-sm">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                <div id="order-items-container" class="space-y-4">
-                    @foreach($order->items as $item)
-                        <div x-data="{ expanded: false }" class="bg-[#0d1114] border border-white/5 rounded-lg overflow-hidden transition-all duration-300 shadow-md">
-                            <!-- Summary Header (Clickable) -->
-                            <div @click="expanded = !expanded" class="flex justify-between items-center p-4 md:p-5 cursor-pointer hover:bg-white/5 transition-colors">
-                                <div class="flex items-center gap-4 flex-grow">
-                                    <div class="w-12 h-12 rounded-md bg-gray-800 shrink-0 overflow-hidden border border-white/10">
-                                        <img src="{{ $item->food->image ?? '/images/default-food.jpg' }}" alt="{{ $item->food->name }}" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3 class="text-white text-sm md:text-md tracking-wide font-medium">{{ $item->food->name }} <span class="text-gray-400 font-normal ml-1">x{{ $item->quantity }}</span></h3>
-                                        <div class="mt-2 flex flex-wrap gap-2 items-center">
-                                            <span class="px-2 py-0.5 rounded text-[10px] md:text-xs font-semibold uppercase tracking-wider 
-                                                {{ $item->status === 'new' ? 'bg-primary/20 text-primary border border-primary/30' : '' }}
-                                                {{ $item->status === 'preparing' ? 'bg-warning/20 text-warning border border-warning/30 text-orange-400' : '' }}
-                                                {{ $item->status === 'ready' ? 'bg-info/20 text-info border border-info/30 text-blue-400' : '' }}
-                                                {{ $item->status === 'served' ? 'bg-success/20 text-success border border-success/30 text-green-400' : '' }}
-                                                {{ $item->status === 'completed' ? 'bg-gray-800/80 text-gray-300 border border-gray-600' : '' }}
-                                                {{ $item->status === 'cancelled' ? 'bg-danger/20 text-danger border border-danger/30 text-red-400' : '' }}
-                                            ">
-                                                @switch($item->status)
-                                                    @case('new') Đang đợi bếp @break
-                                                    @case('preparing') Đang nấu @break
-                                                    @case('ready') Nấu xong @break
-                                                    @case('served') Đã lên món @break
-                                                    @case('completed') Đã hoàn tất @break
-                                                    @case('cancelled') Đã huỷ @break
-                                                    @default {{ $item->status }}
-                                                @endswitch
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center gap-4 shrink-0">
-                                    <span class="text-primary font-medium text-sm md:text-md whitespace-nowrap hidden sm:inline">{{ number_format($item->quantity * $item->unit_price * 1000, 0, ',', '.') }} đ</span>
-                                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-300" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Expanded Details -->
-                            <div x-show="expanded" x-collapse.duration.300ms class="border-t border-white/5 bg-[#080b0e]" style="display: none;">
-                                <div class="p-4 md:p-5">
-                                    <div class="flex justify-between text-sm text-gray-400 mb-3">
-                                        <span>Đơn giá:</span>
-                                        <span>{{ number_format($item->unit_price * 1000, 0, ',', '.') }} VNĐ</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm text-gray-400 mb-6">
-                                        <span>Tổng tiền:</span>
-                                        <span class="text-white font-medium">{{ number_format($item->quantity * $item->unit_price * 1000, 0, ',', '.') }} VNĐ</span>
-                                    </div>
-                                    
-                                    @if($item->status === 'new')
-                                        <div class="flex gap-3 justify-end pt-4 border-t border-white/5">
-                                            @if($item->quantity > 1)
-                                                <form action="{{ route('order.item.reduce', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc muốn giảm 1 số lượng của món này không?');">
-                                                    @csrf
-                                                    <button type="submit" class="px-4 py-2 border border-warning/50 text-orange-400 hover:bg-warning/10 text-xs font-semibold tracking-wider uppercase rounded transition-colors flex items-center gap-2">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                                        Giảm 1 SL
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            
-                                            <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" class="inline-block" onsubmit="return confirm('Bạn có chắc muốn huỷ toàn bộ món này không?');">
-                                                @csrf
-                                                <button type="submit" class="px-4 py-2 bg-red-900/30 border border-red-500/50 text-red-400 hover:bg-red-900/50 hover:text-red-300 text-xs font-semibold tracking-wider uppercase rounded transition-colors flex items-center gap-2">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    Huỷ món
-                                                </button>
-                                            </form>
-                                        </div>
-                                    @else
-                                        <div class="pt-4 border-t border-white/5 text-right">
-                                            <span class="text-gray-500 text-xs italic">Không thể huỷ hay giảm số lượng khi bếp đã bắt đầu xử lý.</span>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
                 </div>
                 
-                <div class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
-                    <span class="text-gray-400 uppercase tracking-widest text-sm">Tổng cộng:</span>
-                    <span class="text-2xl text-white font-serif">{{ number_format($order->total_price * 1000, 0, ',', '.') }} VNĐ</span>
+                <!-- Dropdown Body -->
+                <div x-show="showItems" x-collapse.duration.400ms>
+                    <div class="p-6 md:p-8">
+                        @if(session('success'))
+                            <div class="bg-green-900/30 text-green-400 border border-green-500/30 px-4 py-3 rounded mb-6 text-sm">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        
+                        @if(session('error'))
+                            <div class="bg-red-900/30 text-red-400 border border-red-500/30 px-4 py-3 rounded mb-6 text-sm">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
+                        <div class="space-y-6">
+                            @foreach($order->items as $item)
+                                <div class="bg-[#0d1114] border border-white/5 rounded-lg overflow-hidden shadow-md p-5 relative transition-opacity duration-300"
+                                     :class="items[{{ $item->id }}].status === 'cancelled' ? 'opacity-50' : 'opacity-100'">
+                                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                                        <div class="w-16 h-16 rounded-md bg-gray-800 shrink-0 overflow-hidden border border-white/10 relative">
+                                            <img src="{{ $item->food->image ?? '/images/default-food.jpg' }}" alt="{{ $item->food->name }}" class="w-full h-full object-cover">
+                                            <div x-show="items[{{ $item->id }}].status === 'cancelled'" class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                                <span class="text-white text-xs font-bold uppercase rotate-[-20deg]">Đã huỷ</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow w-full">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h3 class="text-white text-md tracking-wide font-medium">
+                                                        {{ $item->food->name }}
+                                                    </h3>
+                                                    <p class="text-gray-400 text-sm mt-1">
+                                                        Số lượng: <span x-text="items[{{ $item->id }}].quantity"></span> 
+                                                        <span class="mx-2">•</span> {{ number_format($item->unit_price * 1000, 0, ',', '.') }} đ
+                                                    </p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <span class="text-primary font-medium" x-text="(items[{{ $item->id }}].quantity * {{ $item->unit_price * 1000 }}).toLocaleString('vi-VN') + ' đ'"></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Actions (Cancel/Reduce) when 'new' -->
+                                            <div class="mt-4" x-show="items[{{ $item->id }}].status === 'new'">
+                                                <div class="flex gap-2">
+                                                    @if($item->quantity > 1)
+                                                        <form action="{{ route('order.item.reduce', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn giảm 1 số lượng của món này không?');">
+                                                            @csrf
+                                                            <button type="submit" class="px-3 py-1.5 border border-warning/50 text-orange-400 hover:bg-warning/10 text-[10px] md:text-xs font-semibold tracking-wider uppercase rounded transition-colors flex items-center gap-1">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                                                                Giảm 1 SL
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                    <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ toàn bộ món này không?');">
+                                                        @csrf
+                                                        <button type="submit" class="px-3 py-1.5 bg-red-900/30 border border-red-500/50 text-red-400 hover:bg-red-900/50 hover:text-red-300 text-[10px] md:text-xs font-semibold tracking-wider uppercase rounded transition-colors flex items-center gap-1">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                            Huỷ món
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4" x-show="items[{{ $item->id }}].status !== 'new'">
+                                                <span class="text-gray-500 text-xs italic" x-text="items[{{ $item->id }}].status === 'cancelled' ? 'Món đã bị huỷ' : 'Bếp đã xử lý, không thể thay đổi'"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Progress Bar for individual item -->
+                                    <div class="mt-5" x-show="items[{{ $item->id }}].status !== 'cancelled'">
+                                        <div class="flex justify-between items-end mb-2">
+                                            <span class="text-[10px] uppercase tracking-wider font-semibold"
+                                                  :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'text-green-400' : 'text-blue-400'"
+                                                  x-text="getItemStatusText(items[{{ $item->id }}].status)">
+                                            </span>
+                                            <span class="text-[10px] text-gray-500">
+                                                <span x-text="Math.floor(getItemProgress({{ $item->id }}))"></span>%
+                                            </span>
+                                        </div>
+                                        <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full transition-all duration-1000 ease-linear relative"
+                                                 :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'bg-green-500' : 'bg-primary'"
+                                                 :style="{ width: getItemProgress({{ $item->id }}) + '%' }">
+                                                <div x-show="['new','preparing'].includes(items[{{ $item->id }}].status)" class="absolute inset-0 bg-white/20 animate-pulse"></div>     
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
+                            <span class="text-gray-400 uppercase tracking-widest text-sm">Tổng cộng:</span>
+                            <span class="text-2xl text-white font-serif">{{ number_format($order->total_price * 1000, 0, ',', '.') }} VNĐ</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -300,40 +302,88 @@
                 allItemsServed: {{ $allServed ? 'true' : 'false' }},
                 orderId: {{ $order->id }},
                 pollInterval: null,
+                timerInterval: null,
+                currentTime: new Date().getTime(),
+                
+                items: {
+                    @foreach($order->items as $item)
+                        {{ $item->id }}: {
+                            status: '{{ $item->status }}',
+                            quantity: {{ $item->quantity }},
+                            prepMins: {{ $item->food->preparation_time ? ($item->food->preparation_time * $item->quantity) : 5 }},
+                            createdAtMs: {{ $item->created_at->timestamp * 1000 }}
+                        },
+                    @endforeach
+                },
 
                 initTracker() {
+                    // Start progress bar tick
+                    this.timerInterval = setInterval(() => {
+                        this.currentTime = new Date().getTime();
+                    }, 1000);
+
+                    // Fetch status from API without replacing DOM
                     this.pollInterval = setInterval(() => {
                         this.fetchStatus();
                     }, 3000); // Fetch every 3 seconds
                 },
 
                 getProgressWidth() {
-                    if (this.paymentStatus === 'paid') return '80%';
-                    if (this.status === 'served' || this.status === 'completed') return '53.33%';
-                    if (this.status === 'ready') return '26.66%';
+                    if (this.paymentStatus === 'paid') return '100%';
+                    if (this.status === 'served' || this.status === 'completed') return '66.66%';
+                    if (this.status === 'ready') return '33.33%';
                     return '0%';
                 },
 
+                getItemStatusText(status) {
+                    switch(status) {
+                        case 'new': return 'Đang đợi bếp';
+                        case 'preparing': return 'Đang nấu';
+                        case 'ready': return 'Nấu xong';
+                        case 'served': return 'Đã phục vụ';
+                        case 'completed': return 'Đã hoàn tất';
+                        case 'cancelled': return 'Đã huỷ';
+                        default: return status;
+                    }
+                },
+
+                getItemProgress(id) {
+                    const item = this.items[id];
+                    if (!item) return 0;
+                    if (['ready', 'served', 'completed'].includes(item.status)) return 100;
+                    if (item.status === 'cancelled') return 0;
+                    
+                    const elapsed = Math.floor((this.currentTime - item.createdAtMs) / 1000);
+                    const total = item.prepMins * 60;
+                    let p = (elapsed / total) * 100;
+                    
+                    if (p > 95 && item.status !== 'ready') {
+                        p = 95; // Stop at 95% until Chef marks it ready
+                    }
+                    
+                    return Math.min(100, Math.max(0, p));
+                },
+
                 fetchStatus() {
-                    fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
+                    fetch(`/api/order/${this.orderId}/status`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(res => res.json())
+                        .then(data => {
+                            this.status = data.status;
+                            this.paymentStatus = data.payment_status;
+                            this.allItemsServed = data.all_items_served;
                             
-                            const newItems = doc.getElementById('order-items-container');
-                            if (newItems) document.getElementById('order-items-container').innerHTML = newItems.innerHTML;
+                            // Dynamically update items' status without reloading DOM
+                            data.items.forEach(apiItem => {
+                                if (this.items[apiItem.id]) {
+                                    this.items[apiItem.id].status = apiItem.status;
+                                    this.items[apiItem.id].quantity = apiItem.quantity;
+                                }
+                            });
                             
-                            fetch(`/api/order/${this.orderId}/status`)
-                                .then(res => res.json())
-                                .then(data => {
-                                    this.status = data.status;
-                                    this.paymentStatus = data.payment_status;
-                                    this.allItemsServed = data.all_items_served;
-                                    if (this.status === 'completed' && this.paymentStatus === 'paid') {
-                                        clearInterval(this.pollInterval);
-                                    }
-                                });
+                            if (this.status === 'completed' && this.paymentStatus === 'paid') {
+                                clearInterval(this.pollInterval);
+                                clearInterval(this.timerInterval);
+                            }
                         })
                         .catch(err => console.error('Error fetching status:', err));
                 }
