@@ -244,7 +244,7 @@
                     @elseif($order->payment_method === 'cash')
                         <div class="bg-gray-800/50 rounded-xl p-6 border border-white/10 backdrop-blur-md">
                             <h4 class="text-white text-lg font-serif mb-2 tracking-wider">Thanh toán Tiền mặt</h4>
-                            <p class="text-gray-300 text-sm leading-relaxed mb-4">Vui lòng thanh toán tại quầy thu ngân.</p>
+                            <p class="text-gray-300 text-sm leading-relaxed mb-4">Cảm ơn khách hàng đã thanh toán.</p>
                             <p class="text-white font-semibold text-xl">{{ number_format($order->total_price * 1000, 0, ',', '.') }} VNĐ</p>
                         </div>
                     @endif

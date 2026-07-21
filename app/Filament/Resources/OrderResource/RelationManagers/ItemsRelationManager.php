@@ -73,7 +73,7 @@ class ItemsRelationManager extends RelationManager
                         'new' => 'Mới gọi',
                         'preparing' => 'Đang nấu',
                         'ready' => 'Nấu xong',
-                        'served' => 'Đã lên bàn',
+                        'served' => 'Đã phục vụ',
                         'cancelled' => 'Đã huỷ',
                         default => $state,
                     }),
@@ -100,7 +100,7 @@ class ItemsRelationManager extends RelationManager
                     ->action(fn ($record) => $record->update(['status' => 'ready'])),
                     
                 Tables\Actions\Action::make('serve')
-                    ->label('Lên bàn')
+                    ->label('Phục vụ')
                     ->icon('heroicon-o-arrow-right')
                     ->color('success')
                     ->visible(fn ($record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))

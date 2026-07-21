@@ -138,7 +138,7 @@
                                         <!-- Actions -->
                                         @if($item->status === 'ready')
                                             <button onclick="serveItem({{ $item->id }})" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded mt-1 transition">
-                                                Xác nhận Đã Mang Lên
+                                                Phục vụ
                                             </button>
                                         @elseif(in_array($item->status, ['new', 'preparing']))
                                             @if($item->quantity > 1)
@@ -347,7 +347,7 @@
         // Functions for vanilla JS interactions
         function serveItem(itemId) {
             Swal.fire({
-                title: 'Xác nhận mang lên?',
+                title: 'Xác nhận phục vụ?',
                 text: "Đánh dấu món này đã được giao cho khách",
                 icon: 'question',
                 showCancelButton: true,
