@@ -32,10 +32,10 @@ class FoodResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('category_id')
+                Forms\Components\Select::make('category_id')
+                    ->relationship('category', 'name')
                     ->label('Danh mục')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->label('Tên món ăn')
                     ->required()
@@ -58,7 +58,10 @@ class FoodResource extends Resource
                     ->nullable(),
                 Forms\Components\FileUpload::make('image')
                     ->label('Hình ảnh')
-                    ->image(),
+                    ->image()
+                    ->disk('public')
+                    ->directory('images')
+                    ->preserveFilenames(),
                 Forms\Components\Toggle::make('is_available')
                     ->label('Còn hàng')
                     ->required(),
@@ -69,9 +72,8 @@ class FoodResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('category_id')
+                Tables\Columns\TextColumn::make('category.name')
                     ->label('Danh mục')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Tên món ăn')
@@ -87,7 +89,8 @@ class FoodResource extends Resource
                     ->label('Thời gian (phút)')
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('image')
-                    ->label('Hình ảnh'),
+                    ->label('Hình ảnh')
+                    ->disk('public'),
                 Tables\Columns\IconColumn::make('is_available')
                     ->label('Còn hàng')
                     ->boolean(),

@@ -42,9 +42,12 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('food.name')
                     ->label('Món ăn'),
-                Tables\Columns\TextColumn::make('food.preparation_time')
+                Tables\Columns\TextColumn::make('total_prep_time')
                     ->label('T.gian chuẩn bị (phút)')
-                    ->numeric(),
+                    ->state(function ($record) {
+                        if (!$record->food || !$record->food->preparation_time) return null;
+                        return $record->food->preparation_time * $record->quantity;
+                    }),
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Số lượng'),
                 Tables\Columns\TextColumn::make('unit_price')
@@ -110,6 +113,7 @@ class ItemsRelationManager extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->poll('3s');
     }
 }

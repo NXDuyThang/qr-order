@@ -158,14 +158,11 @@
                     </div>
                 @endif
 
-                <div class="space-y-4">
+                <div id="order-items-container" class="space-y-4">
                     @foreach($order->items as $item)
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center p-4 border border-white/5 bg-[#0d1114] rounded-lg gap-4">
                             <div>
                                 <h3 class="text-white text-md tracking-wide">{{ $item->food->name }}</h3>
-                                @if($item->food->preparation_time)
-                                    <p class="text-gray-400 text-xs mt-1">⏳ Thời gian làm: {{ $item->food->preparation_time }} phút</p>
-                                @endif
                                 <p class="text-gray-400 text-sm mt-1">
                                     Số lượng: {{ $item->quantity }} x {{ number_format($item->unit_price * 1000, 0, ',', '.') }} VNĐ 
                                     = <strong class="text-primary">{{ number_format($item->quantity * $item->unit_price * 1000, 0, ',', '.') }} VNĐ</strong>
@@ -296,41 +293,25 @@
                 },
 
                 fetchStatus() {
-                    fetch(`/api/order/${this.orderId}/status`)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.status = data.status;
-                            this.paymentStatus = data.payment_status;
-                            this.allItemsServed = data.all_items_served;
+                    fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
                             
-                            if (data.items) {
-                                data.items.forEach(item => {
-                                    const badge = document.getElementById('badge-' + item.id);
-                                    if (badge) {
-                                        let text = '';
-                                        let classes = 'px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider ';
-                                        if (item.status === 'new') { text = 'Đang đợi bếp'; classes += 'bg-primary/20 text-primary border border-primary/30'; }
-                                        else if (item.status === 'preparing') { text = 'Đang nấu'; classes += 'bg-warning/20 text-warning border border-warning/30 text-orange-400'; }
-                                        else if (item.status === 'ready') { text = 'Nấu xong'; classes += 'bg-info/20 text-info border border-info/30 text-blue-400'; }
-                                        else if (item.status === 'served') { text = 'Đã lên món'; classes += 'bg-success/20 text-success border border-success/30 text-green-400'; }
-                                        else if (item.status === 'completed') { text = 'Đã hoàn tất'; classes += 'bg-gray-800/80 text-gray-300 border border-gray-600'; }
-                                        else if (item.status === 'cancelled') { text = 'Đã huỷ'; classes += 'bg-danger/20 text-danger border border-danger/30 text-red-400'; }
-                                        
-                                        badge.className = classes;
-                                        badge.innerText = text;
-                                    }
-                                    
-                                    const cancelForm = document.getElementById('cancel-form-' + item.id);
-                                    if (cancelForm && item.status !== 'new') {
-                                        cancelForm.style.display = 'none';
+                            const newItems = doc.getElementById('order-items-container');
+                            if (newItems) document.getElementById('order-items-container').innerHTML = newItems.innerHTML;
+                            
+                            fetch(`/api/order/${this.orderId}/status`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    this.status = data.status;
+                                    this.paymentStatus = data.payment_status;
+                                    this.allItemsServed = data.all_items_served;
+                                    if (this.status === 'completed' && this.paymentStatus === 'paid') {
+                                        clearInterval(this.pollInterval);
                                     }
                                 });
-                            }
-                            
-                            // Stop polling if completed and paid
-                            if (this.status === 'completed' && this.paymentStatus === 'paid') {
-                                clearInterval(this.pollInterval);
-                            }
                         })
                         .catch(err => console.error('Error fetching status:', err));
                 }

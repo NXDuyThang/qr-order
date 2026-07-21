@@ -107,7 +107,8 @@ class OrderResource extends Resource
                                 'completed' => 'Hoàn tất',
                                 default => $item->status
                             };
-                            $prepTime = $item->food->preparation_time ? ' (⏳ ' . $item->food->preparation_time . 'p)' : '';
+                            $totalPrepTime = $item->food->preparation_time ? ($item->food->preparation_time * $item->quantity) : 0;
+                            $prepTime = $totalPrepTime ? ' (⏳ ' . $totalPrepTime . 'p)' : '';
                             return $item->food->name . ' (x' . $item->quantity . ')' . $prepTime . ' - [' . $statusStr . ']';
                         })->toArray();
                     })
