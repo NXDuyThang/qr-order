@@ -63,30 +63,6 @@
                                 :class="(status === 'new' || status !== 'new') ? 'text-white' : 'text-gray-500'">Đã tiếp nhận</h3>
                         </div>
                         
-                        <!-- Step 2: Ready -->
-                        <div class="relative z-10 flex flex-col items-center w-28 group transition-all duration-500" 
-                             :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'opacity-100' : 'opacity-50'">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-[2px] bg-[#040810] transition-all duration-500"
-                                 :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
-                                <div class="w-3 h-3 rounded-full transition-all duration-500"
-                                     :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'bg-primary' : 'bg-transparent'"></div>
-                            </div>
-                            <h3 class="mt-4 text-[12px] md:text-sm font-medium tracking-widest uppercase text-center transition-colors"
-                                :class="(paymentStatus === 'paid' || status === 'ready' || status === 'served' || status === 'completed') ? 'text-white' : 'text-gray-500'">Nấu xong</h3>
-                        </div>
-                        
-                        <!-- Step 3: Served -->
-                        <div class="relative z-10 flex flex-col items-center w-28 group transition-all duration-500"
-                             :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'opacity-100' : 'opacity-50'">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-[2px] bg-[#040810] transition-all duration-500"
-                                 :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'border-primary shadow-[0_0_15px_rgba(0,119,187,0.5)]' : 'border-white/20'">
-                                <div class="w-3 h-3 rounded-full transition-all duration-500"
-                                     :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'bg-primary' : 'bg-transparent'"></div>
-                            </div>
-                            <h3 class="mt-4 text-[12px] md:text-sm font-medium tracking-widest uppercase text-center transition-colors"
-                                :class="(paymentStatus === 'paid' || status === 'served' || status === 'completed') ? 'text-white' : 'text-gray-500'">Đã giao món</h3>
-                        </div>
-                        
                         <!-- Step 4: Payment -->
                         <div class="relative z-10 flex flex-col items-center w-28 group transition-all duration-500"
                              :class="(paymentStatus === 'paid') ? 'opacity-100' : 'opacity-50'">
@@ -317,8 +293,6 @@
 
                 getProgressWidth() {
                     if (this.paymentStatus === 'paid') return '100%';
-                    if (this.status === 'served' || this.status === 'completed') return '66.66%';
-                    if (this.status === 'ready') return '33.33%';
                     return '0%';
                 },
 
