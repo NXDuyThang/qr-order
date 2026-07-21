@@ -110,7 +110,7 @@
             </div>
 
             <!-- Bill Content -->
-            <div class="p-4 flex flex-col gap-4" style="flex: 1 1 auto; overflow-y: auto; height: 100%;">
+            <div id="bill-content" class="p-4 flex flex-col gap-4" style="flex: 1 1 auto; overflow-y: auto; height: 100%;">
                 
                 <!-- 1. Existing Items -->
                 @if($activeOrder && $activeOrder->items->count() > 0)
@@ -202,16 +202,17 @@
             <div class="p-4 bg-[#1a222c] border-t border-gray-800">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-gray-400 font-medium">Tổng tiền:</span>
-                    <span class="text-2xl font-bold text-white" x-text="formatMoney(getTotal()) + 'đ'"></span>
+                    <span id="pos-total" class="text-2xl font-bold text-white" x-text="formatMoney(getTotal()) + 'đ'">{{ number_format((($activeOrder ? $activeOrder->total_price : 0) * 1000), 0, ',', '.') }}đ</span>
                 </div>
 
                 <!-- Submit Cart -->
-                <button x-show="cart.length > 0" @click="submitOrder()" :disabled="isSubmitting" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-xl transition flex justify-center items-center gap-2">
+                <button x-show="cart.length > 0" @click="submitOrder()" :disabled="isSubmitting" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-xl transition flex justify-center items-center gap-2" style="display: none;">
                     <span x-text="isSubmitting ? 'Đang gửi...' : 'GỬI BẾP'"></span>
                     <svg x-show="!isSubmitting" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 </button>
 
                 <!-- Payment Options -->
+                <div id="pos-actions">
                 @if($activeOrder && $activeOrder->items->count() > 0)
                     <div x-show="cart.length === 0" class="flex gap-2">
                         <button onclick="openPaymentModal()" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-lg rounded-xl transition flex justify-center items-center gap-2">
@@ -220,6 +221,7 @@
                         </button>
                     </div>
                 @endif
+                </div>
             </div>
         </div>
     </div>
@@ -276,6 +278,33 @@
                 cart: [],
                 existingTotal: {{ $activeOrder ? $activeOrder->total_price : 0 }},
                 isSubmitting: false,
+
+                init() {
+                    setInterval(() => {
+                        if (this.cart.length === 0 && !this.isSubmitting) {
+                            fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                            .then(res => res.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newBill = doc.getElementById('bill-content');
+                                if (newBill) {
+                                    document.getElementById('bill-content').innerHTML = newBill.innerHTML;
+                                }
+                                
+                                const newTotal = doc.getElementById('pos-total');
+                                if (newTotal) {
+                                    document.getElementById('pos-total').innerHTML = newTotal.innerHTML;
+                                }
+                                
+                                const newActions = doc.getElementById('pos-actions');
+                                if (newActions) {
+                                    document.getElementById('pos-actions').innerHTML = newActions.innerHTML;
+                                }
+                            });
+                        }
+                    }, 3000);
+                },
 
                 addToCart(id, name, price) {
                     const index = this.cart.findIndex(item => item.id === id);

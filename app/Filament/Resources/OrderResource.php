@@ -107,7 +107,8 @@ class OrderResource extends Resource
                                 'completed' => 'Hoàn tất',
                                 default => $item->status
                             };
-                            return $item->food->name . ' (x' . $item->quantity . ') - [' . $statusStr . ']';
+                            $prepTime = $item->food->preparation_time ? ' (⏳ ' . $item->food->preparation_time . 'p)' : '';
+                            return $item->food->name . ' (x' . $item->quantity . ')' . $prepTime . ' - [' . $statusStr . ']';
                         })->toArray();
                     })
                     ->listWithLineBreaks()
@@ -167,24 +168,6 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('finish')
-                    ->label('Nấu xong')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->visible(fn (Order $record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    ->action(function (Order $record) {
-                        $record->update(['status' => 'ready']);
-                        $record->items()->whereIn('status', ['new', 'preparing'])->update(['status' => 'ready']);
-                    }),
-                Tables\Actions\Action::make('serve')
-                    ->label('Đã giao')
-                    ->icon('heroicon-o-arrow-right-circle')
-                    ->color('success')
-                    ->visible(fn (Order $record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
-                    ->action(function (Order $record) {
-                        $record->update(['status' => 'served']);
-                        $record->items()->where('status', 'ready')->update(['status' => 'served']);
-                    }),
                 Tables\Actions\Action::make('confirmPayment')
                     ->label('Xác nhận Thanh toán')
                     ->icon('heroicon-o-currency-dollar')

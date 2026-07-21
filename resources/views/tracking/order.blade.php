@@ -172,7 +172,7 @@
                                 </p>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider 
+                                <span id="badge-{{ $item->id }}" class="px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider 
                                     {{ $item->status === 'new' ? 'bg-primary/20 text-primary border border-primary/30' : '' }}
                                     {{ $item->status === 'preparing' ? 'bg-warning/20 text-warning border border-warning/30 text-orange-400' : '' }}
                                     {{ $item->status === 'ready' ? 'bg-info/20 text-info border border-info/30 text-blue-400' : '' }}
@@ -192,7 +192,7 @@
                                 </span>
                                 
                                 @if($item->status === 'new')
-                                    <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ món này không?');">
+                                    <form id="cancel-form-{{ $item->id }}" action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ món này không?');">
                                         @csrf
                                         <button type="submit" class="text-red-400 hover:text-red-300 text-sm tracking-wide">Huỷ món</button>
                                     </form>
@@ -302,6 +302,30 @@
                             this.status = data.status;
                             this.paymentStatus = data.payment_status;
                             this.allItemsServed = data.all_items_served;
+                            
+                            if (data.items) {
+                                data.items.forEach(item => {
+                                    const badge = document.getElementById('badge-' + item.id);
+                                    if (badge) {
+                                        let text = '';
+                                        let classes = 'px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider ';
+                                        if (item.status === 'new') { text = 'Đang đợi bếp'; classes += 'bg-primary/20 text-primary border border-primary/30'; }
+                                        else if (item.status === 'preparing') { text = 'Đang nấu'; classes += 'bg-warning/20 text-warning border border-warning/30 text-orange-400'; }
+                                        else if (item.status === 'ready') { text = 'Nấu xong'; classes += 'bg-info/20 text-info border border-info/30 text-blue-400'; }
+                                        else if (item.status === 'served') { text = 'Đã lên món'; classes += 'bg-success/20 text-success border border-success/30 text-green-400'; }
+                                        else if (item.status === 'completed') { text = 'Đã hoàn tất'; classes += 'bg-gray-800/80 text-gray-300 border border-gray-600'; }
+                                        else if (item.status === 'cancelled') { text = 'Đã huỷ'; classes += 'bg-danger/20 text-danger border border-danger/30 text-red-400'; }
+                                        
+                                        badge.className = classes;
+                                        badge.innerText = text;
+                                    }
+                                    
+                                    const cancelForm = document.getElementById('cancel-form-' + item.id);
+                                    if (cancelForm && item.status !== 'new') {
+                                        cancelForm.style.display = 'none';
+                                    }
+                                });
+                            }
                             
                             // Stop polling if completed and paid
                             if (this.status === 'completed' && this.paymentStatus === 'paid') {

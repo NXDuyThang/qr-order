@@ -172,11 +172,20 @@ class OrderController extends Controller
     {
         $allServed = $order->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
 
+        $items = $order->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'status' => $item->status,
+                'quantity' => $item->quantity,
+            ];
+        });
+
         // Optional: Add simple authorization here if needed
         return response()->json([
             'status' => $order->status,
             'payment_status' => $order->payment_status,
             'all_items_served' => $allServed,
+            'items' => $items,
         ]);
     }
 
