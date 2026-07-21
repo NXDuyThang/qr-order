@@ -118,8 +118,10 @@ class OrderController extends Controller
         }
 
         if ($request->payment_method === 'cash') {
+            $order->update(['payment_status' => 'paid']);
+            
             if ($isStaff) {
-                $order->update(['payment_status' => 'paid', 'status' => 'completed']);
+                $order->update(['status' => 'completed']);
                 $order->items()->whereNotIn('status', ['cancelled'])->update(['status' => 'completed']);
                 
                 if ($order->table_id) {
@@ -130,10 +132,9 @@ class OrderController extends Controller
                         \App\Models\Table::where('id', $order->table_id)->update(['status' => 'available']);
                     }
                 }
-                
-                return back()->with('success', 'Thanh toán thành công. Cảm ơn quý khách!');
             }
-            return redirect('/')->with('success', 'Cảm ơn bạn đã dùng bữa! Vui lòng thanh toán tại quầy thu ngân.');
+            
+            return back()->with('success', 'Đã ghi nhận thanh toán tiền mặt thành công. Cảm ơn quý khách!');
         }
 
         return back()->with('success', 'Đã cập nhật phương thức thanh toán.');
