@@ -18,7 +18,8 @@
                     'slug' => $food->slug,
                     'price' => $food->price,
                     'image' => $imgSrc,
-                    'category_id' => $category->id
+                    'category_id' => $category->id,
+                    'preparation_time' => $food->preparation_time
                 ];
             }
         }
@@ -261,6 +262,9 @@
                                 <div class="product-rating">
                                     &#9734; &#9734; &#9734; &#9734; &#9734;
                                 </div>
+                                <div class="text-center mt-1" x-show="item.preparation_time">
+                                    <span class="text-gray-400 text-[10px] tracking-wider">⏳ <span x-text="item.preparation_time"></span> phút</span>
+                                </div>
                                 <div class="product-price" x-text="formatPrice(item.price)"></div>
                             </div>
                         </div>
@@ -362,18 +366,14 @@
     </div>
 
     @if(!$tableId)
-    <!-- Table Selection Modal -->
+    <!-- QR Scan Prompt Modal -->
     <div class="fixed inset-0 bg-black/90 z-[200] flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-[#0d1114] border border-white/10 rounded-2xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl text-primary font-serif mb-2 uppercase tracking-[0.1em]">Chọn Bàn</h2>
-            <p class="text-gray-400 mb-8 text-sm">Vui lòng chọn bàn bạn đang ngồi để thực hiện gọi món.</p>
-            <div class="grid grid-cols-2 gap-4">
-                @foreach($tables as $table)
-                <a href="{{ route('order_at_table', ['table_id' => $table->id]) }}" class="border border-white/20 text-white hover:bg-primary hover:border-primary hover:text-white transition-colors p-4 rounded-xl text-lg font-bold font-sans">
-                    {{ $table->name ?? 'Bàn ' . $table->id }}
-                </a>
-                @endforeach
+            <h2 class="text-2xl text-primary font-serif mb-2 uppercase tracking-[0.1em]">Quét Mã QR</h2>
+            <div class="my-8 flex justify-center">
+                <svg class="w-24 h-24 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4h4v4H4V4zm12 0h4v4h-4V4zM4 16h4v4H4v-4zm12 0h4v4h-4v-4z"></path></svg>
             </div>
+            <p class="text-gray-400 mb-8 text-sm">Vui lòng quét mã QR tại bàn của bạn để hệ thống định vị đúng bàn và bắt đầu gọi món.</p>
             <div class="mt-8">
                 <a href="{{ route('welcome') }}" class="text-gray-500 hover:text-white text-sm transition-colors border-b border-transparent hover:border-white pb-1">Quay lại trang chủ</a>
             </div>

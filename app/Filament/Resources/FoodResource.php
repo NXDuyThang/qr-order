@@ -52,6 +52,10 @@ class FoodResource extends Resource
                     ->required()
                     ->numeric()
                     ->suffix('VNĐ'),
+                Forms\Components\TextInput::make('preparation_time')
+                    ->label('Thời gian chuẩn bị (phút)')
+                    ->numeric()
+                    ->nullable(),
                 Forms\Components\FileUpload::make('image')
                     ->label('Hình ảnh')
                     ->image(),
@@ -78,6 +82,9 @@ class FoodResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->label('Giá bán')
                     ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('preparation_time')
+                    ->label('Thời gian (phút)')
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Hình ảnh'),
