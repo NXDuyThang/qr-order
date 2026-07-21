@@ -46,9 +46,12 @@
                     </div>
 
                     <div class="w-full mt-10">
-                        <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="block text-center w-full bg-primary text-white py-4 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors relative z-10 shadow-[0_0_15px_rgba(0,119,187,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-                            Tôi Đã Thanh Toán Thành Công
-                        </a>
+                        <form action="{{ route('checkout.transfer.confirm', $order->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="block text-center w-full bg-primary text-white py-4 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors relative z-10 shadow-[0_0_15px_rgba(0,119,187,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] cursor-pointer">
+                                Tôi Đã Thanh Toán Thành Công
+                            </button>
+                        </form>
                         <p class="text-center text-gray-500 text-[12px] mt-4 tracking-wide">
                             Nhân viên sẽ kiểm tra và xác nhận đơn hàng của bạn ngay lập tức.
                         </p>

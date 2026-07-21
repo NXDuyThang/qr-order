@@ -168,6 +168,27 @@ class OrderController extends Controller
         return view('checkout_transfer', compact('order', 'qrUrl', 'amount', 'addInfo', 'accountName', 'accountNo', 'bankId'));
     }
 
+    public function confirmTransfer(Order $order)
+    {
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff) {
+            // Ensure the order belongs to the user or table logic
+            if ($order->user_id) {
+                if ($order->user_id !== auth()->id()) {
+                    abort(403, 'Không có quyền truy cập');
+                }
+            } else {
+                // Guest order
+                if ((string)$order->table_id !== (string)session('table_id')) {
+                    abort(403, 'Không có quyền truy cập (Sai bàn)');
+                }
+            }
+        }
+
+        return redirect()->route('order.track', ['order' => $order->id])
+            ->with('success', 'Cảm ơn quý khách! Nhân viên sẽ kiểm tra thanh toán và xác nhận trong giây lát.');
+    }
+
     public function getStatus(Order $order)
     {
         $allServed = $order->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;

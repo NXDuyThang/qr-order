@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/track/{order}', [\App\Http\Controllers\OrderController::class, 'track'])->name('order.track');
     Route::post('/order/{order}/payment-method', [\App\Http\Controllers\OrderController::class, 'updatePaymentMethod'])->name('order.update_payment_method');
     Route::get('/checkout/transfer/{order}', [\App\Http\Controllers\OrderController::class, 'showTransferQR'])->name('checkout.transfer');
+    Route::post('/checkout/transfer/{order}/confirm', [\App\Http\Controllers\OrderController::class, 'confirmTransfer'])->name('checkout.transfer.confirm');
     Route::post('/order/{order}/item/{item}/cancel', [\App\Http\Controllers\OrderController::class, 'cancelItem'])->name('order.item.cancel');
     Route::post('/order/{order}/item/{item}/reduce', [\App\Http\Controllers\OrderController::class, 'reduceItem'])->name('order.item.reduce');
 });
