@@ -136,72 +136,63 @@
                             </div>
                         @endif
 
-                        <div class="space-y-6">
+                        <div class="max-h-[50vh] overflow-y-auto timeline-scroll pr-2 space-y-3">
                             @foreach($order->items as $item)
-                                <div class="bg-[#0d1114] border border-white/5 rounded-lg overflow-hidden shadow-md p-5 relative transition-opacity duration-300"
-                                     :class="items[{{ $item->id }}].status === 'cancelled' ? 'opacity-50' : 'opacity-100'">
-                                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                                        <div class="w-16 h-16 rounded-md bg-gray-800 shrink-0 overflow-hidden border border-white/10 relative">
+                                <div x-show="items[{{ $item->id }}].status !== 'cancelled'" class="bg-[#0d1114] border border-white/5 rounded-lg overflow-hidden shadow-md p-3 relative transition-opacity duration-300">
+                                    <div class="flex gap-3 items-center">
+                                        <div class="w-12 h-12 rounded-md bg-gray-800 shrink-0 overflow-hidden border border-white/10 relative">
                                             <img src="{{ $item->food->image ?? '/images/default-food.jpg' }}" alt="{{ $item->food->name }}" class="w-full h-full object-cover">
-                                            <div x-show="items[{{ $item->id }}].status === 'cancelled'" class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                                <span class="text-white text-xs font-bold uppercase rotate-[-20deg]">Đã huỷ</span>
-                                            </div>
                                         </div>
                                         <div class="flex-grow w-full">
                                             <div class="flex justify-between items-start">
                                                 <div>
-                                                    <h3 class="text-white text-md tracking-wide font-medium">
+                                                    <h3 class="text-white text-sm tracking-wide font-medium">
                                                         {{ $item->food->name }}
                                                     </h3>
-                                                    <p class="text-gray-400 text-sm mt-1">
-                                                        Số lượng: <span x-text="items[{{ $item->id }}].quantity"></span> 
-                                                        <span class="mx-2">•</span> {{ number_format($item->unit_price * 1000, 0, ',', '.') }} đ
+                                                    <p class="text-gray-400 text-[11px] mt-0.5">
+                                                        SL: <span x-text="items[{{ $item->id }}].quantity"></span> 
+                                                        <span class="mx-1">•</span> {{ number_format($item->unit_price * 1000, 0, ',', '.') }} đ
                                                     </p>
                                                 </div>
-                                                <div class="text-right">
-                                                    <span class="text-primary font-medium" x-text="(items[{{ $item->id }}].quantity * {{ $item->unit_price * 1000 }}).toLocaleString('vi-VN') + ' đ'"></span>
+                                                <div class="text-right flex flex-col items-end">
+                                                    <span class="text-primary font-medium text-sm" x-text="(items[{{ $item->id }}].quantity * {{ $item->unit_price * 1000 }}).toLocaleString('vi-VN') + ' đ'"></span>
+                                                    
+                                                    <!-- Actions (Cancel/Reduce) when 'new' -->
+                                                    <div class="mt-1" x-show="items[{{ $item->id }}].status === 'new'">
+                                                        <div class="flex gap-1">
+                                                            @if($item->quantity > 1)
+                                                                <form action="{{ route('order.item.reduce', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Giảm 1 phần?');">
+                                                                    @csrf
+                                                                    <button type="submit" class="px-2 py-1 border border-warning/50 text-orange-400 hover:bg-warning/10 text-[10px] rounded transition-colors" title="Giảm 1 phần">
+                                                                        -1 SL
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                            <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Huỷ món?');">
+                                                                @csrf
+                                                                <button type="submit" class="px-2 py-1 bg-red-900/30 border border-red-500/50 text-red-400 hover:bg-red-900/50 text-[10px] rounded transition-colors" title="Huỷ món">
+                                                                    Huỷ
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            
-                                            <!-- Actions (Cancel/Reduce) when 'new' -->
-                                            <div class="mt-4" x-show="items[{{ $item->id }}].status === 'new'">
-                                                <div class="flex gap-2">
-                                                    @if($item->quantity > 1)
-                                                        <form action="{{ route('order.item.reduce', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn giảm 1 số lượng của món này không?');">
-                                                            @csrf
-                                                            <button type="submit" class="px-3 py-1.5 border border-warning/50 text-orange-400 hover:bg-warning/10 text-[10px] md:text-xs font-semibold tracking-wider uppercase rounded transition-colors flex items-center gap-1">
-                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-                                                                Giảm 1 SL
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                    <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn huỷ toàn bộ món này không?');">
-                                                        @csrf
-                                                        <button type="submit" class="px-3 py-1.5 bg-red-900/30 border border-red-500/50 text-red-400 hover:bg-red-900/50 hover:text-red-300 text-[10px] md:text-xs font-semibold tracking-wider uppercase rounded transition-colors flex items-center gap-1">
-                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                            Huỷ món
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <div class="mt-4" x-show="items[{{ $item->id }}].status !== 'new'">
-                                                <span class="text-gray-500 text-xs italic" x-text="items[{{ $item->id }}].status === 'cancelled' ? 'Món đã bị huỷ' : 'Bếp đã xử lý, không thể thay đổi'"></span>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!-- Progress Bar for individual item -->
-                                    <div class="mt-5" x-show="items[{{ $item->id }}].status !== 'cancelled'">
-                                        <div class="flex justify-between items-end mb-2">
-                                            <span class="text-[10px] uppercase tracking-wider font-semibold"
+                                    <div class="mt-3">
+                                        <div class="flex justify-between items-end mb-1">
+                                            <span class="text-[9px] uppercase tracking-wider font-semibold"
                                                   :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'text-green-400' : 'text-blue-400'"
                                                   x-text="getItemStatusText(items[{{ $item->id }}].status)">
                                             </span>
-                                            <span class="text-[10px] text-gray-500">
+                                            <span class="text-[9px] text-gray-500">
                                                 <span x-text="Math.floor(getItemProgress({{ $item->id }}))"></span>%
                                             </span>
                                         </div>
-                                        <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                        <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
                                             <div class="h-full rounded-full transition-all duration-1000 ease-linear relative"
                                                  :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'bg-green-500' : 'bg-primary'"
                                                  :style="{ width: getItemProgress({{ $item->id }}) + '%' }">
