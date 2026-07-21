@@ -185,8 +185,10 @@ class OrderController extends Controller
             }
         }
 
+        $order->update(['payment_status' => 'paid']);
+
         return redirect()->route('order.track', ['order' => $order->id])
-            ->with('success', 'Cảm ơn quý khách! Nhân viên sẽ kiểm tra thanh toán và xác nhận trong giây lát.');
+            ->with('success', 'Cảm ơn quý khách! Đơn hàng của bạn đã được ghi nhận thanh toán thành công.');
     }
 
     public function getStatus(Order $order)
