@@ -200,6 +200,7 @@ class OrderController extends Controller
                 'id' => $item->id,
                 'status' => $item->status,
                 'quantity' => $item->quantity,
+                'updatedAtMs' => $item->updated_at->timestamp * 1000,
             ];
         });
 
@@ -278,12 +279,59 @@ class OrderController extends Controller
             $item->save();
             
             $order->total_price -= $item->unit_price;
-            if ($order->total_price < 0) $order->total_price = 0;
             $order->save();
             
-            return back()->with('success', 'Đã giảm 1 phần món ăn.');
+            return back()->with('success', 'Đã giảm 1 số lượng món.');
         } else {
+            // Huỷ món luôn nếu số lượng là 1
+            $item->update(['status' => 'cancelled']);
+            
+            $order->total_price -= $item->unit_price;
+            $order->save();
+            
+            return back()->with('success', 'Đã huỷ món thành công.');
+        }
+    }
+
+    public function updateQuantity(Request $request, Order $order, OrderItem $item)
+    {
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff && $order->user_id && $order->user_id !== auth()->id()) {
+            abort(403, 'Không có quyền truy cập');
+        }
+
+        if ($item->order_id !== $order->id) {
+            abort(404, 'Không tìm thấy món trong đơn hàng');
+        }
+
+        if ($isStaff) {
+            if (in_array($item->status, ['ready', 'served', 'completed', 'cancelled'])) {
+                return back()->with('error', 'Không thể giảm món này vì bếp đã nấu xong hoặc món đã bị huỷ.');
+            }
+        } else {
+            if ($item->status !== 'new') {
+                return back()->with('error', 'Không thể giảm món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
+            }
+        }
+
+        $newQuantity = (int)$request->input('quantity');
+        
+        if ($newQuantity < 1) {
+            // Huỷ món
             return $this->cancelItem($request, $order, $item);
         }
+
+        if ($newQuantity < $item->quantity) {
+            $difference = $item->quantity - $newQuantity;
+            $item->quantity = $newQuantity;
+            $item->save();
+            
+            $order->total_price -= ($item->unit_price * $difference);
+            $order->save();
+            
+            return back()->with('success', 'Đã giảm số lượng món thành công.');
+        }
+
+        return back()->with('error', 'Chỉ có thể giảm số lượng món đã đặt.');
     }
 }

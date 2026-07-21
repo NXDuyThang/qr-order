@@ -112,7 +112,7 @@
             </div>
 
             <!-- Order Items List as ONE Dropdown -->
-            <div x-data="{ showItems: true }" class="bg-[#040810] border border-white/5 rounded-xl mb-12 shadow-2xl overflow-hidden">
+            <div x-data="{ showItems: false }" class="bg-[#040810] border border-white/5 rounded-xl mb-12 shadow-2xl overflow-hidden">
                 <!-- Dropdown Header -->
                 <div @click="showItems = !showItems" class="p-6 md:p-8 cursor-pointer flex justify-between items-center bg-[#0d1114] border-b border-white/5 hover:bg-white/5 transition-colors">
                     <h2 class="text-white text-lg font-medium tracking-wider">Chi tiết các món đã gọi</h2>
@@ -158,23 +158,18 @@
                                                     <span class="text-primary font-medium text-sm" x-text="(items[{{ $item->id }}].quantity * {{ $item->unit_price * 1000 }}).toLocaleString('vi-VN') + ' đ'"></span>
                                                     
                                                     <!-- Actions (Cancel/Reduce) when 'new' -->
-                                                    <div class="mt-1" x-show="items[{{ $item->id }}].status === 'new'">
-                                                        <div class="flex gap-1">
-                                                            @if($item->quantity > 1)
-                                                                <form action="{{ route('order.item.reduce', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Giảm 1 phần?');">
-                                                                    @csrf
-                                                                    <button type="submit" class="px-2 py-1 border border-warning/50 text-orange-400 hover:bg-warning/10 text-[10px] rounded transition-colors" title="Giảm 1 phần">
-                                                                        -1 SL
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                            <form action="{{ route('order.item.cancel', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Huỷ món?');">
-                                                                @csrf
-                                                                <button type="submit" class="px-2 py-1 bg-red-900/30 border border-red-500/50 text-red-400 hover:bg-red-900/50 text-[10px] rounded transition-colors" title="Huỷ món">
-                                                                    Huỷ
-                                                                </button>
-                                                            </form>
-                                                        </div>
+                                                    <div class="mt-2" x-show="items[{{ $item->id }}].status === 'new'">
+                                                        <form action="{{ route('order.item.update_quantity', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" class="flex items-center gap-2" x-data="{ qty: {{ $item->quantity }}, maxQty: {{ $item->quantity }} }">
+                                                            @csrf
+                                                            <div class="flex items-center bg-[#040810] rounded border border-white/20 h-6">
+                                                                <button type="button" @click="if(qty > 0) qty--" class="w-6 h-full flex items-center justify-center text-white hover:bg-gray-800 rounded-l leading-none pb-0.5">-</button>
+                                                                <input type="number" name="quantity" x-model="qty" readonly class="w-6 h-full bg-transparent border-none text-white text-center text-xs p-0 focus:ring-0 leading-none pointer-events-none">
+                                                                <button type="button" @click="if(qty < maxQty) qty++" class="w-6 h-full flex items-center justify-center text-white hover:bg-gray-800 rounded-r" :class="qty >= maxQty ? 'opacity-50 cursor-not-allowed' : ''">+</button>
+                                                            </div>
+                                                            <button type="submit" x-show="qty < maxQty" class="px-2 py-1 bg-primary text-white text-[9px] uppercase font-bold tracking-wider rounded shadow hover:bg-blue-600 transition-colors">
+                                                                Xác nhận
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
@@ -302,7 +297,8 @@
                             status: '{{ $item->status }}',
                             quantity: {{ $item->quantity }},
                             prepMins: {{ $item->food->preparation_time ? ($item->food->preparation_time * $item->quantity) : 5 }},
-                            createdAtMs: {{ $item->created_at->timestamp * 1000 }}
+                            createdAtMs: {{ $item->created_at->timestamp * 1000 }},
+                            updatedAtMs: {{ $item->updated_at->timestamp * 1000 }}
                         },
                     @endforeach
                 },
@@ -342,9 +338,9 @@
                     const item = this.items[id];
                     if (!item) return 0;
                     if (['ready', 'served', 'completed'].includes(item.status)) return 100;
-                    if (item.status === 'cancelled') return 0;
+                    if (['cancelled', 'new'].includes(item.status)) return 0;
                     
-                    const elapsed = Math.floor((this.currentTime - item.createdAtMs) / 1000);
+                    const elapsed = Math.floor((this.currentTime - item.updatedAtMs) / 1000);
                     const total = item.prepMins * 60;
                     let p = (elapsed / total) * 100;
                     
@@ -368,6 +364,9 @@
                                 if (this.items[apiItem.id]) {
                                     this.items[apiItem.id].status = apiItem.status;
                                     this.items[apiItem.id].quantity = apiItem.quantity;
+                                    if (apiItem.updatedAtMs) {
+                                        this.items[apiItem.id].updatedAtMs = apiItem.updatedAtMs;
+                                    }
                                 }
                             });
                             
