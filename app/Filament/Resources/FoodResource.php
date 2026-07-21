@@ -59,7 +59,7 @@ class FoodResource extends Resource
                 Forms\Components\FileUpload::make('image')
                     ->label('Hình ảnh')
                     ->image()
-                    ->disk('public')
+                    ->disk('public_root')
                     ->directory('images')
                     ->preserveFilenames(),
                 Forms\Components\Toggle::make('is_available')
@@ -90,7 +90,7 @@ class FoodResource extends Resource
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Hình ảnh')
-                    ->disk('public'),
+                    ->disk('public_root'),
                 Tables\Columns\IconColumn::make('is_available')
                     ->label('Còn hàng')
                     ->boolean(),
