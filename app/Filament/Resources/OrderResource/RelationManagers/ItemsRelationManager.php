@@ -90,21 +90,42 @@ class ItemsRelationManager extends RelationManager
                     ->icon('heroicon-o-fire')
                     ->color('warning')
                     ->visible(fn ($record) => $record->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    ->action(fn ($record) => $record->update(['status' => 'preparing'])),
+                    ->action(function ($record) {
+                        $record->update(['status' => 'preparing']);
+                        if ($record->order && $record->order->status === 'new') {
+                            $record->order->update(['status' => 'preparing']);
+                        }
+                    }),
                     
                 Tables\Actions\Action::make('ready')
                     ->label('Xong')
                     ->icon('heroicon-o-check')
                     ->color('info')
                     ->visible(fn ($record) => $record->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    ->action(fn ($record) => $record->update(['status' => 'ready'])),
+                    ->action(function ($record) {
+                        $record->update(['status' => 'ready']);
+                        if ($record->order) {
+                            $allReady = $record->order->items()->whereNotIn('status', ['ready', 'served', 'completed', 'cancelled'])->count() === 0;
+                            if ($allReady) {
+                                $record->order->update(['status' => 'ready']);
+                            }
+                        }
+                    }),
                     
                 Tables\Actions\Action::make('serve')
                     ->label('Phục vụ')
                     ->icon('heroicon-o-arrow-right')
                     ->color('success')
                     ->visible(fn ($record) => $record->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
-                    ->action(fn ($record) => $record->update(['status' => 'served'])),
+                    ->action(function ($record) {
+                        $record->update(['status' => 'served']);
+                        if ($record->order) {
+                            $allServed = $record->order->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
+                            if ($allServed && $record->order->status !== 'completed') {
+                                $record->order->update(['status' => 'served']);
+                            }
+                        }
+                    }),
                     
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

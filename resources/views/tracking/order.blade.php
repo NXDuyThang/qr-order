@@ -160,13 +160,13 @@
                                                   x-text="getItemStatusText(items[{{ $item->id }}].status)">
                                             </span>
                                             <span class="text-[9px] text-gray-500">
-                                                <span x-text="Math.floor(getItemProgress({{ $item->id }}))"></span>%
+                                                <span x-text="Math.floor(getItemProgress({{ $item->id }}, syncedTime))"></span>%
                                             </span>
                                         </div>
                                         <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
                                             <div class="h-full rounded-full transition-all duration-1000 ease-linear relative"
                                                  :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'bg-green-500' : 'bg-primary'"
-                                                 :style="{ width: getItemProgress({{ $item->id }}) + '%' }">
+                                                 :style="{ width: getItemProgress({{ $item->id }}, syncedTime) + '%' }">
                                                 <div x-show="['new','preparing'].includes(items[{{ $item->id }}].status)" class="absolute inset-0 bg-white/20 animate-pulse"></div>     
                                             </div>
                                         </div>
@@ -310,15 +310,18 @@
                     }
                 },
 
-                getItemProgress(id) {
+                getItemProgress(id, nowMs) {
                     const item = this.items[id];
                     if (!item) return 0;
                     if (['ready', 'served', 'completed'].includes(item.status)) return 100;
                     if (['cancelled', 'new'].includes(item.status)) return 0;
                     
-                    const elapsed = Math.floor((this.syncedTime - item.updatedAtMs) / 1000);
-                    const total = item.prepMins * 60;
+                    const now = nowMs || (new Date().getTime() + this.serverTimeOffset);
+                    const elapsed = Math.max(0, Math.floor((now - item.updatedAtMs) / 1000));
+                    const total = (item.prepMins || 5) * 60;
                     let p = (elapsed / total) * 100;
+                    
+                    if (p < 5) p = 5; // Initial progress when cooking starts
                     
                     if (p > 95 && item.status !== 'ready') {
                         p = 95; // Stop at 95% until Chef marks it ready
@@ -331,20 +334,34 @@
                     fetch(`/api/order/${this.orderId}/status`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                         .then(res => res.json())
                         .then(data => {
-                            this.status = data.status;
-                            this.paymentStatus = data.payment_status;
-                            this.allItemsServed = data.all_items_served;
+                            let changed = false;
+                            if (this.status !== data.status || this.paymentStatus !== data.payment_status || this.allItemsServed !== data.all_items_served) {
+                                this.status = data.status;
+                                this.paymentStatus = data.payment_status;
+                                this.allItemsServed = data.all_items_served;
+                                changed = true;
+                            }
                             
-                            // Dynamically update items' status without reloading DOM
+                            // Dynamically update items' status
                             data.items.forEach(apiItem => {
                                 if (this.items[apiItem.id]) {
-                                    this.items[apiItem.id].status = apiItem.status;
-                                    this.items[apiItem.id].quantity = apiItem.quantity;
-                                    if (apiItem.updatedAtMs) {
-                                        this.items[apiItem.id].updatedAtMs = apiItem.updatedAtMs;
+                                    if (this.items[apiItem.id].status !== apiItem.status ||
+                                        this.items[apiItem.id].quantity !== apiItem.quantity ||
+                                        this.items[apiItem.id].updatedAtMs !== apiItem.updatedAtMs) {
+                                        
+                                        this.items[apiItem.id].status = apiItem.status;
+                                        this.items[apiItem.id].quantity = apiItem.quantity;
+                                        if (apiItem.updatedAtMs) {
+                                            this.items[apiItem.id].updatedAtMs = apiItem.updatedAtMs;
+                                        }
+                                        changed = true;
                                     }
                                 }
                             });
+
+                            if (changed) {
+                                this.items = JSON.parse(JSON.stringify(this.items));
+                            }
                             
                             if (this.status === 'completed' && this.paymentStatus === 'paid') {
                                 clearInterval(this.pollInterval);
