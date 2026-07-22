@@ -122,6 +122,11 @@
                 } elseif (isset($activeOrder) && $activeOrder->user && Auth::id() === $activeOrder->user_id) {
                     $displayName = $activeOrder->user->name;
                 }
+
+                if ($displayName && str_contains($displayName, '@')) {
+                    $parts = explode('@', $displayName);
+                    $displayName = ucfirst($parts[0]);
+                }
             @endphp
             @if($displayName)
                 <p class="text-white/70 text-sm mt-2 tracking-wider">Khách hàng: <span class="text-white font-medium">{{ $displayName }}</span></p>

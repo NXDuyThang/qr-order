@@ -109,9 +109,28 @@ class AuthController extends Controller
 
                 // Sync user to local database so Laravel Auth works
                 $email = $userInfo['email'] ?? ($request->username . '@nks.local');
-                $name = $userInfo['name'] ?? trim(($userInfo['firstname'] ?? '') . ' ' . ($userInfo['lastname'] ?? ''));
+                
+                $name = null;
+                $fullName = trim(($userInfo['firstname'] ?? '') . ' ' . ($userInfo['lastname'] ?? ''));
+                if (!empty($fullName)) {
+                    $name = $fullName;
+                }
+                
                 if (empty($name)) {
-                    $name = $request->username;
+                    $rawName = $userInfo['name'] ?? ($userInfo['full_name'] ?? ($userInfo['fullname'] ?? ''));
+                    if (!empty($rawName) && !str_contains($rawName, '@')) {
+                        $name = $rawName;
+                    }
+                }
+                
+                if (empty($name) || str_contains($name, '@')) {
+                    $cleanUsername = $request->username;
+                    if (str_contains($cleanUsername, '@')) {
+                        $parts = explode('@', $cleanUsername);
+                        $name = ucfirst($parts[0]);
+                    } else {
+                        $name = ucfirst($cleanUsername);
+                    }
                 }
 
                 $localUser = \App\Models\User::firstOrCreate(
