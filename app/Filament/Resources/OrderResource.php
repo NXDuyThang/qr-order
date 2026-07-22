@@ -46,9 +46,9 @@ class OrderResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('total_price')
                     ->label('Tổng tiền')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+                    ->formatStateUsing(fn ($state) => number_format(($state ?? 0) * 1000, 0, ',', '.') . ' VNĐ')
+                    ->disabled()
+                    ->dehydrated(false),
                 Forms\Components\Select::make('status')
                     ->label('Trạng thái món')
                     ->options([
