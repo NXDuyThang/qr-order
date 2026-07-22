@@ -58,6 +58,7 @@ class AuthController extends Controller
                 return redirect()->route('waiter.dashboard');
             } else {
                 // Khách hàng / User thường đăng nhập thành công qua local DB
+                Session::put('access_token', 'local_auth_' . $localUser->id);
                 Session::put('user_info', [
                     'id' => $localUser->id,
                     'name' => $localUser->name,

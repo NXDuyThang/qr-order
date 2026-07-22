@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
     protected function checkAuth()
     {
-        if (!Session::has('access_token')) {
+        if (!Session::has('access_token') && !\Illuminate\Support\Facades\Auth::check()) {
             abort(redirect()->route('login')->with('warning', 'Vui lòng đăng nhập để tiếp tục.'));
         }
     }
@@ -27,16 +27,31 @@ class ProfileController extends Controller
     {
         $this->checkAuth();
         $token = Session::get('access_token');
+        $userInfo = [];
         
-        // Fetch User Info to get latest data
-        $userResponse = $this->apiService->getUser($token);
+        if ($token) {
+            try {
+                $userResponse = $this->apiService->getUser($token);
+                $userInfo = $userResponse['User Info'] ?? ($userResponse['data'] ?? []);
+            } catch (\Exception $e) {
+                Log::error('Profile API error: ' . $e->getMessage());
+            }
+        }
         
-        // Ensure we handle different possible response structures
-        $userInfo = $userResponse['User Info'] ?? ($userResponse['data'] ?? []);
-        
-        // If API doesn't return properly, we might fall back to session
+        // If API doesn't return properly, we fall back to session or local auth
         if (empty($userInfo) && Session::has('user_info')) {
             $userInfo = Session::get('user_info');
+        }
+        
+        if (empty($userInfo) && auth()->check()) {
+            $localUser = auth()->user();
+            $userInfo = [
+                'id' => $localUser->id,
+                'name' => $localUser->name,
+                'email' => $localUser->email,
+                'avatar' => $localUser->avatar_url,
+                'phone' => $localUser->phone,
+            ];
         } elseif (!empty($userInfo)) {
             // Prevent large data from bloating the session cookie
             $filteredUserInfo = [
