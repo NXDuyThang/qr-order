@@ -39,8 +39,16 @@ class PageController extends Controller
     public function booking() { return view('booking'); }
     public function orderAtTable(Request $request) 
     { 
+        // Yêu cầu bắt buộc đăng nhập để đặt món
+        if (!\Illuminate\Support\Facades\Auth::check() && !\Illuminate\Support\Facades\Session::has('access_token')) {
+            $tableId = $request->query('table_id');
+            if ($tableId) {
+                session(['table_id' => $tableId]);
+            }
+            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để thực hiện đặt món tại bàn!');
+        }
+
         $tableId = $request->query('table_id');
-        
         if ($tableId) {
             $tableExists = \App\Models\Table::where('id', $tableId)->exists();
             if ($tableExists) {
@@ -50,11 +58,6 @@ class PageController extends Controller
             }
         } else {
             $tableId = session('table_id');
-        }
-
-        // Yêu cầu bắt buộc đăng nhập để đặt món
-        if (!\Illuminate\Support\Facades\Auth::check() && !\Illuminate\Support\Facades\Session::has('access_token')) {
-            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để thực hiện đặt món tại bàn!');
         }
 
         $tables = \App\Models\Table::all();
@@ -75,9 +78,13 @@ class PageController extends Controller
         
         $activeOrder = null;
         if ($tableId) {
+            $currentUserId = \Illuminate\Support\Facades\Auth::id();
             $activeOrder = \App\Models\Order::with('user')
                 ->where('table_id', $tableId)
-                ->whereIn('status', ['new', 'processing', 'completed']) // Assuming completed orders might still be pending payment
+                ->when($currentUserId, function($q) use ($currentUserId) {
+                    $q->where('user_id', $currentUserId);
+                })
+                ->whereIn('status', ['new', 'processing', 'completed'])
                 ->where('payment_status', 'pending')
                 ->latest()
                 ->first();

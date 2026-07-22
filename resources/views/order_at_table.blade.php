@@ -115,10 +115,12 @@
             </h1>
             @php
                 $displayName = null;
-                if (isset($activeOrder) && $activeOrder->user) {
-                    $displayName = $activeOrder->user->name;
-                } elseif (Auth::check() && in_array(Auth::user()->role, ['customer', 'user'])) {
+                if (Auth::check()) {
                     $displayName = Auth::user()->name;
+                } elseif (Session::has('user_info')) {
+                    $displayName = Session::get('user_info')['name'] ?? null;
+                } elseif (isset($activeOrder) && $activeOrder->user && Auth::id() === $activeOrder->user_id) {
+                    $displayName = $activeOrder->user->name;
                 }
             @endphp
             @if($displayName)

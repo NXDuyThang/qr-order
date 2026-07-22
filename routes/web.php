@@ -22,6 +22,7 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout.get');
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('filament.admin.auth.logout');
 // Profile Routes
 Route::prefix('profile')->name('profile.')->group(function () {
