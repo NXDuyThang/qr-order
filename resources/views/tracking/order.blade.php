@@ -152,25 +152,18 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Progress Bar for individual item -->
-                                    <div class="mt-3">
-                                        <div class="flex justify-between items-end mb-1">
-                                            <span class="text-[9px] uppercase tracking-wider font-semibold"
-                                                  :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'text-green-400' : 'text-blue-400'"
-                                                  x-text="getItemStatusText(items[{{ $item->id }}].status)">
-                                            </span>
-                                            <span class="text-[9px] text-gray-500">
-                                                <span x-text="Math.floor(getItemProgress({{ $item->id }}, syncedTime))"></span>%
-                                            </span>
-                                        </div>
-                                        <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-1000 ease-linear relative"
-                                                 :class="['ready','served','completed'].includes(items[{{ $item->id }}].status) ? 'bg-green-500' : 'bg-primary'"
-                                                 :style="{ width: getItemProgress({{ $item->id }}, syncedTime) + '%' }">
-                                                <div x-show="['new','preparing'].includes(items[{{ $item->id }}].status)" class="absolute inset-0 bg-white/20 animate-pulse"></div>     
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <!-- Item Status Badge -->
+                                     <div class="mt-2.5 flex items-center justify-between">
+                                         <span class="text-[10px] uppercase tracking-wider font-semibold px-2.5 py-1 rounded border inline-block"
+                                               :class="{
+                                                   'bg-blue-950/40 text-blue-400 border-blue-500/30': items[{{ $item->id }}].status === 'new',
+                                                   'bg-amber-950/40 text-amber-400 border-amber-500/30': items[{{ $item->id }}].status === 'preparing',
+                                                   'bg-emerald-950/40 text-emerald-400 border-emerald-500/30': ['ready','served','completed'].includes(items[{{ $item->id }}].status),
+                                                   'bg-red-950/40 text-red-400 border-red-500/30': items[{{ $item->id }}].status === 'cancelled'
+                                               }"
+                                               x-text="getItemStatusText(items[{{ $item->id }}].status)">
+                                         </span>
+                                     </div>
                                 </div>
                             @endforeach
                         </div>
@@ -261,36 +254,21 @@
                 allItemsServed: {{ $allServed ? 'true' : 'false' }},
                 orderId: {{ $order->id }},
                 pollInterval: null,
-                timerInterval: null,
-                serverTimeOffset: {{ now()->timestamp * 1000 }} - new Date().getTime(),
-                currentTime: new Date().getTime(),
-                
-                get syncedTime() {
-                    return this.currentTime + this.serverTimeOffset;
-                },
                 
                 items: {
                     @foreach($order->items as $item)
                         {{ $item->id }}: {
                             status: '{{ $item->status }}',
-                            quantity: {{ $item->quantity }},
-                            prepMins: {{ $item->food->preparation_time ? ($item->food->preparation_time * $item->quantity) : 5 }},
-                            createdAtMs: {{ $item->created_at->timestamp * 1000 }},
-                            updatedAtMs: {{ $item->updated_at->timestamp * 1000 }}
+                            quantity: {{ $item->quantity }}
                         },
                     @endforeach
                 },
 
                 initTracker() {
-                    // Start progress bar tick
-                    this.timerInterval = setInterval(() => {
-                        this.currentTime = new Date().getTime();
-                    }, 1000);
-
-                    // Fetch status from API without replacing DOM
+                    // Fetch status from API every 3 seconds
                     this.pollInterval = setInterval(() => {
                         this.fetchStatus();
-                    }, 3000); // Fetch every 3 seconds
+                    }, 3000);
                 },
 
                 getProgressWidth() {
@@ -310,27 +288,6 @@
                     }
                 },
 
-                getItemProgress(id, nowMs) {
-                    const item = this.items[id];
-                    if (!item) return 0;
-                    if (['ready', 'served', 'completed'].includes(item.status)) return 100;
-                    if (item.status === 'cancelled') return 0;
-                    
-                    const startTime = (item.status === 'preparing' && item.updatedAtMs) ? item.updatedAtMs : (item.createdAtMs || item.updatedAtMs);
-                    const now = nowMs || (new Date().getTime() + this.serverTimeOffset);
-                    const elapsed = Math.max(0, Math.floor((now - startTime) / 1000));
-                    const total = (item.prepMins || 5) * 60;
-                    let p = (elapsed / total) * 100;
-                    
-                    if (p < 5) p = 5; // Initial progress visual start so bar animates immediately
-                    
-                    if (p > 95 && !['ready', 'served', 'completed'].includes(item.status)) {
-                        p = 95; // Stop at 95% until Chef marks it ready
-                    }
-                    
-                    return Math.min(100, Math.max(0, p));
-                },
-
                 fetchStatus() {
                     fetch(`/api/order/${this.orderId}/status`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                         .then(res => res.json())
@@ -341,20 +298,15 @@
                             
                             const updatedItems = {};
                             data.items.forEach(apiItem => {
-                                const oldItem = this.items[apiItem.id] || {};
                                 updatedItems[apiItem.id] = {
                                     status: apiItem.status,
-                                    quantity: apiItem.quantity,
-                                    prepMins: oldItem.prepMins || 5,
-                                    createdAtMs: oldItem.createdAtMs || apiItem.updatedAtMs || new Date().getTime(),
-                                    updatedAtMs: apiItem.updatedAtMs || oldItem.updatedAtMs || new Date().getTime()
+                                    quantity: apiItem.quantity
                                 };
                             });
                             this.items = updatedItems;
                             
                             if (this.status === 'completed' && this.paymentStatus === 'paid') {
                                 clearInterval(this.pollInterval);
-                                clearInterval(this.timerInterval);
                             }
                         })
                         .catch(err => console.error('Error fetching status:', err));
