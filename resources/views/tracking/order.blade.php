@@ -314,16 +314,17 @@
                     const item = this.items[id];
                     if (!item) return 0;
                     if (['ready', 'served', 'completed'].includes(item.status)) return 100;
-                    if (['cancelled', 'new'].includes(item.status)) return 0;
+                    if (item.status === 'cancelled') return 0;
                     
+                    const startTime = (item.status === 'preparing' && item.updatedAtMs) ? item.updatedAtMs : (item.createdAtMs || item.updatedAtMs);
                     const now = nowMs || (new Date().getTime() + this.serverTimeOffset);
-                    const elapsed = Math.max(0, Math.floor((now - item.updatedAtMs) / 1000));
+                    const elapsed = Math.max(0, Math.floor((now - startTime) / 1000));
                     const total = (item.prepMins || 5) * 60;
                     let p = (elapsed / total) * 100;
                     
-                    if (p < 5) p = 5; // Initial progress when cooking starts
+                    if (p < 5) p = 5; // Initial progress visual start so bar animates immediately
                     
-                    if (p > 95 && item.status !== 'ready') {
+                    if (p > 95 && !['ready', 'served', 'completed'].includes(item.status)) {
                         p = 95; // Stop at 95% until Chef marks it ready
                     }
                     
@@ -344,7 +345,16 @@
                             
                             // Dynamically update items' status
                             data.items.forEach(apiItem => {
-                                if (this.items[apiItem.id]) {
+                                if (!this.items[apiItem.id]) {
+                                    this.items[apiItem.id] = {
+                                        status: apiItem.status,
+                                        quantity: apiItem.quantity,
+                                        prepMins: 5,
+                                        createdAtMs: apiItem.updatedAtMs || new Date().getTime(),
+                                        updatedAtMs: apiItem.updatedAtMs || new Date().getTime()
+                                    };
+                                    changed = true;
+                                } else {
                                     if (this.items[apiItem.id].status !== apiItem.status ||
                                         this.items[apiItem.id].quantity !== apiItem.quantity ||
                                         this.items[apiItem.id].updatedAtMs !== apiItem.updatedAtMs) {
@@ -360,7 +370,7 @@
                             });
 
                             if (changed) {
-                                this.items = JSON.parse(JSON.stringify(this.items));
+                                this.items = { ...this.items };
                             }
                             
                             if (this.status === 'completed' && this.paymentStatus === 'paid') {
