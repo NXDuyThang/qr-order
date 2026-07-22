@@ -18,7 +18,7 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         // If already logged in, redirect to profile
-        if (Session::has('access_token')) {
+        if (Session::has('access_token') || \Illuminate\Support\Facades\Auth::check()) {
             return redirect()->route('profile.index');
         }
 
@@ -136,10 +136,15 @@ class AuthController extends Controller
         return back()->with('error', 'Đăng nhập không thành công')->withInput($request->only('username'));
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        \Illuminate\Support\Facades\Auth::logout();
         Session::forget('access_token');
         Session::forget('user_info');
+        Session::forget('user_avatar');
+        Session::forget('table_id');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         
         return redirect()->route('welcome')->with('success', 'Đăng xuất thành công.');
     }

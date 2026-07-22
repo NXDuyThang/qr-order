@@ -11,18 +11,24 @@ class OrderController extends Controller
 {
     public function store(Request $request)
     {
+        if (!auth()->check() && !\Illuminate\Support\Facades\Session::has('access_token')) {
+            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để thực hiện đặt món!');
+        }
+
         $validated = $request->validate([
             'table_id' => 'required|exists:tables,id',
             'items' => 'required|json'
         ]);
 
+        $tableId = $validated['table_id'] ?? session('table_id');
+        if (!$tableId) {
+            return redirect()->route('welcome')->with('error', 'Vui lòng quét mã QR tại bàn để chọn bàn trước khi đặt món!');
+        }
+
         $items = json_decode($validated['items'], true);
-        
         if (empty($items)) {
             return back()->with('error', 'Giỏ hàng của bạn đang trống.');
         }
-
-        $tableId = $validated['table_id'];
 
         $totalPrice = 0;
         foreach ($items as $item) {

@@ -52,11 +52,21 @@ class PageController extends Controller
             $tableId = session('table_id');
         }
 
+        // Yêu cầu bắt buộc đăng nhập để đặt món
+        if (!\Illuminate\Support\Facades\Auth::check() && !\Illuminate\Support\Facades\Session::has('access_token')) {
+            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để thực hiện đặt món tại bàn!');
+        }
+
         $tables = \App\Models\Table::all();
         
         if ($tableId && !$tables->contains('id', $tableId)) {
             session()->forget('table_id');
             $tableId = null;
+        }
+
+        // Yêu cầu bắt buộc phải quét mã QR chọn bàn trước
+        if (!$tableId) {
+            return redirect()->route('welcome')->with('error', 'Vui lòng quét mã QR tại bàn để chọn bàn trước khi đặt món!');
         }
 
         $categories = Category::with(['food' => function($query) {
