@@ -307,11 +307,11 @@ class OrderController extends Controller
 
         if ($isStaff) {
             if (in_array($item->status, ['ready', 'served', 'completed', 'cancelled'])) {
-                return back()->with('error', 'Không thể giảm món này vì bếp đã nấu xong hoặc món đã bị huỷ.');
+                return back()->with('error', 'Không thể thay đổi món này vì bếp đã nấu xong hoặc món đã bị huỷ.');
             }
         } else {
             if ($item->status !== 'new') {
-                return back()->with('error', 'Không thể giảm món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
+                return back()->with('error', 'Không thể thay đổi món này vì bếp đã bắt đầu làm hoặc đã huỷ.');
             }
         }
 
@@ -328,11 +328,23 @@ class OrderController extends Controller
             $item->save();
             
             $order->total_price -= ($item->unit_price * $difference);
+            if ($order->total_price < 0) $order->total_price = 0;
             $order->save();
             
             return back()->with('success', 'Đã giảm số lượng món thành công.');
         }
 
-        return back()->with('error', 'Chỉ có thể giảm số lượng món đã đặt.');
+        if ($newQuantity > $item->quantity) {
+            $difference = $newQuantity - $item->quantity;
+            $item->quantity = $newQuantity;
+            $item->save();
+            
+            $order->total_price += ($item->unit_price * $difference);
+            $order->save();
+            
+            return back()->with('success', 'Đã tăng số lượng món thành công.');
+        }
+
+        return back();
     }
 }

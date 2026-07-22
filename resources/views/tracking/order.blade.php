@@ -135,14 +135,14 @@
                                                     
                                                     <!-- Actions (Cancel/Reduce) when 'new' -->
                                                     <div class="mt-2" x-show="items[{{ $item->id }}].status === 'new'">
-                                                        <form action="{{ route('order.item.update_quantity', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" class="flex items-center gap-2" x-data="{ qty: {{ $item->quantity }}, maxQty: {{ $item->quantity }} }">
+                                                        <form action="{{ route('order.item.update_quantity', ['order' => $order->id, 'item' => $item->id]) }}" method="POST" class="flex items-center gap-2" x-data="{ qty: {{ $item->quantity }}, initialQty: {{ $item->quantity }} }">
                                                             @csrf
                                                             <div class="flex items-center bg-[#040810] rounded border border-white/20 h-6">
                                                                 <button type="button" @click="if(qty > 0) qty--" class="w-6 h-full flex items-center justify-center text-white hover:bg-gray-800 rounded-l leading-none pb-0.5">-</button>
                                                                 <input type="number" name="quantity" x-model="qty" readonly class="w-6 h-full bg-transparent border-none text-white text-center text-xs p-0 focus:ring-0 leading-none pointer-events-none">
-                                                                <button type="button" @click="if(qty < maxQty) qty++" class="w-6 h-full flex items-center justify-center text-white hover:bg-gray-800 rounded-r" :class="qty >= maxQty ? 'opacity-50 cursor-not-allowed' : ''">+</button>
+                                                                <button type="button" @click="qty++" class="w-6 h-full flex items-center justify-center text-white hover:bg-gray-800 rounded-r">+</button>
                                                             </div>
-                                                            <button type="submit" x-show="qty < maxQty" class="px-2 py-1 bg-primary text-white text-[9px] uppercase font-bold tracking-wider rounded shadow hover:bg-blue-600 transition-colors">
+                                                            <button type="submit" x-show="qty !== initialQty" class="px-2 py-1 bg-primary text-white text-[9px] uppercase font-bold tracking-wider rounded shadow hover:bg-blue-600 transition-colors">
                                                                 Xác nhận
                                                             </button>
                                                         </form>
@@ -241,9 +241,9 @@
             </div>
 
             <!-- Back to Menu or Add More -->
-            <div class="mt-8 flex gap-4 justify-center relative z-10" x-show="status !== 'completed'">
+            <div class="mt-8 flex gap-4 justify-center relative z-10" x-show="status !== 'completed' && !'{{ $order->payment_method }}'">
                 <a href="{{ route('order_at_table', ['table_id' => $order->table_id]) }}" class="inline-block bg-transparent text-white border border-white px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-black transition-colors">
-                    <span x-text="paymentStatus === 'paid' ? 'GỌI ĐƠN MỚI' : 'GỌI THÊM MÓN'"></span>
+                    Gọi thêm món
                 </a>
             </div>
             
