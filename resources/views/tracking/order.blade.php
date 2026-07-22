@@ -335,43 +335,22 @@
                     fetch(`/api/order/${this.orderId}/status`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                         .then(res => res.json())
                         .then(data => {
-                            let changed = false;
-                            if (this.status !== data.status || this.paymentStatus !== data.payment_status || this.allItemsServed !== data.all_items_served) {
-                                this.status = data.status;
-                                this.paymentStatus = data.payment_status;
-                                this.allItemsServed = data.all_items_served;
-                                changed = true;
-                            }
+                            this.status = data.status;
+                            this.paymentStatus = data.payment_status;
+                            this.allItemsServed = data.all_items_served;
                             
-                            // Dynamically update items' status
+                            const updatedItems = {};
                             data.items.forEach(apiItem => {
-                                if (!this.items[apiItem.id]) {
-                                    this.items[apiItem.id] = {
-                                        status: apiItem.status,
-                                        quantity: apiItem.quantity,
-                                        prepMins: 5,
-                                        createdAtMs: apiItem.updatedAtMs || new Date().getTime(),
-                                        updatedAtMs: apiItem.updatedAtMs || new Date().getTime()
-                                    };
-                                    changed = true;
-                                } else {
-                                    if (this.items[apiItem.id].status !== apiItem.status ||
-                                        this.items[apiItem.id].quantity !== apiItem.quantity ||
-                                        this.items[apiItem.id].updatedAtMs !== apiItem.updatedAtMs) {
-                                        
-                                        this.items[apiItem.id].status = apiItem.status;
-                                        this.items[apiItem.id].quantity = apiItem.quantity;
-                                        if (apiItem.updatedAtMs) {
-                                            this.items[apiItem.id].updatedAtMs = apiItem.updatedAtMs;
-                                        }
-                                        changed = true;
-                                    }
-                                }
+                                const oldItem = this.items[apiItem.id] || {};
+                                updatedItems[apiItem.id] = {
+                                    status: apiItem.status,
+                                    quantity: apiItem.quantity,
+                                    prepMins: oldItem.prepMins || 5,
+                                    createdAtMs: oldItem.createdAtMs || apiItem.updatedAtMs || new Date().getTime(),
+                                    updatedAtMs: apiItem.updatedAtMs || oldItem.updatedAtMs || new Date().getTime()
+                                };
                             });
-
-                            if (changed) {
-                                this.items = { ...this.items };
-                            }
+                            this.items = updatedItems;
                             
                             if (this.status === 'completed' && this.paymentStatus === 'paid') {
                                 clearInterval(this.pollInterval);

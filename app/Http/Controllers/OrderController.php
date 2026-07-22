@@ -194,6 +194,7 @@ class OrderController extends Controller
 
     public function getStatus(Order $order)
     {
+        $order->refresh();
         $allServed = $order->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
 
         $items = $order->items->map(function ($item) {
