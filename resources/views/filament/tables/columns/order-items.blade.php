@@ -48,13 +48,13 @@
             
             <!-- Nút hành động nằm ngoài -->
             <div class="flex items-center gap-1 shrink-0">
-                @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin', 'manager'])))
+                @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
                     <x-filament::button color="warning" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'preparing')">
                         Nấu
                     </x-filament::button>
                 @endif
                 
-                @if($item->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin', 'manager'])))
+                @if($item->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
                     <x-filament::button color="info" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'ready')">
                         Xong
                     </x-filament::button>
