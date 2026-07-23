@@ -29,22 +29,22 @@
             </div>
             
             <div class="flex items-center gap-1 ml-2">
-                @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    <button type="button" wire:click="updateItemStatus({{ $item->id }}, 'preparing')" class="px-2 py-1 text-xs font-semibold bg-orange-500 text-white rounded hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm transition">
+                @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin', 'manager'])))
+                    <x-filament::button color="warning" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'preparing')">
                         Nấu
-                    </button>
+                    </x-filament::button>
                 @endif
                 
-                @if($item->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    <button type="button" wire:click="updateItemStatus({{ $item->id }}, 'ready')" class="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition">
+                @if($item->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin', 'manager'])))
+                    <x-filament::button color="info" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'ready')">
                         Xong
-                    </button>
+                    </x-filament::button>
                 @endif
                 
-                @if($item->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
-                    <button type="button" wire:click="updateItemStatus({{ $item->id }}, 'served')" class="px-2 py-1 text-xs font-semibold bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition">
+                @if($item->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin', 'manager'])))
+                    <x-filament::button color="success" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'served')">
                         Phục vụ
-                    </button>
+                    </x-filament::button>
                 @endif
             </div>
         </div>
