@@ -66,7 +66,7 @@
                     </x-filament::button>
                 @endif
 
-                @if($isLate && in_array($item->status, ['new', 'preparing']) && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
+                @if($isLate && $item->status === 'new' && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
                     <x-filament::button tag="button" type="button" color="danger" size="xs" wire:click.prevent="remindKitchen({{ $item->id }})" title="Gửi nhắc nhở Bếp" x-on:click.stop.prevent>
                         Nhắc bếp
                     </x-filament::button>
