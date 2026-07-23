@@ -61,6 +61,8 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(1)
                     ->visible(fn (): bool => auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter'])),
             ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('10s')
             ->pages([
                 Pages\Dashboard::class,
             ])
