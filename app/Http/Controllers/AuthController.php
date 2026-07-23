@@ -41,43 +41,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // 1. Thử đăng nhập bằng local database (bằng email hoặc name)
-        $credentialsEmail = ['email' => $request->username, 'password' => $request->password];
-        $credentialsName = ['name' => $request->username, 'password' => $request->password];
-
-        if (\Illuminate\Support\Facades\Auth::attempt($credentialsEmail, $request->has('remember')) ||
-            \Illuminate\Support\Facades\Auth::attempt($credentialsName, $request->has('remember'))) {
-            
-            $localUser = \Illuminate\Support\Facades\Auth::user();
-            
-            if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin', 'chef', 'waiter'])) {
-                return redirect()->route('filament.admin.pages.dashboard');
-            } else {
-                // Khách hàng / User thường đăng nhập thành công qua local DB
-                Session::put('access_token', 'local_auth_' . $localUser->id);
-                Session::put('user_info', [
-                    'id' => $localUser->id,
-                    'name' => $localUser->name,
-                    'email' => $localUser->email,
-                    'avatar' => $localUser->avatar_url,
-                    'phone' => $localUser->phone,
-                ]);
-                if ($localUser->avatar_url) {
-                    Session::put('user_avatar', $localUser->avatar_url);
-                }
-
-                $targetUrl = session()->get('url.intended');
-                if (!$targetUrl && session('table_id')) {
-                    $targetUrl = route('order_at_table');
-                }
-                if (!$targetUrl) {
-                    $targetUrl = route('profile.index');
-                }
-                return redirect()->intended($targetUrl)->with('success', 'Đăng nhập thành công.');
-            }
-        }
-
-        // 2. Thử đăng nhập qua API NKS nếu local DB không khớp
+        // 1. Thử đăng nhập qua API NKS trước để đồng bộ dữ liệu mới nhất
         try {
             $response = $this->apiService->login(
                 $request->username,
@@ -149,6 +113,13 @@ class AuthController extends Controller
                 }
                 $localUser->save();
 
+                \Illuminate\Support\Facades\Log::info('NKS API Login', [
+                    'username' => $request->username,
+                    'userInfo' => $userInfo,
+                    'extractedName' => $name,
+                    'localUserAfterSave' => $localUser->toArray()
+                ]);
+
                 // Đăng nhập bằng Laravel Auth
                 \Illuminate\Support\Facades\Auth::login($localUser);
 
@@ -167,6 +138,41 @@ class AuthController extends Controller
             }
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('API Login Exception: ' . $e->getMessage());
+        }
+
+        // 2. Thử đăng nhập bằng local database (dành cho Admin / NV không có tài khoản NKS)
+        $credentialsEmail = ['email' => $request->username, 'password' => $request->password];
+        $credentialsName = ['name' => $request->username, 'password' => $request->password];
+
+        if (\Illuminate\Support\Facades\Auth::attempt($credentialsEmail, $request->has('remember')) ||
+            \Illuminate\Support\Facades\Auth::attempt($credentialsName, $request->has('remember'))) {
+            
+            $localUser = \Illuminate\Support\Facades\Auth::user();
+            
+            if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin', 'chef', 'waiter'])) {
+                return redirect()->route('filament.admin.pages.dashboard');
+            } else {
+                Session::put('access_token', 'local_auth_' . $localUser->id);
+                Session::put('user_info', [
+                    'id' => $localUser->id,
+                    'name' => $localUser->name,
+                    'email' => $localUser->email,
+                    'avatar' => $localUser->avatar_url,
+                    'phone' => $localUser->phone,
+                ]);
+                if ($localUser->avatar_url) {
+                    Session::put('user_avatar', $localUser->avatar_url);
+                }
+
+                $targetUrl = session()->get('url.intended');
+                if (!$targetUrl && session('table_id')) {
+                    $targetUrl = route('order_at_table');
+                }
+                if (!$targetUrl) {
+                    $targetUrl = route('profile.index');
+                }
+                return redirect()->intended($targetUrl)->with('success', 'Đăng nhập thành công.');
+            }
         }
 
         // Đăng nhập thất bại
