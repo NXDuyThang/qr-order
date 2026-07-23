@@ -1,7 +1,7 @@
-<div class="flex flex-col gap-2">
+<div style="display: flex; flex-direction: column; gap: 8px;">
     @foreach ($getRecord()->items->where('status', '!=', 'cancelled') as $item)
-        <div class="flex items-center justify-between text-sm p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-            <div class="flex items-center gap-2 flex-1 flex-wrap">
+        <div style="margin-bottom: 4px;" class="flex items-center justify-between text-sm p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+            <div class="flex items-center gap-2 flex-1 flex-wrap" style="gap: 8px;">
                 <span class="font-medium text-gray-900 dark:text-gray-100">{{ $item->food->name }}</span>
                 <span class="text-gray-500 dark:text-gray-400">x{{ $item->quantity }}</span>
                 
