@@ -107,15 +107,16 @@ class AuthController extends Controller
                 $email = $userInfo['email'] ?? ($request->username . '@nks.local');
                 
                 $name = null;
-                $fullName = trim(($userInfo['firstname'] ?? '') . ' ' . ($userInfo['lastname'] ?? ''));
-                if (!empty($fullName)) {
-                    $name = $fullName;
+                // Prioritize the 'name' field if it exists
+                $rawName = $userInfo['name'] ?? ($userInfo['full_name'] ?? ($userInfo['fullname'] ?? ''));
+                if (!empty($rawName) && !str_contains($rawName, '@')) {
+                    $name = $rawName;
                 }
                 
                 if (empty($name)) {
-                    $rawName = $userInfo['name'] ?? ($userInfo['full_name'] ?? ($userInfo['fullname'] ?? ''));
-                    if (!empty($rawName) && !str_contains($rawName, '@')) {
-                        $name = $rawName;
+                    $fullName = trim(($userInfo['firstname'] ?? '') . ' ' . ($userInfo['lastname'] ?? ''));
+                    if (!empty($fullName)) {
+                        $name = $fullName;
                     }
                 }
                 
