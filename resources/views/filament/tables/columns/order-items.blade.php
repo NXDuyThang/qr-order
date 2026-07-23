@@ -49,25 +49,25 @@
             <!-- Nút hành động nằm ngoài -->
             <div class="flex items-center gap-1 shrink-0">
                 @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    <x-filament::button color="warning" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'preparing')">
+                    <x-filament::button tag="button" type="button" color="warning" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'preparing')">
                         Nấu
                     </x-filament::button>
                 @endif
                 
                 @if($item->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    <x-filament::button color="info" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'ready')">
+                    <x-filament::button tag="button" type="button" color="info" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'ready')">
                         Xong
                     </x-filament::button>
                 @endif
                 
                 @if($item->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin', 'manager'])))
-                    <x-filament::button color="success" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'served')">
+                    <x-filament::button tag="button" type="button" color="success" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'served')">
                         Phục vụ
                     </x-filament::button>
                 @endif
 
                 @if($isLate && in_array($item->status, ['new', 'preparing']) && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
-                    <x-filament::button color="danger" size="xs" wire:click="remindKitchen({{ $item->id }})" title="Gửi nhắc nhở Bếp">
+                    <x-filament::button tag="button" type="button" color="danger" size="xs" wire:click.stop="remindKitchen({{ $item->id }})" title="Gửi nhắc nhở Bếp">
                         Nhắc bếp
                     </x-filament::button>
                 @endif
