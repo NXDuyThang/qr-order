@@ -80,16 +80,11 @@ class OrderController extends Controller
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
         if (!$isStaff) {
-            // Ensure the order belongs to the user or table logic
-            if ($order->user_id) {
-                if ($order->user_id != auth()->id()) {
-                    abort(403, 'Không có quyền truy cập');
-                }
-            } else {
-                // Guest order
-                if ((string)$order->table_id !== (string)session('table_id')) {
-                    abort(403, 'Không có quyền truy cập (Sai bàn)');
-                }
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
             }
         }
 
@@ -100,15 +95,11 @@ class OrderController extends Controller
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
         if (!$isStaff) {
-            // Check authorization
-            if ($order->user_id) {
-                if ($order->user_id != auth()->id()) {
-                    abort(403, 'Không có quyền truy cập');
-                }
-            } else {
-                if ((string)$order->table_id !== (string)session('table_id')) {
-                    abort(403, 'Không có quyền truy cập (Sai bàn)');
-                }
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
             }
         }
 
@@ -179,16 +170,11 @@ class OrderController extends Controller
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
         if (!$isStaff) {
-            // Ensure the order belongs to the user or table logic
-            if ($order->user_id) {
-                if ($order->user_id != auth()->id()) {
-                    abort(403, 'Không có quyền truy cập');
-                }
-            } else {
-                // Guest order
-                if ((string)$order->table_id !== (string)session('table_id')) {
-                    abort(403, 'Không có quyền truy cập (Sai bàn)');
-                }
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
             }
         }
 
@@ -224,9 +210,13 @@ class OrderController extends Controller
     public function cancelItem(Request $request, Order $order, OrderItem $item)
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
-        // Check authorization
-        if (!$isStaff && $order->user_id && $order->user_id != auth()->id()) {
-            abort(403, 'Không có quyền truy cập');
+        if (!$isStaff) {
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
+            }
         }
 
         // Ensure item belongs to order
@@ -264,8 +254,13 @@ class OrderController extends Controller
     public function reduceItem(Request $request, Order $order, OrderItem $item)
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
-        if (!$isStaff && $order->user_id && $order->user_id != auth()->id()) {
-            abort(403, 'Không có quyền truy cập');
+        if (!$isStaff) {
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
+            }
         }
 
         if ($item->order_id !== $order->id) {
@@ -304,8 +299,13 @@ class OrderController extends Controller
     public function updateQuantity(Request $request, Order $order, OrderItem $item)
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
-        if (!$isStaff && $order->user_id && $order->user_id != auth()->id()) {
-            abort(403, 'Không có quyền truy cập');
+        if (!$isStaff) {
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
+            }
         }
 
         if ($item->order_id !== $order->id) {
