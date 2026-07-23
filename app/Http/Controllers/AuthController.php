@@ -86,7 +86,7 @@ class AuthController extends Controller
 
             if (isset($response['access_token']) || (isset($response['data']) && isset($response['data']['access_token']))) {
                 $token = $response['access_token'] ?? $response['data']['access_token'];
-                $userInfo = $response['User Info'] ?? ($response['data']['User Info'] ?? ($response['data'] ?? null));
+                $userInfo = $response['User Info'] ?? ($response['data']['User Info'] ?? ($response['data']['user'] ?? ($response['data'] ?? null)));
 
                 Session::put('access_token', $token);
                 if ($userInfo) {
