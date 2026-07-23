@@ -359,4 +359,46 @@ class OrderController extends Controller
 
         return back();
     }
+
+    public function receipt(Order $order)
+    {
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff) {
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
+            }
+        }
+
+        return view('tracking.receipt', compact('order'));
+    }
+
+    public function sendReceiptEmail(Request $request, Order $order)
+    {
+        $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
+        if (!$isStaff) {
+            $isOwner = $order->user_id && $order->user_id == auth()->id();
+            $isAtTable = $order->table_id && (string)$order->table_id === (string)session('table_id');
+            
+            if (!$isOwner && !$isAtTable) {
+                abort(403, 'Không có quyền truy cập');
+            }
+        }
+
+        $validated = $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\Mail::send('tracking.receipt', ['order' => $order, 'isEmail' => true], function($message) use ($validated, $order) {
+                $message->to($validated['email'])
+                        ->subject('Hóa đơn đơn hàng #' . $order->id . ' - Hệ thống QR Order');
+            });
+            return back()->with('success', 'Đã gửi hóa đơn qua email thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Có lỗi xảy ra khi gửi email: ' . $e->getMessage());
+        }
+    }
 }
