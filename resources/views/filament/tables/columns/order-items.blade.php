@@ -47,7 +47,7 @@
             </div>
             
             <!-- Nút hành động nằm ngoài -->
-            <div class="flex items-center gap-1 shrink-0">
+            <div class="flex items-center gap-1 shrink-0" x-on:click.stop>
                 @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
                     <x-filament::button tag="button" type="button" color="warning" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'preparing')">
                         Nấu
