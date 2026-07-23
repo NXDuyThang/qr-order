@@ -121,7 +121,7 @@
 
     <div class="receipt-card">
         <div class="header">
-            <h1>NKS Restaurant</h1>
+            <h1>Nhà Hàng Ẩm Thực Việt</h1>
             <p>Hóa đơn thanh toán</p>
         </div>
         
@@ -161,7 +161,7 @@
                 <tr>
                     <td>{{ $item->food->name }}</td>
                     <td style="text-align: center;">{{ $item->quantity }}</td>
-                    <td class="price">{{ number_format($item->unit_price * $item->quantity, 0, ',', '.') }}đ</td>
+                    <td class="price">{{ number_format($item->unit_price * $item->quantity * 1000, 0, ',', '.') }} đ</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -170,7 +170,7 @@
         <div class="total-section">
             <div class="total-row">
                 <span>Tổng cộng:</span>
-                <span>{{ number_format($order->total_price, 0, ',', '.') }}đ</span>
+                <span>{{ number_format($order->total_price * 1000, 0, ',', '.') }} đ</span>
             </div>
         </div>
         
