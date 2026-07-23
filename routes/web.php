@@ -74,11 +74,11 @@ Route::post('/chatbot/send', [ChatbotController::class, 'chat'])->name('chatbot.
 // Employee Routes
 use App\Http\Controllers\EmployeeController;
 Route::middleware(['auth', 'role:chef'])->group(function () {
-    Route::get('/chef', function () { return redirect('/admin/employee-dashboard'); })->name('chef.dashboard');
+    Route::get('/chef', function () { return redirect('/admin'); })->name('chef.dashboard');
 });
 
 Route::middleware(['auth', 'role:waiter'])->group(function () {
-    Route::get('/waiter', function () { return redirect('/admin/employee-dashboard'); })->name('waiter.dashboard');
+    Route::get('/waiter', function () { return redirect('/admin'); })->name('waiter.dashboard');
 });
 
 // POS Routes for Waiter/Manager/Admin

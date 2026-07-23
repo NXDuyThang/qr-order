@@ -50,12 +50,8 @@ class AuthController extends Controller
             
             $localUser = \Illuminate\Support\Facades\Auth::user();
             
-            if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin'])) {
+            if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin', 'chef', 'waiter'])) {
                 return redirect()->route('filament.admin.pages.dashboard');
-            } elseif ($localUser->role === 'chef') {
-                return redirect()->route('chef.dashboard');
-            } elseif ($localUser->role === 'waiter') {
-                return redirect()->route('waiter.dashboard');
             } else {
                 // Khách hàng / User thường đăng nhập thành công qua local DB
                 Session::put('access_token', 'local_auth_' . $localUser->id);
@@ -155,12 +151,8 @@ class AuthController extends Controller
                 // Đăng nhập bằng Laravel Auth
                 \Illuminate\Support\Facades\Auth::login($localUser);
 
-                if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin'])) {
+                if ($localUser->is_admin || in_array($localUser->role, ['manager', 'admin', 'chef', 'waiter'])) {
                     return redirect()->route('filament.admin.pages.dashboard');
-                } elseif ($localUser->role === 'chef') {
-                    return redirect()->route('chef.dashboard');
-                } elseif ($localUser->role === 'waiter') {
-                    return redirect()->route('waiter.dashboard');
                 }
 
                 $targetUrl = session()->get('url.intended');
