@@ -135,6 +135,18 @@ class OrderController extends Controller
                     }
                 }
             }
+
+            // Auto send email if logged in
+            if (auth()->check() && auth()->user()->email) {
+                try {
+                    \Illuminate\Support\Facades\Mail::send('tracking.receipt', ['order' => $order, 'isEmail' => true], function($message) use ($order) {
+                        $message->to(auth()->user()->email)
+                                ->subject('Hóa đơn đơn hàng #' . $order->id . ' - Hệ thống QR Order');
+                    });
+                } catch (\Exception $e) {
+                    // Ignore email errors to not block checkout
+                }
+            }
             
             return back()->with('success', 'Đã ghi nhận thanh toán tiền mặt thành công. Cảm ơn quý khách!');
         }
@@ -184,6 +196,18 @@ class OrderController extends Controller
         }
 
         $order->update(['payment_status' => 'paid']);
+
+        // Auto send email if logged in
+        if (auth()->check() && auth()->user()->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::send('tracking.receipt', ['order' => $order, 'isEmail' => true], function($message) use ($order) {
+                    $message->to(auth()->user()->email)
+                            ->subject('Hóa đơn đơn hàng #' . $order->id . ' - Hệ thống QR Order');
+                });
+            } catch (\Exception $e) {
+                // Ignore email errors
+            }
+        }
 
         return redirect()->route('order.track', ['order' => $order->id])
             ->with('success', 'Cảm ơn quý khách! Đơn hàng của bạn đã được ghi nhận thanh toán thành công.');

@@ -232,17 +232,6 @@
                         <a href="{{ route('order.receipt', ['order' => $order->id]) }}" target="_blank" class="inline-block bg-primary text-white border border-primary px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)]">
                             Xem / In Hóa Đơn
                         </a>
-                        
-                        <div class="w-full border-t border-white/10 pt-4">
-                            <p class="text-gray-400 text-xs mb-3 text-left">Gửi hóa đơn qua email:</p>
-                            <form action="{{ route('order.send_receipt_email', ['order' => $order->id]) }}" method="POST" class="flex gap-2">
-                                @csrf
-                                <input type="email" name="email" placeholder="Nhập địa chỉ email..." required class="bg-[#040810] border border-white/20 rounded text-white px-4 py-2 text-sm flex-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-500">
-                                <button type="submit" class="bg-white/10 hover:bg-white/20 rounded text-white px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors border border-white/20">
-                                    Gửi
-                                </button>
-                            </form>
-                        </div>
                     </div>
                 </div>
                 <div class="mt-8">
