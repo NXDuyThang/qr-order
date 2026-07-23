@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/order/{order}/item/{item}/reduce', [\App\Http\Controllers\OrderController::class, 'reduceItem'])->name('order.item.reduce');
     Route::post('/order/{order}/item/{item}/update-quantity', [\App\Http\Controllers\OrderController::class, 'updateQuantity'])->name('order.item.update_quantity');
     Route::get('/order/{order}/receipt', [\App\Http\Controllers\OrderController::class, 'receipt'])->name('order.receipt');
+    Route::post('/order/{order}/send-receipt', [\App\Http\Controllers\OrderController::class, 'sendReceiptEmail'])->name('order.send_receipt_email');
 });
 
 // Order tracking API (Must be outside auth middleware so guests can poll)

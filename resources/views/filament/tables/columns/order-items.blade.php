@@ -6,7 +6,7 @@
             if ($item->food->preparation_time && in_array($item->status, ['new', 'preparing'])) {
                 $expectedTime = $item->created_at->copy()->addMinutes($item->food->preparation_time * $item->quantity);
                 $isLate = now()->greaterThan($expectedTime);
-                $diffMinutes = now()->diffInMinutes($expectedTime);
+                $diffMinutes = abs((int)now()->diffInMinutes($expectedTime));
             }
         @endphp
         <div style="margin-bottom: 4px;" class="flex items-center justify-between gap-2">
@@ -37,7 +37,7 @@
                     @endswitch
                 </span>
 
-                @if($item->food->preparation_time && in_array($item->status, ['new', 'preparing']))
+                @if($item->food->preparation_time && in_array($item->status, ['new', 'preparing']) && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
                     @if($isLate)
                         <span class="text-xs font-bold text-red-500">Trễ {{ $diffMinutes }}p</span>
                     @else

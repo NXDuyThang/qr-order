@@ -215,6 +215,7 @@ class OrderResource extends Resource
                     ->label('In Hóa Đơn')
                     ->icon('heroicon-o-printer')
                     ->color('gray')
+                    ->visible(fn (Order $record) => auth()->check() && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
                     ->url(fn (Order $record) => route('order.receipt', $record->id))
                     ->openUrlInNewTab(),
             ])

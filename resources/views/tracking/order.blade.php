@@ -223,10 +223,27 @@
             </div>
 
             <div class="text-center relative z-10 transition-all duration-500 mt-12" x-show="paymentStatus === 'paid'" style="display: none;" x-transition.opacity>
-                <div class="bg-green-900/20 border border-green-500/30 text-green-400 p-6 rounded-xl inline-block">
+                <div class="bg-green-900/20 border border-green-500/30 text-green-400 p-6 rounded-xl inline-block w-full max-w-md">
                     <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <p class="text-lg tracking-widest uppercase">Cảm ơn quý khách</p>
-                    <p class="text-sm mt-2 text-green-500/70">Thanh toán đã được xác nhận.</p>
+                    <p class="text-sm mt-2 text-green-500/70 mb-6">Thanh toán đã được xác nhận.</p>
+                    
+                    <div class="mt-4 flex flex-col items-center gap-6 w-full">
+                        <a href="{{ route('order.receipt', ['order' => $order->id]) }}" target="_blank" class="inline-block bg-primary text-white border border-primary px-8 py-3 text-[13px] font-semibold tracking-[0.2em] uppercase hover:bg-white hover:text-primary transition-colors shadow-[0_0_15px_rgba(0,119,187,0.3)]">
+                            Xem / In Hóa Đơn
+                        </a>
+                        
+                        <div class="w-full border-t border-white/10 pt-4">
+                            <p class="text-gray-400 text-xs mb-3 text-left">Gửi hóa đơn qua email:</p>
+                            <form action="{{ route('order.send_receipt_email', ['order' => $order->id]) }}" method="POST" class="flex gap-2">
+                                @csrf
+                                <input type="email" name="email" placeholder="Nhập địa chỉ email..." required class="bg-[#040810] border border-white/20 rounded text-white px-4 py-2 text-sm flex-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder-gray-500">
+                                <button type="submit" class="bg-white/10 hover:bg-white/20 rounded text-white px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors border border-white/20">
+                                    Gửi
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <div class="mt-8">
                     <a href="{{ route('welcome') }}" class="text-gray-400 hover:text-white transition-colors text-sm border-b border-transparent hover:border-white pb-1">Trở về trang chủ</a>
