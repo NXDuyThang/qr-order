@@ -47,27 +47,27 @@
             </div>
             
             <!-- Nút hành động nằm ngoài -->
-            <div class="flex items-center gap-1 shrink-0" x-on:click.stop>
+            <div class="flex items-center gap-1 shrink-0" x-on:click.stop.prevent>
                 @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    <x-filament::button tag="button" type="button" color="warning" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'preparing')">
+                    <x-filament::button tag="button" type="button" color="warning" size="xs" wire:click.prevent="updateItemStatus({{ $item->id }}, 'preparing')" x-on:click.stop.prevent>
                         Nấu
                     </x-filament::button>
                 @endif
                 
                 @if($item->status === 'preparing' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
-                    <x-filament::button tag="button" type="button" color="info" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'ready')">
+                    <x-filament::button tag="button" type="button" color="info" size="xs" wire:click.prevent="updateItemStatus({{ $item->id }}, 'ready')" x-on:click.stop.prevent>
                         Xong
                     </x-filament::button>
                 @endif
                 
                 @if($item->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin', 'manager'])))
-                    <x-filament::button tag="button" type="button" color="success" size="xs" wire:click.stop="updateItemStatus({{ $item->id }}, 'served')">
+                    <x-filament::button tag="button" type="button" color="success" size="xs" wire:click.prevent="updateItemStatus({{ $item->id }}, 'served')" x-on:click.stop.prevent>
                         Phục vụ
                     </x-filament::button>
                 @endif
 
                 @if($isLate && in_array($item->status, ['new', 'preparing']) && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
-                    <x-filament::button tag="button" type="button" color="danger" size="xs" wire:click.stop="remindKitchen({{ $item->id }})" title="Gửi nhắc nhở Bếp">
+                    <x-filament::button tag="button" type="button" color="danger" size="xs" wire:click.prevent="remindKitchen({{ $item->id }})" title="Gửi nhắc nhở Bếp" x-on:click.stop.prevent>
                         Nhắc bếp
                     </x-filament::button>
                 @endif
