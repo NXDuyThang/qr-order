@@ -1,7 +1,17 @@
 <div style="display: flex; flex-direction: column; gap: 8px;">
     @foreach ($getRecord()->items->where('status', '!=', 'cancelled') as $item)
-        <div style="margin-bottom: 4px;" class="flex items-center justify-between text-sm p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-            <div class="flex items-center gap-2 flex-1 flex-wrap" style="gap: 8px;">
+        @php
+            $isLate = false;
+            $diffMinutes = 0;
+            if ($item->food->preparation_time && in_array($item->status, ['new', 'preparing'])) {
+                $expectedTime = $item->created_at->copy()->addMinutes($item->food->preparation_time * $item->quantity);
+                $isLate = now()->greaterThan($expectedTime);
+                $diffMinutes = now()->diffInMinutes($expectedTime);
+            }
+        @endphp
+        <div style="margin-bottom: 4px;" class="flex items-center justify-between gap-2">
+            <!-- Box thông tin món ăn -->
+            <div class="flex items-center gap-2 flex-1 flex-wrap text-sm p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" style="gap: 8px;">
                 <span class="font-medium text-gray-900 dark:text-gray-100">{{ $item->food->name }}</span>
                 <span class="text-gray-500 dark:text-gray-400">x{{ $item->quantity }}</span>
                 
@@ -26,9 +36,18 @@
                         @default {{ $item->status }}
                     @endswitch
                 </span>
+
+                @if($item->food->preparation_time && in_array($item->status, ['new', 'preparing']))
+                    @if($isLate)
+                        <span class="text-xs font-bold text-red-500">Trễ {{ $diffMinutes }}p</span>
+                    @else
+                        <span class="text-xs font-medium text-green-600">Còn {{ $diffMinutes }}p</span>
+                    @endif
+                @endif
             </div>
             
-            <div class="flex items-center gap-1 ml-2">
+            <!-- Nút hành động nằm ngoài -->
+            <div class="flex items-center gap-1 shrink-0">
                 @if($item->status === 'new' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin', 'manager'])))
                     <x-filament::button color="warning" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'preparing')">
                         Nấu
@@ -44,6 +63,12 @@
                 @if($item->status === 'ready' && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin', 'manager'])))
                     <x-filament::button color="success" size="xs" wire:click="updateItemStatus({{ $item->id }}, 'served')">
                         Phục vụ
+                    </x-filament::button>
+                @endif
+
+                @if($isLate && in_array($item->status, ['new', 'preparing']) && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
+                    <x-filament::button color="danger" size="xs" wire:click="remindKitchen({{ $item->id }})" title="Gửi nhắc nhở Bếp">
+                        Nhắc bếp
                     </x-filament::button>
                 @endif
             </div>

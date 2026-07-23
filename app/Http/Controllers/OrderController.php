@@ -42,6 +42,11 @@ class OrderController extends Controller
         $order = $existingOrder->first();
 
         if ($order) {
+            // Check if table is occupied by someone else
+            if ($order->user_id && $order->user_id !== auth()->id()) {
+                return redirect()->route('welcome')->with('error', 'Bàn này hiện đang có khách sử dụng, bạn không thể đặt thêm món!');
+            }
+            
             $order->total_price += $totalPrice;
             $order->status = 'new'; // Reset status to new so the kitchen is notified again
             $order->save();

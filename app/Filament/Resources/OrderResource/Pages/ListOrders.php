@@ -73,4 +73,22 @@ class ListOrders extends ListRecords
             }
         }
     }
+
+    public function remindKitchen($itemId)
+    {
+        $item = \App\Models\OrderItem::find($itemId);
+        if ($item && $item->order) {
+            \Filament\Notifications\Notification::make()
+                ->title('Nhắc nhở từ Quản lý')
+                ->body('Vui lòng đẩy nhanh tiến độ món: ' . $item->food->name . ' (Bàn ' . $item->order->table->name . ')')
+                ->warning()
+                ->sendToDatabase(\App\Models\User::whereIn('role', ['chef', 'admin'])->get());
+                
+            \Filament\Notifications\Notification::make()
+                ->title('Đã gửi nhắc nhở')
+                ->body('Đã gửi nhắc nhở đến bộ phận bếp thành công.')
+                ->success()
+                ->send();
+        }
+    }
 }

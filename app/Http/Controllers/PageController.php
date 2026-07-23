@@ -79,15 +79,18 @@ class PageController extends Controller
         $activeOrder = null;
         if ($tableId) {
             $currentUserId = \Illuminate\Support\Facades\Auth::id();
-            $activeOrder = \App\Models\Order::with('user')
-                ->where('table_id', $tableId)
-                ->when($currentUserId, function($q) use ($currentUserId) {
-                    $q->where('user_id', $currentUserId);
-                })
-                ->whereIn('status', ['new', 'processing', 'completed'])
+            
+            // Check if table is occupied by someone else
+            $existingOrder = \App\Models\Order::where('table_id', $tableId)
+                ->whereNotIn('status', ['completed', 'cancelled'])
                 ->where('payment_status', 'pending')
-                ->latest()
                 ->first();
+                
+            if ($existingOrder && $existingOrder->user_id !== $currentUserId) {
+                return redirect()->route('welcome')->with('error', 'Bàn này hiện đang có khách sử dụng, vui lòng chọn bàn khác!');
+            }
+            
+            $activeOrder = $existingOrder;
         }
         
         return view('order_at_table', compact('categories', 'tableId', 'tables', 'activeOrder'));

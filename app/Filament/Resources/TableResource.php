@@ -91,6 +91,10 @@ class TableResource extends Resource
                         default => $state,
                     })
                     ->searchable(),
+                Tables\Columns\TextColumn::make('orders_count')
+                    ->counts('orders')
+                    ->label('Tổng số đơn hàng')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Ngày tạo')
                     ->dateTime()

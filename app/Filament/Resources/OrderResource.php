@@ -210,6 +210,13 @@ class OrderResource extends Resource
                         }
                     })
                     ->successNotificationTitle('Đã xác nhận thanh toán thành công'),
+                    
+                Tables\Actions\Action::make('printReceipt')
+                    ->label('In Hóa Đơn')
+                    ->icon('heroicon-o-printer')
+                    ->color('gray')
+                    ->url(fn (Order $record) => route('order.receipt', $record->id))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
