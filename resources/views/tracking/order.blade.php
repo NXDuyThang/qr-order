@@ -306,7 +306,7 @@
                 },
 
                 fetchStatus() {
-                    fetch(`/api/order/${this.orderId}/status`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    fetch(`/api/order/${this.orderId}/status?t=${Date.now()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                         .then(res => res.json())
                         .then(data => {
                             this.status = data.status;
