@@ -44,4 +44,33 @@ class ListOrders extends ListRecords
 
         return $tabs;
     }
+
+    public function updateItemStatus($itemId, $status)
+    {
+        $item = \App\Models\OrderItem::find($itemId);
+        if ($item) {
+            $item->update(['status' => $status]);
+            
+            // Update order status if necessary
+            if ($item->order) {
+                if ($status === 'preparing' && $item->order->status === 'new') {
+                    $item->order->update(['status' => 'preparing']);
+                }
+                
+                if ($status === 'ready') {
+                    $allReady = $item->order->items()->whereNotIn('status', ['ready', 'served', 'completed', 'cancelled'])->count() === 0;
+                    if ($allReady) {
+                        $item->order->update(['status' => 'ready']);
+                    }
+                }
+                
+                if ($status === 'served') {
+                    $allServed = $item->order->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
+                    if ($allServed && $item->order->status !== 'completed') {
+                        $item->order->update(['status' => 'served']);
+                    }
+                }
+            }
+        }
+    }
 }

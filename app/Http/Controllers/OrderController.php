@@ -82,7 +82,7 @@ class OrderController extends Controller
         if (!$isStaff) {
             // Ensure the order belongs to the user or table logic
             if ($order->user_id) {
-                if ($order->user_id !== auth()->id()) {
+                if ($order->user_id != auth()->id()) {
                     abort(403, 'Không có quyền truy cập');
                 }
             } else {
@@ -102,7 +102,7 @@ class OrderController extends Controller
         if (!$isStaff) {
             // Check authorization
             if ($order->user_id) {
-                if ($order->user_id !== auth()->id()) {
+                if ($order->user_id != auth()->id()) {
                     abort(403, 'Không có quyền truy cập');
                 }
             } else {
@@ -181,7 +181,7 @@ class OrderController extends Controller
         if (!$isStaff) {
             // Ensure the order belongs to the user or table logic
             if ($order->user_id) {
-                if ($order->user_id !== auth()->id()) {
+                if ($order->user_id != auth()->id()) {
                     abort(403, 'Không có quyền truy cập');
                 }
             } else {
@@ -225,7 +225,7 @@ class OrderController extends Controller
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
         // Check authorization
-        if (!$isStaff && $order->user_id && $order->user_id !== auth()->id()) {
+        if (!$isStaff && $order->user_id && $order->user_id != auth()->id()) {
             abort(403, 'Không có quyền truy cập');
         }
 
@@ -264,7 +264,7 @@ class OrderController extends Controller
     public function reduceItem(Request $request, Order $order, OrderItem $item)
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
-        if (!$isStaff && $order->user_id && $order->user_id !== auth()->id()) {
+        if (!$isStaff && $order->user_id && $order->user_id != auth()->id()) {
             abort(403, 'Không có quyền truy cập');
         }
 
@@ -304,7 +304,7 @@ class OrderController extends Controller
     public function updateQuantity(Request $request, Order $order, OrderItem $item)
     {
         $isStaff = auth()->check() && in_array(auth()->user()->role, ['admin', 'manager', 'waiter']);
-        if (!$isStaff && $order->user_id && $order->user_id !== auth()->id()) {
+        if (!$isStaff && $order->user_id && $order->user_id != auth()->id()) {
             abort(403, 'Không có quyền truy cập');
         }
 

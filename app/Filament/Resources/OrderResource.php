@@ -93,27 +93,9 @@ class OrderResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->default('Khách vãng lai'),
-                Tables\Columns\TextColumn::make('items_list')
+                Tables\Columns\ViewColumn::make('items_list')
                     ->label('Danh sách món ăn')
-                    ->getStateUsing(function (Order $record) {
-                        return collect($record->items)->filter(function($item) {
-                            return $item->status !== 'cancelled';
-                        })->map(function ($item) {
-                            $statusStr = match($item->status) {
-                                'new' => 'Mới đặt',
-                                'preparing' => 'Đang làm',
-                                'ready' => 'Nấu xong',
-                                'served' => 'Đã giao',
-                                'completed' => 'Hoàn tất',
-                                default => $item->status
-                            };
-                            $totalPrepTime = $item->food->preparation_time ? ($item->food->preparation_time * $item->quantity) : 0;
-                            $prepTime = $totalPrepTime ? ' (⏳ ' . $totalPrepTime . 'p)' : '';
-                            return $item->food->name . ' (x' . $item->quantity . ')' . $prepTime . ' - [' . $statusStr . ']';
-                        })->toArray();
-                    })
-                    ->listWithLineBreaks()
-                    ->bulleted(),
+                    ->view('filament.tables.columns.order-items'),
                 Tables\Columns\TextColumn::make('total_price')
                     ->label('Tổng tiền')
                     ->formatStateUsing(fn ($state) => number_format($state * 1000, 0, ',', '.') . ' VNĐ')
@@ -169,6 +151,44 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('prepareAll')
+                    ->label('Nấu')
+                    ->icon('heroicon-o-fire')
+                    ->color('warning')
+                    ->visible(fn (Order $record) => $record->items()->where('status', 'new')->exists() && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
+                    ->action(function (Order $record) {
+                        $record->items()->where('status', 'new')->update(['status' => 'preparing']);
+                        if ($record->status === 'new') {
+                            $record->update(['status' => 'preparing']);
+                        }
+                    }),
+
+                Tables\Actions\Action::make('readyAll')
+                    ->label('Xong')
+                    ->icon('heroicon-o-check')
+                    ->color('info')
+                    ->visible(fn (Order $record) => $record->items()->where('status', 'preparing')->exists() && (auth()->user()->is_admin || in_array(auth()->user()->role, ['chef', 'admin'])))
+                    ->action(function (Order $record) {
+                        $record->items()->where('status', 'preparing')->update(['status' => 'ready']);
+                        $allReady = $record->items()->whereNotIn('status', ['ready', 'served', 'completed', 'cancelled'])->count() === 0;
+                        if ($allReady) {
+                            $record->update(['status' => 'ready']);
+                        }
+                    }),
+
+                Tables\Actions\Action::make('serveAll')
+                    ->label('Phục vụ')
+                    ->icon('heroicon-o-arrow-right')
+                    ->color('success')
+                    ->visible(fn (Order $record) => $record->items()->where('status', 'ready')->exists() && (auth()->user()->is_admin || in_array(auth()->user()->role, ['waiter', 'admin'])))
+                    ->action(function (Order $record) {
+                        $record->items()->where('status', 'ready')->update(['status' => 'served']);
+                        $allServed = $record->items()->whereNotIn('status', ['served', 'completed', 'cancelled'])->count() === 0;
+                        if ($allServed && $record->status !== 'completed') {
+                            $record->update(['status' => 'served']);
+                        }
+                    }),
+                    
                 Tables\Actions\Action::make('confirmPayment')
                     ->label('Xác nhận Thanh toán')
                     ->icon('heroicon-o-currency-dollar')
